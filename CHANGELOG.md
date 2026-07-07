@@ -1,6 +1,16 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.7.0] — 2026-07-06
+### Added
+- `includes/class-spz-data-store.php`: `SPZ_Data_Store` con `table()`, `create_table()` (dbDelta, UNIQUE KEY sec_slug), `get_override()`, `save_override()` ($wpdb->replace), `delete_override()`, `all_overrides()`. Todas las queries usan `$wpdb->prepare()`.
+- `includes/class-spz-security.php`: `validate_payload(array):bool` — detecta shape (módulo vs vista PAZ vs vista nativa), rechaza claves no permitidas por tipo, rechaza tipos incorrectos (scalar donde se espera array y viceversa), rechaza strings con contenido HTML (`/<[a-zA-Z\/]/`). Refleja la lógica de `scripts/validate-views.py`.
+- `includes/class-spz-rest-api.php`: `POST /suite-paz/v1/save` (admin + nonce; sanitiza seccion/slug, valida payload, guarda override); `POST /suite-paz/v1/reset` (borra override); `GET /suite-paz/v1/export?seccion&slug` (devuelve override o semilla JSON con campo `source`).
+### Changed
+- `includes/class-spz-data-provider.php`: constructor recibe `SPZ_Data_Store $store`; `get_view()` consulta `store->get_override()` antes de leer el JSON semilla — override en BD gana.
+- `includes/class-spz-plugin.php`: `__construct()` instancia `SPZ_Data_Store` y lo pasa a cada `SPZ_Data_Provider`; `activate()` llama `(new SPZ_Data_Store())->create_table()`.
+- `suite-paz.php`: versión `0.6.1` → `0.7.0`.
+
 ## [0.6.1] — 2026-07-06
 ### Fixed
 - `includes/class-spz-plugin.php`: añadida dependencia `spz-modules` en `wp_register_script('spz-frontend',...)` para garantizar que `modules.js` cargue antes que `frontend.js`.

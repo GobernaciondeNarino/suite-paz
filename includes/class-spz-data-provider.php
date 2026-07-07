@@ -57,6 +57,7 @@ class SPZ_Data_Provider {
 	private const DATA_KEY_CANDIDATES = [ 'data', 'datos', 'municipios', 'items', 'rows' ];
 
 	private SPZ_Security $security;
+	private SPZ_Data_Store $store;
 	private string $seccion;
 
 	/**
@@ -69,12 +70,14 @@ class SPZ_Data_Provider {
 	/**
 	 * Constructor.
 	 *
-	 * @param SPZ_Security $security Security helper.
-	 * @param string       $seccion  Sección slug (sanitised internally).
+	 * @param SPZ_Security  $security Security helper.
+	 * @param string        $seccion  Sección slug (sanitised internally).
+	 * @param SPZ_Data_Store $store   DB override store (shared singleton).
 	 */
-	public function __construct( SPZ_Security $security, string $seccion ) {
+	public function __construct( SPZ_Security $security, string $seccion, SPZ_Data_Store $store ) {
 		$this->security = $security;
 		$this->seccion  = sanitize_key( $seccion );
+		$this->store    = $store;
 	}
 
 	/**
@@ -189,6 +192,25 @@ class SPZ_Data_Provider {
 			return $this->cache[ $cache_key ];
 		}
 
+		// ── DB override takes priority over the seed JSON ──────────────────────
+		$override = $this->store->get_override( $this->seccion, $slug );
+		if ( null !== $override ) {
+			// Module override — return raw payload decorated with is_module flag.
+			if ( isset( $override['modulo'] ) ) {
+				$view                      = array_merge( $override, [ 'is_module' => true ] );
+				$this->cache[ $cache_key ] = $view;
+				return $view;
+			}
+			// Regular view override — adapt and normalise.
+			$view = $this->adapt_and_normalize( $override, $slug );
+			if ( ! empty( $view ) ) {
+				$this->cache[ $cache_key ] = $view;
+				return $view;
+			}
+			// If the override is malformed, fall through to the seed JSON.
+		}
+
+		// ── Seed JSON fallback ─────────────────────────────────────────────────
 		$path = $this->security->safe_view_path( $this->seccion, $slug );
 		if ( null === $path ) {
 			return null;

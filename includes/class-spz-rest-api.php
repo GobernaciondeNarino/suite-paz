@@ -49,6 +49,17 @@ class SPZ_Rest_Api {
 	}
 
 	/**
+	 * Permission callback for write routes (save / reset).
+	 * Requires manage_options capability AND a valid REST nonce.
+	 *
+	 * @return bool
+	 */
+	private function write_permission(): bool {
+		return $this->security->current_user_can_manage()
+		       && $this->security->verify_nonce();
+	}
+
+	/**
 	 * Register all REST routes. Hooked to rest_api_init.
 	 */
 	public function register_routes(): void {
@@ -67,6 +78,46 @@ class SPZ_Rest_Api {
 				'callback'            => [ $this, 'list_views' ],
 				'permission_callback' => [ $this->security, 'rest_admin_permission' ],
 				'args'                => [ 'seccion' => $seccion_arg ],
+			]
+		);
+
+		// POST /suite-paz/v1/save — save (upsert) a DB override (admin + nonce).
+		register_rest_route(
+			SPZ_REST_NAMESPACE,
+			'/save',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ $this, 'save_override' ],
+				'permission_callback' => [ $this, 'write_permission' ],
+			]
+		);
+
+		// POST /suite-paz/v1/reset — delete a DB override (admin + nonce).
+		register_rest_route(
+			SPZ_REST_NAMESPACE,
+			'/reset',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ $this, 'reset_override' ],
+				'permission_callback' => [ $this, 'write_permission' ],
+			]
+		);
+
+		// GET /suite-paz/v1/export?seccion=&slug= — export current state (admin).
+		register_rest_route(
+			SPZ_REST_NAMESPACE,
+			'/export',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'export_view' ],
+				'permission_callback' => [ $this->security, 'rest_admin_permission' ],
+				'args'                => [
+					'seccion' => $seccion_arg,
+					'slug'    => [
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_key',
+					],
+				],
 			]
 		);
 
@@ -211,6 +262,174 @@ class SPZ_Rest_Api {
 		];
 
 		return new WP_REST_Response( $payload, 200 );
+	}
+
+	// -------------------------------------------------------------------------
+	// Write route callbacks (Task 7)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * POST /suite-paz/v1/save
+	 *
+	 * Body (JSON): { seccion: string, slug: string, payload: object }
+	 *
+	 * Sanitises seccion (whitelist) and slug, validates the payload schema via
+	 * SPZ_Security::validate_payload(), then upserts the override in the DB.
+	 *
+	 * @param WP_REST_Request $request Incoming request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function save_override( WP_REST_Request $request ) {
+		$params  = $request->get_json_params();
+		$seccion = $this->plugin->normalize_seccion( (string) ( $params['seccion'] ?? '' ) );
+		$slug    = $this->security->sanitize_slug( (string) ( $params['slug'] ?? '' ) );
+		$payload = $params['payload'] ?? null;
+
+		if ( '' === $slug ) {
+			return new WP_Error(
+				'spz_bad_request',
+				__( 'Parámetro inválido: se requiere "slug".', 'suite-paz' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( ! is_array( $payload ) ) {
+			return new WP_Error(
+				'spz_bad_request',
+				__( 'Parámetro inválido: "payload" debe ser un objeto JSON.', 'suite-paz' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( ! $this->security->validate_payload( $payload ) ) {
+			return new WP_Error(
+				'spz_invalid_payload',
+				__( 'Payload inválido: claves no permitidas, tipos incorrectos o contenido HTML no permitido.', 'suite-paz' ),
+				[ 'status' => 422 ]
+			);
+		}
+
+		$saved = $this->plugin->store->save_override( $seccion, $slug, $payload );
+		if ( ! $saved ) {
+			return new WP_Error(
+				'spz_db_error',
+				__( 'Error al guardar el override en la base de datos.', 'suite-paz' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		return new WP_REST_Response(
+			[
+				'saved'   => true,
+				'seccion' => $seccion,
+				'slug'    => $slug,
+			],
+			200
+		);
+	}
+
+	/**
+	 * POST /suite-paz/v1/reset
+	 *
+	 * Body (JSON): { seccion: string, slug: string }
+	 *
+	 * Deletes the DB override for (seccion, slug), restoring the seed JSON
+	 * as the authoritative source for that view/module.
+	 *
+	 * @param WP_REST_Request $request Incoming request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reset_override( WP_REST_Request $request ) {
+		$params  = $request->get_json_params();
+		$seccion = $this->plugin->normalize_seccion( (string) ( $params['seccion'] ?? '' ) );
+		$slug    = $this->security->sanitize_slug( (string) ( $params['slug'] ?? '' ) );
+
+		if ( '' === $slug ) {
+			return new WP_Error(
+				'spz_bad_request',
+				__( 'Parámetro inválido: se requiere "slug".', 'suite-paz' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$deleted = $this->plugin->store->delete_override( $seccion, $slug );
+		if ( ! $deleted ) {
+			return new WP_Error(
+				'spz_db_error',
+				__( 'Error al eliminar el override de la base de datos.', 'suite-paz' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		return new WP_REST_Response(
+			[
+				'reset'   => true,
+				'seccion' => $seccion,
+				'slug'    => $slug,
+			],
+			200
+		);
+	}
+
+	/**
+	 * GET /suite-paz/v1/export?seccion=&slug=
+	 *
+	 * Returns the current effective state for (seccion, slug):
+	 *   • If a DB override exists → returns the raw override payload.
+	 *   • Otherwise → returns the raw seed JSON via get_raw().
+	 *
+	 * The response also includes a `source` field ('override' or 'seed') so
+	 * the client knows which path was taken.
+	 *
+	 * @param WP_REST_Request $request Incoming request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function export_view( WP_REST_Request $request ) {
+		$seccion = $this->seccion_from( $request );
+		$slug    = $this->security->sanitize_slug( (string) $request->get_param( 'slug' ) );
+
+		if ( '' === $slug ) {
+			return new WP_Error(
+				'spz_bad_request',
+				__( 'Parámetro inválido: se requiere "slug".', 'suite-paz' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// DB override wins.
+		$override = $this->plugin->store->get_override( $seccion, $slug );
+		if ( null !== $override ) {
+			return new WP_REST_Response(
+				[
+					'source'  => 'override',
+					'seccion' => $seccion,
+					'slug'    => $slug,
+					'payload' => $override,
+				],
+				200
+			);
+		}
+
+		// Fall back to seed JSON.
+		$dp  = $this->plugin->data_provider( $seccion );
+		$raw = $dp->get_raw( $slug );
+		if ( null === $raw ) {
+			return new WP_Error(
+				'spz_view_not_found',
+				__( 'Vista no encontrada.', 'suite-paz' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return new WP_REST_Response(
+			[
+				'source'  => 'seed',
+				'seccion' => $seccion,
+				'slug'    => $slug,
+				'payload' => $raw,
+			],
+			200
+		);
 	}
 
 	// -------------------------------------------------------------------------

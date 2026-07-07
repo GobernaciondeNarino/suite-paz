@@ -200,4 +200,205 @@ class SPZ_Security {
 		}
 		return $decoded;
 	}
+
+	// -------------------------------------------------------------------------
+	// Payload validation (mirrors scripts/validate-views.py logic in PHP).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Validate a view or module payload before persisting it in the DB.
+	 *
+	 * Rules (mirrors validate-views.py):
+	 *  1. Must be non-empty.
+	 *  2. No string value (anywhere, recursively) may contain HTML-like content
+	 *     (`<letter` or `</`) — blocks <script>, <img onerror=…>, etc.
+	 *  3. The payload must identify as a known shape:
+	 *       • Module  — has `modulo` ∈ {kpi, compare, timeline, logro}
+	 *       • PAZ view — has `vista` (string) + at least one data array key
+	 *       • Native view — has `id` + `name` + `data` (array)
+	 *  4. No unexpected top-level keys beyond the allowed set for that shape.
+	 *  5. Fields that must be scalar (strings/numbers) are rejected when they
+	 *     are arrays, and vice-versa for fields that must be arrays.
+	 *
+	 * @param array<string, mixed> $payload Decoded payload to validate.
+	 * @return bool True when the payload is safe and well-formed, false otherwise.
+	 */
+	public function validate_payload( array $payload ): bool {
+		if ( empty( $payload ) ) {
+			return false;
+		}
+
+		// Rule 2 — recursive script/HTML injection check.
+		if ( $this->payload_has_script( $payload ) ) {
+			return false;
+		}
+
+		// Branch by shape.
+		if ( isset( $payload['modulo'] ) ) {
+			return $this->validate_module_shape( $payload );
+		}
+
+		return $this->validate_view_shape( $payload );
+	}
+
+	/**
+	 * Recursively scan a value for HTML-tag–like strings (potential XSS).
+	 * Matches `<letter` or `</` which covers all opening and closing tags.
+	 *
+	 * @param mixed $value Any decoded JSON value.
+	 * @return bool True when script-like content is found.
+	 */
+	private function payload_has_script( $value ): bool {
+		if ( is_string( $value ) ) {
+			return (bool) preg_match( '/<[a-zA-Z\/]/', $value );
+		}
+		if ( is_array( $value ) ) {
+			foreach ( $value as $v ) {
+				if ( $this->payload_has_script( $v ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Validate a module payload (has `modulo` key).
+	 *
+	 * @param array<string, mixed> $p Decoded payload.
+	 * @return bool
+	 */
+	private function validate_module_shape( array $p ): bool {
+		$modulo = (string) ( $p['modulo'] ?? '' );
+		if ( ! in_array( $modulo, [ 'kpi', 'compare', 'timeline', 'logro' ], true ) ) {
+			return false;
+		}
+
+		// Required in every module.
+		if ( ! isset( $p['id'], $p['titulo'] ) ) {
+			return false;
+		}
+		if ( ! is_string( $p['id'] ) || ! is_string( $p['titulo'] ) ) {
+			return false;
+		}
+
+		// Build allowed-key list by module type.
+		$base = [ 'modulo', 'id', 'titulo', 'fuente' ];
+
+		switch ( $modulo ) {
+			case 'kpi':
+				$allowed = array_merge( $base, [ 'valor', 'unidad', 'leyenda', 'serie', 'bajar_es_bueno' ] );
+				// valor must be numeric when present.
+				if ( isset( $p['valor'] ) && ! is_int( $p['valor'] ) && ! is_float( $p['valor'] ) ) {
+					return false;
+				}
+				// serie must be an array when present.
+				if ( isset( $p['serie'] ) && ! is_array( $p['serie'] ) ) {
+					return false;
+				}
+				break;
+
+			case 'compare':
+				$allowed = array_merge( $base, [ 'unidad', 'from', 'to', 'delta', 'bajar_es_bueno' ] );
+				// delta must be numeric when present.
+				if ( isset( $p['delta'] ) && ! is_int( $p['delta'] ) && ! is_float( $p['delta'] ) ) {
+					return false;
+				}
+				// from / to must be arrays when present.
+				if ( isset( $p['from'] ) && ! is_array( $p['from'] ) ) {
+					return false;
+				}
+				if ( isset( $p['to'] ) && ! is_array( $p['to'] ) ) {
+					return false;
+				}
+				break;
+
+			case 'timeline':
+				$allowed = array_merge( $base, [ 'total', 'eventos' ] );
+				// eventos must be an array when present.
+				if ( isset( $p['eventos'] ) && ! is_array( $p['eventos'] ) ) {
+					return false;
+				}
+				break;
+
+			case 'logro':
+				$allowed = array_merge( $base, [ 'texto' ] );
+				// texto must be a string when present.
+				if ( isset( $p['texto'] ) && ! is_string( $p['texto'] ) ) {
+					return false;
+				}
+				break;
+
+			default:
+				return false;
+		}
+
+		// Rule 4 — reject unexpected top-level keys.
+		foreach ( array_keys( $p ) as $key ) {
+			if ( ! in_array( $key, $allowed, true ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate a view payload (no `modulo` key).
+	 * Accepts both PAZ publication format (vista + titulo) and native plugin
+	 * format (id + name + data[]).
+	 *
+	 * @param array<string, mixed> $p Decoded payload.
+	 * @return bool
+	 */
+	private function validate_view_shape( array $p ): bool {
+		$is_paz    = isset( $p['vista'] ) && is_string( $p['vista'] );
+		$is_native = isset( $p['id'], $p['name'], $p['data'] )
+		             && is_string( $p['id'] )
+		             && is_string( $p['name'] )
+		             && is_array( $p['data'] );
+
+		if ( ! $is_paz && ! $is_native ) {
+			return false;
+		}
+
+		// Union of all allowed top-level keys for both view formats.
+		$allowed = [
+			// PAZ publication format.
+			'vista', 'titulo', 'descripcion', 'tipo_grafico_sugerido', 'categoria',
+			'municipios', 'datos', 'data', 'items', 'rows', 'fuente',
+			'total_municipios', 'total_valores',
+			// Native plugin format.
+			'id', 'name', 'description', 'category', 'dimensions', 'measures',
+			'temporal_range', 'edges',
+		];
+
+		// Rule 4 — reject unexpected top-level keys.
+		foreach ( array_keys( $p ) as $key ) {
+			if ( ! in_array( $key, $allowed, true ) ) {
+				return false;
+			}
+		}
+
+		// Rule 5 — fields that must be scalar when present.
+		$scalar_fields = [
+			'vista', 'titulo', 'descripcion', 'tipo_grafico_sugerido', 'categoria',
+			'id', 'name', 'description', 'category', 'fuente',
+		];
+		foreach ( $scalar_fields as $field ) {
+			if ( isset( $p[ $field ] ) && ! is_scalar( $p[ $field ] ) ) {
+				return false;
+			}
+		}
+
+		// Fields that must be arrays when present.
+		$array_fields = [ 'municipios', 'datos', 'data', 'items', 'rows', 'dimensions', 'measures', 'edges' ];
+		foreach ( $array_fields as $field ) {
+			if ( isset( $p[ $field ] ) && ! is_array( $p[ $field ] ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

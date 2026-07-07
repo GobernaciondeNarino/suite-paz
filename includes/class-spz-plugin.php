@@ -64,6 +64,13 @@ final class SPZ_Plugin {
 	public SPZ_Modules $modules;
 
 	/**
+	 * DB override store — shared by all data providers.
+	 *
+	 * @var SPZ_Data_Store
+	 */
+	public SPZ_Data_Store $store;
+
+	/**
 	 * One data provider per sección, keyed by sección slug.
 	 *
 	 * @var array<string, SPZ_Data_Provider>
@@ -104,8 +111,9 @@ final class SPZ_Plugin {
 		$this->security    = new SPZ_Security();
 		$this->chart_types = new SPZ_Chart_Types();
 		$this->modules     = new SPZ_Modules();
+		$this->store       = new SPZ_Data_Store();
 		foreach ( array_keys( self::SECCIONES ) as $sec ) {
-			$this->data_providers[ $sec ] = new SPZ_Data_Provider( $this->security, $sec );
+			$this->data_providers[ $sec ] = new SPZ_Data_Provider( $this->security, $sec, $this->store );
 		}
 		$this->shortcode = new SPZ_Shortcode( $this, $this->chart_types, $this->security, $this->modules );
 		$this->rest_api  = new SPZ_Rest_Api( $this, $this->chart_types, $this->security );
@@ -184,7 +192,8 @@ final class SPZ_Plugin {
 		if ( ! file_exists( SPZ_DATA_DIR ) ) {
 			wp_mkdir_p( SPZ_DATA_DIR );
 		}
-		// Tarea 7 crea la tabla wp_spz_views aquí.
+		// Create (or upgrade) the DB override table.
+		( new SPZ_Data_Store() )->create_table();
 	}
 
 	/**
