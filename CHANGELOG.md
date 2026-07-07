@@ -1,6 +1,13 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.3] — 2026-07-07
+### Fixed
+- `assets/js/modules.js`: escapar `payload.modulo` con `esc()` en fallback "no soportado" (XSS).
+- `assets/js/renderer.js`: escapar `typeHint` con `escHtml()` en fallback "tipo no soportado" (XSS).
+- `assets/js/modules.js`: guards `|| ''` en `esc(d.centro)` y `esc(r.nombre)` del módulo `diagrama`.
+- `assets/js/renderer.js`: eliminar bloque muerto `numericCols` en `dataTable` (nunca leído).
+
 ## [1.1.2] — 2026-07-07
 ### Added
 - `assets/js/renderer.js`: rama `tabla` nativa — detecta `tipo_grafico_sugerido:'tabla'` (raw seed) o `chart.class===''` (REST) y renderiza `<table class="spz-tabla">` con encabezado violeta, filas zebra y números formateados `es-CO`, sin invocar d3plus. `SPZ.util.dataTable(rows, columns)` expuesto para reutilización desde Fix-Task 6.

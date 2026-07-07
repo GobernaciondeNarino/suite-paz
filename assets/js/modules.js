@@ -38,11 +38,11 @@ SPZ.modules = (function(){
   function logro(el,d){el.innerHTML=`<div class="spz-logro"><h4>${esc(d.titulo)}</h4><p>${esc(d.texto)}</p></div>`;}
   function diagrama(el,d){
     var html='<div class="spz-diagrama">';
-    html+='<div class="spz-diagrama__centro">'+esc(d.centro)+'</div>';
+    html+='<div class="spz-diagrama__centro">'+esc(d.centro||'')+'</div>';
     html+='<ul class="spz-diagrama__ramas">';
     (d.ramas||[]).forEach(function(r){
       html+='<li class="spz-diagrama__rama">';
-      html+='<span class="spz-diagrama__nombre">'+esc(r.nombre)+'</span>';
+      html+='<span class="spz-diagrama__nombre">'+esc(r.nombre||'')+'</span>';
       if(r.kpi){html+='<span class="spz-diagrama__kpi">'+esc(r.kpi)+'</span>';}
       if(r.sub&&r.sub.length){
         html+='<ul class="spz-diagrama__sub">';
@@ -72,5 +72,5 @@ SPZ.modules = (function(){
   }
   const R={kpi,compare,timeline,logro,diagrama,estrategia};
   return { render(el,payload){ const fn=R[payload.modulo]; if(fn) fn(el,payload);
-    else el.innerHTML='<p class="spz-empty">Módulo no soportado: '+String(payload.modulo||'?')+'</p>'; } };
+    else el.innerHTML='<p class="spz-empty">Módulo no soportado: '+esc(String(payload.modulo||'?'))+'</p>'; } };
 })();

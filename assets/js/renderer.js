@@ -87,14 +87,6 @@
 			} );
 			columns = Object.keys( keySet );
 		}
-		// Determine which columns are numeric (for alignment class).
-		const numericCols = Object.create( null );
-		rows.forEach( function ( row ) {
-			columns.forEach( function ( col ) {
-				if ( typeof row[ col ] === 'number' ) { numericCols[ col ] = true; }
-			} );
-		} );
-
 		let html = '<div class="spz-tabla-wrap"><table class="spz-tabla"><thead><tr>';
 		columns.forEach( function ( col ) {
 			html += '<th>' + escHtml( col ) + '</th>';
@@ -172,7 +164,7 @@
 			}
 
 			if ( ! payload || ! payload.chart || ! payload.chart.class ) {
-				el.innerHTML = `<p class="spz-empty">Tipo de gráfico no soportado: ${ typeHint || '(desconocido)' }</p>`;
+				el.innerHTML = `<p class="spz-empty">Tipo de gráfico no soportado: ${ escHtml( String( typeHint || '(desconocido)' ) ) }</p>`;
 				return;
 			}
 
