@@ -225,7 +225,7 @@ final class SPZ_Plugin {
 		wp_register_script(
 			'spz-frontend',
 			SPZ_PLUGIN_URL . 'assets/js/frontend.js',
-			[ 'spz-d3plus', 'spz-renderer' ],
+			[ 'spz-d3plus', 'spz-renderer', 'spz-modules' ],
 			SPZ_VERSION,
 			true
 		);

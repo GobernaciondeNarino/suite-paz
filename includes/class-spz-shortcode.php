@@ -182,7 +182,7 @@ class SPZ_Shortcode {
 
 		// Verify the view exists and is the declared module type.
 		$view = $this->plugin->data_provider( $seccion )->get_view( $id );
-		if ( empty( $view ) || empty( $view['is_module'] ) || $view['modulo'] !== $modulo_key ) {
+		if ( empty( $view ) || empty( $view['is_module'] ) || ( $view['modulo'] ?? '' ) !== $modulo_key ) {
 			return sprintf(
 				'<div class="spz-empty" role="note">%s</div>',
 				esc_html(

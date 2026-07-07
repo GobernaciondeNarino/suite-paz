@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.6.1] — 2026-07-06
+### Fixed
+- `includes/class-spz-plugin.php`: añadida dependencia `spz-modules` en `wp_register_script('spz-frontend',...)` para garantizar que `modules.js` cargue antes que `frontend.js`.
+- `includes/class-spz-shortcode.php`: guard null-coalesce en `render_module()` — `( $view['modulo'] ?? '' ) !== $modulo_key` evita PHP Notice en módulos con JSON malformado sin clave `modulo`.
+- `assets/js/modules.js`: añadido helper `esc()` y escapado de todos los campos de texto de usuario (`titulo`, `unidad`, `leyenda`, `fuente`, `e.fecha`, `e.texto`, `logro.texto`) en las cuatro funciones de renderizado para prevenir XSS; valores numéricos siguen pasando por `fmt()`.
+
 ## [0.6.0] — 2026-07-06
 ### Added
 - `includes/class-spz-modules.php`: `SPZ_Modules` con `types():array` → `['kpi','compare','timeline','logro']` e `is_valid(string):bool`.
