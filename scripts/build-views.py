@@ -100,16 +100,46 @@ def dni_confinamiento_anual():
 
 
 def dni_minas_narino():
-    """s13 — compare 2023→2024 personas afectadas por minas"""
+    """s13 — compare 2023→2024 personas afectadas por minas (anual)"""
     d = CATALOGO["minas_narino"]
     write("dni", "minas-narino", {
         "modulo": "compare",
         "id": "minas-narino",
-        "titulo": "Personas afectadas por minas antipersonal (Nariño) 2023→2024",
+        "titulo": "Personas afectadas por minas antipersonal — anual (Nariño) 2023→2024",
         "unidad": "civiles",
         "from": {"y": "2023", "v": d["2023"]},
         "to":   {"y": "2024", "v": d["2024"]},
         "delta": d["delta_2324"],
+        "fuente": "Comités de Justicia Transicional Ley 1448 de 2011"
+    })
+
+
+def dni_minas_interanual():
+    """s13 — compare 2024→2025 personas afectadas por minas (interanual)"""
+    d = CATALOGO["minas_narino"]
+    write("dni", "minas-interanual", {
+        "modulo": "compare",
+        "id": "minas-interanual",
+        "titulo": "Personas afectadas por minas antipersonal — interanual (Nariño) 2024→2025",
+        "unidad": "civiles",
+        "from": {"y": "2024", "v": d["2024"]},
+        "to":   {"y": "2025", "v": d["2025"]},
+        "delta": d["delta_2425"],
+        "fuente": "Comités de Justicia Transicional Ley 1448 de 2011"
+    })
+
+
+def dni_minas_narino_parcial():
+    """s13 — compare 2025→2026 personas afectadas por minas (parcial)"""
+    d = CATALOGO["minas_narino"]
+    write("dni", "minas-narino-parcial", {
+        "modulo": "compare",
+        "id": "minas-narino-parcial",
+        "titulo": "Personas afectadas por minas antipersonal — parcial (Nariño) 2025→2026",
+        "unidad": "civiles",
+        "from": {"y": "2025", "v": d["2025"]},
+        "to":   {"y": "2026", "v": d["2026"]},
+        "delta": d["delta_2526"],
         "fuente": "Comités de Justicia Transicional Ley 1448 de 2011"
     })
 
@@ -174,6 +204,54 @@ def dni_cneb_confinamiento():
         "tipo_grafico_sugerido": "bar",
         "categoria": "humanitarian",
         "datos": datos
+    })
+
+
+def dni_coordinadora_desplazamiento():
+    """s9 — compare desplazamiento Coord. Nacional Ejército Bolivariano Ene-Jun 25→26"""
+    d = CATALOGO["coordinadoras"]["desplaz_ejto_bolivariano"]
+    write("dni", "coordinadora-desplazamiento", {
+        "modulo": "compare",
+        "id": "coordinadora-desplazamiento",
+        "titulo": "Desplazamiento CNEB — Ene-Jun 2025→2026",
+        "unidad": d["unidad"],
+        "from": d["from"],
+        "to":   d["to"],
+        "delta": d["delta"],
+        "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+    })
+
+
+def dni_coordinadora_confinamiento():
+    """s9 — compare confinamiento CGSB Ene-Jun 25→26"""
+    d = CATALOGO["coordinadoras"]["confin_cgsb"]
+    write("dni", "coordinadora-confinamiento", {
+        "modulo": "compare",
+        "id": "coordinadora-confinamiento",
+        "titulo": "Confinamiento CGSB — Ene-Jun 2025→2026",
+        "unidad": d["unidad"],
+        "from": d["from"],
+        "to":   d["to"],
+        "delta": d["delta"],
+        "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+    })
+
+
+def dni_rutas_nna():
+    """s12 — kpi rutas de prevención NNA 2023–2026"""
+    d = CATALOGO["nna_rutas"]
+    write("dni", "rutas-nna", {
+        "modulo": "kpi",
+        "id": "rutas-nna",
+        "titulo": "Rutas de prevención NNA — Alto Comisionado de Reincorporación",
+        "valor": d["atencion_2026"],
+        "unidad": "casos",
+        "leyenda": "Ene–Jun 2026",
+        "serie": [
+            {"y": y, "v": v}
+            for y, v in zip(d["years"], d["serie"])
+        ],
+        "fuente": "Alto Comisionado de Reincorporación"
     })
 
 
@@ -594,10 +672,15 @@ if __name__ == "__main__":
     dni_desplazamiento_interanual()
     dni_confinamiento_anual()
     dni_minas_narino()
+    dni_minas_interanual()
+    dni_minas_narino_parcial()
     dni_firmantes_100()
     dni_confinamiento_fcs_100()
     dni_cneb_desplazamiento()
     dni_cneb_confinamiento()
+    dni_coordinadora_desplazamiento()
+    dni_coordinadora_confinamiento()
+    dni_rutas_nna()
     dni_desminado_municipios()
     dni_desaparecidos_cuerpos()
     dni_nna_desvinculacion()
