@@ -1,6 +1,15 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.4.0] — 2026-07-06
+### Added
+- `assets/js/renderer.js`: `SPZ.renderer.render(el, {view, type, options})` — renderer d3plus v3 adaptado de tic-suite. Acepta payloads REST pre-construidos o el JSON semilla PAZ crudo (normalización interna: extrae filas de `municipios|datos|data`, infiere dims/measures, construye mapping). CLASS_MAP con los 15 tipos verificados contra el bundle v3.1.4 (`BarChart`, `LinePlot`, `AreaPlot`, `StackedArea`, `Pie`, `Donut`, `Treemap`, `Geomap`, `Network`, `Tree`, `Sankey`, `Rings`, `BoxWhisker`, `Priestley`). Geomap: `viz.tiles(false)` + `viz.ocean('transparent')` (sin basemap), join `_municipio_id` por NFD-normalize, `topojsonId('id')` (key `properties.id` del topojson). Topojson URL leída de `SPZ.config.topojsonUrl` (default relativo para harness; la Task 5 inyecta la URL del plugin WP). Paleta de marca SPZ.
+- `assets/js/frontend.js`: Hidratador WP — localiza `.spz-chart[data-view][data-type][data-seccion]`, llama REST `suite-paz/v1/render` con nonce, renderiza via `SPZ.renderer`. Soporte `data-spz-src` para modo standalone (harness).
+- `assets/css/frontend.css`: Estilos `.spz-*` con paleta de marca (violeta `#5B3B8C`, teal `#3FCF97`, coral `#E63946`, ámbar `#F4A93C`). Adaptado de tic-suite (`tsg-` → `spz-`).
+- `tests/harness.html`: Harness de validación Playwright — renderiza geomap (homicidios-municipio, 64 municipios, Samaniego 47.6 tasa más intensa) + bar chart (fuerza-publica). Servir desde la raíz del plugin: `python -m http.server 8770`, abrir `http://localhost:8770/tests/harness.html`.
+### Changed
+- `suite-paz.php`: versión `0.3.1` → `0.4.0`.
+
 ## [0.3.1] — 2026-07-06
 ### Fixed
 - `class-spz-chart-types.php`: sankey ahora requiere `edges => true`; sin aristas no se ofrece para datos categóricos planos.
