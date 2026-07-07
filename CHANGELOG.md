@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.3.0] — 2026-07-06
+### Added
+- `includes/class-spz-data-provider.php`: `SPZ_Data_Provider(SPZ_Security, string $seccion)` con `list_views()`, `get_view(string):?array`, `get_raw(string):?array`. Caché en memoria `<seccion>:<key>`. Detecta módulos (`modulo` key) y los devuelve con `is_module=true` sin inferir dims/measures. Para vistas PAZ respeta el campo `categoria` explícito; inferencia de dims/measures usa `is_int`/`is_float` (no `is_numeric`) para no promover DIVIPOLA strings a medidas.
+- `includes/class-spz-chart-types.php`: `SPZ_Chart_Types` con 15 tipos d3plus (`bar`, `stacked_bar`, `line`, `area`, `stacked_area`, `pie`, `donut`, `treemap`, `geomap`, `network`, `tree`, `sankey`, `rings`, `box_whisker`, `priestley`). `compatible_for(array $view)` retorna `[]` para módulos y para `tipo_grafico_sugerido` no estándar (e.g. "strategy", "radial"). `is_valid_type(string):bool` y `all_for_js():array`.
+- `includes/class-spz-plugin.php`: `$this->chart_types` (`SPZ_Chart_Types`) + `$this->data_providers[]` (un `SPZ_Data_Provider` por sección). Método público `data_provider(?string $seccion=null):SPZ_Data_Provider`.
+
 ## [0.2.1] — 2026-07-06
 ### Added
 - `data/views/dni/minas-interanual.json`: compare 2024→2025 personas afectadas por minas antipersonal (26→6, −76.9%).

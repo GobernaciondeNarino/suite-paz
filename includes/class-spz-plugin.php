@@ -49,8 +49,20 @@ final class SPZ_Plugin {
 	 */
 	public SPZ_Security $security;
 
-	// Tarea 3 cablea SPZ_Data_Provider (un proveedor por sección).
-	// Tarea 5 cablea SPZ_Chart_Types.
+	/**
+	 * Chart-types registry (15 d3plus types).
+	 *
+	 * @var SPZ_Chart_Types
+	 */
+	public SPZ_Chart_Types $chart_types;
+
+	/**
+	 * One data provider per sección, keyed by sección slug.
+	 *
+	 * @var array<string, SPZ_Data_Provider>
+	 */
+	private array $data_providers = [];
+
 	// Tarea 6 cablea SPZ_Shortcode.
 	// Tarea 8 cablea SPZ_Admin y SPZ_Rest_Api.
 
@@ -65,11 +77,26 @@ final class SPZ_Plugin {
 	}
 
 	/**
-	 * Private constructor — only creates SPZ_Security for now.
-	 * Sub-modules are wired in subsequent tasks.
+	 * Private constructor. Wires security, chart types, and one data provider
+	 * per sección. Shortcode/REST/admin are added in later tasks.
 	 */
 	private function __construct() {
-		$this->security = new SPZ_Security();
+		$this->security    = new SPZ_Security();
+		$this->chart_types = new SPZ_Chart_Types();
+		foreach ( array_keys( self::SECCIONES ) as $sec ) {
+			$this->data_providers[ $sec ] = new SPZ_Data_Provider( $this->security, $sec );
+		}
+	}
+
+	/**
+	 * Return the data provider for the given sección slug.
+	 * Falls back to the default sección when the slug is null or unknown.
+	 *
+	 * @param string|null $seccion Sección slug.
+	 */
+	public function data_provider( ?string $seccion = null ): SPZ_Data_Provider {
+		$slug = $this->normalize_seccion( $seccion );
+		return $this->data_providers[ $slug ];
 	}
 
 	/**
