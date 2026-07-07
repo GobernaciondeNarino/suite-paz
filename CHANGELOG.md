@@ -1,6 +1,19 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.8.0] — 2026-07-06
+### Added
+- `includes/class-spz-admin.php`: `SPZ_Admin` con `register()` → `admin_menu` hook. Top-level menu "Suite PAZ" (dashicon `chart-area`, posición 58, capacidad `manage_options`) + 4 submenús: **Constructor** (slug `suite-paz`), **Shortcodes** (`suite-paz-shortcodes`), **Editar datos** (`suite-paz-editor`), **Ajustes** (`suite-paz-settings`). Cada callback llama `guard()` (capability check) antes de incluir su template.
+- `templates/admin/builder.php`: panel de 3 columnas (vistas, tipos de gráfico, preview + shortcode); sección switcher `<select>` que JS refresca via REST `/views`. Opciones: leyenda, toolbar, acciones, ejes. Genera `[spz_grafico …]` copiable.
+- `templates/admin/shortcodes.php`: galería por sección — vistas con sus tipos compatibles (cada tarjeta con `[spz_grafico …]` copiable) + módulos PAZ con `[spz_kpi/compare/timeline/logro …]`. Sección switcher con `<form method="get">`.
+- `templates/admin/data-editor.php`: editor editable (nueva funcionalidad, sin equivalente read-only de tic-suite). Sección select + vista/módulo select (poblado por REST `/views`). El JS construye tabla editable (vistas) o formulario de campos (módulos); botones Guardar (`POST /save`), Exportar JSON (descarga) y Restablecer (`POST /reset`). Feedback visible y badge fuente (seed/override).
+- `templates/admin/settings.php`: formulario con nonce — caché (enable/TTL), tema por defecto, roles con acceso a shortcodes. Usa `wp_nonce_field`/`wp_verify_nonce` + `update_option`.
+- `assets/js/admin.js`: módulo builder (sección-changer + view picker + chart types + live preview via `SPZRenderer.render` + shortcode generator) y módulo editor (loadViews, renderEditorForm para tablas y módulos, onSave/onReset/onExport). Todos los REST URLs construidos desde `SPZ_ADMIN.restBase` — sin rutas hardcodeadas. Sin `eval`.
+- `assets/css/admin.css`: paleta de marca (violeta `#5B3B8C`, teal `#3FCF97`, coral `#E63946`, ámbar `#F4A93C`); layout 3-panel para el constructor; estilos del editor (tabla editable, formulario módulo, feedback banner, badge fuente). Adaptado de tic-suite (`tsg-` → `spz-`).
+### Changed
+- `includes/class-spz-plugin.php`: instancia `SPZ_Admin` en `__construct()`; `run()` llama `$this->admin->register()` dentro de `is_admin()`; añade enlace "Constructor" en los enlaces de acción del plugin. `enqueue_admin_assets()` encola `spz-d3plus`, `spz-renderer`, `spz-admin` + CSS, y `wp_localize_script('spz-admin','SPZ_ADMIN',{restBase, nonce, pluginUrl, i18n})` con traducciones completas.
+- `suite-paz.php`: versión `0.7.1` → `0.8.0`.
+
 ## [0.7.1] — 2026-07-06
 ### Fixed
 - `includes/class-spz-security.php`: `validate_payload` — PAZ view ahora requiere al menos una clave de datos (`municipios`, `datos` o `data`); tipo estricto para `fuente` (string), `bajar_es_bueno` (bool), `temporal_range` (array), `total_municipios`/`total_valores` (int); límite de tamaño 512 KB para prevenir DoS.

@@ -91,7 +91,12 @@ final class SPZ_Plugin {
 	 */
 	public SPZ_Rest_Api $rest_api;
 
-	// Tarea 8 cablea SPZ_Admin.
+	/**
+	 * Admin controller.
+	 *
+	 * @var SPZ_Admin
+	 */
+	public SPZ_Admin $admin;
 
 	/**
 	 * Get the singleton.
@@ -117,6 +122,7 @@ final class SPZ_Plugin {
 		}
 		$this->shortcode = new SPZ_Shortcode( $this, $this->chart_types, $this->security, $this->modules );
 		$this->rest_api  = new SPZ_Rest_Api( $this, $this->chart_types, $this->security );
+		$this->admin     = new SPZ_Admin( $this, $this->chart_types, $this->security );
 	}
 
 	/**
@@ -169,8 +175,18 @@ final class SPZ_Plugin {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_assets' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
-		// Tarea 8 añade: if ( is_admin() ) { $this->admin->register(); }
-		// Tarea 8 añade: add_filter( 'plugin_action_links_' . SPZ_PLUGIN_BASENAME, [...] );
+		if ( is_admin() ) {
+			$this->admin->register();
+		}
+
+		add_filter(
+			'plugin_action_links_' . SPZ_PLUGIN_BASENAME,
+			static function ( array $links ): array {
+				$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=suite-paz' ) ) . '">'
+					. esc_html__( 'Constructor', 'suite-paz' ) . '</a>';
+				return $links;
+			}
+		);
 	}
 
 	/**
@@ -286,6 +302,89 @@ final class SPZ_Plugin {
 		if ( strpos( $hook, 'suite-paz' ) === false ) {
 			return;
 		}
-		// Tarea 8 enqueue d3plus, spz-renderer, spz-admin, spz-admin CSS.
+
+		// Admin stylesheet.
+		wp_enqueue_style(
+			'spz-admin',
+			SPZ_PLUGIN_URL . 'assets/css/admin.css',
+			[],
+			SPZ_VERSION
+		);
+
+		// Admin script — depends on d3plus + renderer for the builder live preview.
+		wp_enqueue_script(
+			'spz-d3plus',
+			SPZ_D3PLUS_URL,
+			[],
+			SPZ_D3PLUS_VERSION,
+			true
+		);
+		wp_enqueue_script(
+			'spz-renderer',
+			SPZ_PLUGIN_URL . 'assets/js/renderer.js',
+			[ 'spz-d3plus' ],
+			SPZ_VERSION,
+			true
+		);
+		wp_enqueue_script(
+			'spz-admin',
+			SPZ_PLUGIN_URL . 'assets/js/admin.js',
+			[ 'spz-renderer' ],
+			SPZ_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'spz-admin',
+			'SPZ_ADMIN',
+			[
+				'restBase'  => esc_url_raw( rest_url( SPZ_REST_NAMESPACE ) ),
+				'nonce'     => wp_create_nonce( 'wp_rest' ),
+				'pluginUrl' => esc_url_raw( SPZ_PLUGIN_URL ),
+				'i18n'      => [
+					'loading'       => __( 'Cargando…', 'suite-paz' ),
+					'error'         => __( 'Error al cargar.', 'suite-paz' ),
+					'noViews'       => __( 'Sin vistas en esta sección.', 'suite-paz' ),
+					'noCompatible'  => __( 'Ningún gráfico compatible.', 'suite-paz' ),
+					'selectView'    => __( 'Selecciona primero una vista.', 'suite-paz' ),
+					'selectChart'   => __( 'Selecciona un tipo de gráfico.', 'suite-paz' ),
+					'copied'        => __( 'Copiado', 'suite-paz' ),
+					'copyFailed'    => __( 'No se pudo copiar.', 'suite-paz' ),
+					'changeChart'   => __( 'Cambiar tipo', 'suite-paz' ),
+					'typeLabel'     => __( 'Tipo', 'suite-paz' ),
+					'rows'          => __( 'filas', 'suite-paz' ),
+					'saving'        => __( 'Guardando…', 'suite-paz' ),
+					'saved'         => __( 'Datos guardados correctamente.', 'suite-paz' ),
+					'saveError'     => __( 'Error al guardar: ', 'suite-paz' ),
+					'resetting'     => __( 'Restableciendo…', 'suite-paz' ),
+					'reset'         => __( 'Datos restablecidos a la semilla original.', 'suite-paz' ),
+					'resetError'    => __( 'Error al restablecer: ', 'suite-paz' ),
+					'resetConfirm'  => __( '¿Restablecer los datos originales? Esta acción eliminará el override guardado en la BD.', 'suite-paz' ),
+					'noData'        => __( 'Sin datos disponibles.', 'suite-paz' ),
+					'noEvents'      => __( 'Sin eventos registrados.', 'suite-paz' ),
+					'sourceOverride' => __( 'Fuente: override guardado en BD', 'suite-paz' ),
+					'sourceSeed'    => __( 'Fuente: semilla JSON (sin override)', 'suite-paz' ),
+					'labelTitle'    => __( 'Título', 'suite-paz' ),
+					'labelUnit'     => __( 'Unidad', 'suite-paz' ),
+					'labelSource'   => __( 'Fuente', 'suite-paz' ),
+					'labelText'     => __( 'Texto', 'suite-paz' ),
+					'labelSub'      => __( 'Subtítulo', 'suite-paz' ),
+					'labelEvents'   => __( 'Eventos', 'suite-paz' ),
+					'labelDate'     => __( 'Fecha', 'suite-paz' ),
+				],
+			]
+		);
+
+		// Also localize the renderer with topojson URL (for geomap preview).
+		wp_localize_script(
+			'spz-renderer',
+			'SPZ',
+			[
+				'config' => [
+					'topojsonUrl' => esc_url_raw( SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson' ),
+					'pluginUrl'   => esc_url_raw( SPZ_PLUGIN_URL ),
+				],
+			]
+		);
 	}
 }
