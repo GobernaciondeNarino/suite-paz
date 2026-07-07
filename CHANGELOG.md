@@ -1,6 +1,29 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.x] — Resumen del ciclo de corrección y nuevas funcionalidades
+
+> Este bloque resume los cambios acumulados de v1.1.0 → v1.1.7. Ver las entradas individuales más abajo para el detalle por versión.
+
+### Causa raíz corregida (v1.1.0)
+La semilla de datos usaba categorías temáticas (`humanitarian`, `security`, `economic`, `coexistence`) que `SPZ_Chart_Types::compatible_for()` no reconocía como categorías estándar. Todas las vistas de esas secciones devolvían **409 Conflict** en el endpoint REST `/render`. Solución: mapear todas las categorías a las estándar (`categorical`, `geographic`, `social`) y preservar el tema original en campo `tema`.
+
+### Nuevas funcionalidades (v1.1.1 — v1.1.7)
+- **Tipo nativo `tabla`** (v1.1.1): registro en `SPZ_Chart_Types` con `native=true`, compatible con todas las categorías, renderizado HTML puro sin d3plus. Las 5 vistas con `tipo_grafico_sugerido: "tabla"` ahora renderizan correctamente.
+- **Módulos `diagrama` y `estrategia`** (v1.1.2): dos nuevos tipos de módulo nativos para la sección Estrategia (`subsecretaria` y `narino-360`). Renderizado con HTML/CSS sin d3plus.
+- **Shortcode `[spz_analisis id seccion]`** (v1.1.4): renderizado server-side del texto de análisis ciudadano (~594 caracteres) de cada vista. Los 34 elementos tienen análisis redactados. Aparece en el Constructor y en la Galería de shortcodes.
+- **Botón "Ver datos"** (v1.1.6): cada vista renderizada incluye automáticamente `<button class="spz-verdatos">` y un panel colapsable con las filas de datos consumidas.
+- **Correcciones de calidad** (v1.1.3, v1.1.5, v1.1.7): escapado XSS en fallbacks, listener `keydown` sin fuga de memoria, `aria-label` sin doble-escape, campo `fuente` en metadata del panel.
+
+### Validación integral (v1.1.7)
+- `validate-views.py`: 34 vistas válidas.
+- `verify-compat.php`: 17 vistas de gráfico compatibles, 0 fallos.
+- PHP lint: 16 archivos, 0 errores de sintaxis.
+- Regresión no-409: `cneb-confinamiento/bar` → payload con 4 filas; `homicidios-departamental/tabla` → payload con 11 filas.
+- Harness Playwright: 10/10 tests pasan; console clean.
+
+---
+
 ## [1.1.7] — 2026-07-07
 ### Fixed
 - `assets/js/renderer.js`: fuga de listener `keydown` — `attachVerDatos` registraba un listener anónimo irremovible por cada panel. Ahora `onKey` (función nombrada en el closure) se añade en `openPanel()` y se elimina en `closePanel()`, de modo que solo existe un listener mientras el panel está abierto.
