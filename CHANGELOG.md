@@ -1,6 +1,18 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.0.0] — 2026-07-06
+### Added
+- `README.md`: documentación completa en español — descripción, instalación, tabla de shortcodes, las 5 secciones, editor de datos, árbol de archivos, rutas REST, seguridad, guía de prueba en WordPress, limitación conocida (vistas radial/strategy de Estrategia), paleta de marca.
+- `readme.txt`: formato WordPress.org con Description, Installation, FAQ, Screenshots, Changelog completo.
+### Changed
+- `suite-paz.php`: versión `0.8.1` → `1.0.0`.
+### Validated
+- 34 vistas JSON validan sin errores (`python scripts/validate-views.py`).
+- 12 archivos PHP sin errores de sintaxis (`php -l`).
+- Geomap (64 municipios) y módulo KPI confirman render en harness Playwright.
+- Seguridad: permission_callback en todas las rutas de escritura; sin `eval`; sin tokens en el árbol git.
+
 ## [0.8.1] — 2026-07-06
 ### Fixed
 - `includes/class-spz-rest-api.php`: ruta REST `GET /views/{slug}?seccion=` añadida para que el Constructor pueda obtener `{ view, compatible }` al seleccionar una vista (corrige 404 en `onSelectView`). Usa el mismo permission callback `rest_admin_permission` que `GET /views`.
