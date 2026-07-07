@@ -2,8 +2,9 @@
   "vista": "hurtos",
   "titulo": "Hurtos — Nariño vs Colombia (2023–2025)",
   "descripcion": "Casos de hurto a residencias, comercio, automotores y motocicletas. null = dato no disponible en la fuente. Fuente: SIEDCO Plus.",
-  "tipo_grafico_sugerido": "table",
-  "categoria": "coexistence",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "coexistence",
   "datos": [
     {
       "indicador": "Hurto a residencias",

@@ -2,8 +2,9 @@
   "vista": "estructuras-armadas",
   "titulo": "Estructuras armadas ilegales presentes en Nariño",
   "descripcion": "4 grupos armados al margen de la ley + 1 estructura de crimen de alto impacto. CNEB: 3200 combatientes; 2000 en proceso de paz (62.5%).",
-  "tipo_grafico_sugerido": "list",
-  "categoria": "security",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "security",
   "datos": [
     {
       "grupo": "Coordinadora Nacional Ejército Bolivariano",

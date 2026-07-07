@@ -3,7 +3,8 @@
   "titulo": "Desplazamiento en zona de injerencia CNEB (2023–2026)",
   "descripcion": "Personas desplazadas en municipios de influencia de la Coordinadora Nacional Ejército Bolivariano. Fuente: Comité de Justicia Transicional Ley 1448 de 2011.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "humanitarian",
+  "categoria": "categorical",
+  "tema": "humanitarian",
   "datos": [
     {
       "año": "2023",

@@ -2,8 +2,9 @@
   "vista": "homicidios-departamental",
   "titulo": "Ranking departamental de homicidios — Colombia (2023, 2024, 2025)",
   "descripcion": "Tasa de homicidio por 100.000 hab. por departamento y año (selección con Nariño). Fuente: Policía Nacional – DANE.",
-  "tipo_grafico_sugerido": "table",
-  "categoria": "security",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "security",
   "datos": [
     {
       "año": "2023",

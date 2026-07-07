@@ -2,7 +2,7 @@
   "vista": "indicadores-sociales",
   "titulo": "Indicadores sociales — Nariño (2024–2025)",
   "descripcion": "Variación en educación, acceso a agua y calidad de vivienda según el IPM. Fuente: DANE.",
-  "tipo_grafico_sugerido": "table",
+  "tipo_grafico_sugerido": "tabla",
   "categoria": "social",
   "datos": [
     {

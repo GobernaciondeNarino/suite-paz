@@ -2,8 +2,9 @@
   "vista": "convivencia",
   "titulo": "Convivencia y seguridad ciudadana — Nariño vs Colombia (2023–2025)",
   "descripcion": "Casos y tasa por 100.000 hab. de violencia intrafamiliar, lesiones personales y feminicidio. Fuente: SIEDCO Plus · Observatorio Gobernación de Nariño.",
-  "tipo_grafico_sugerido": "table",
-  "categoria": "coexistence",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "coexistence",
   "datos": [
     {
       "indicador": "Violencia intrafamiliar",

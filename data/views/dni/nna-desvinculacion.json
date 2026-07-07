@@ -2,8 +2,9 @@
   "vista": "nna-desvinculacion",
   "titulo": "Niñas, niños y adolescentes desvinculados — Nariño (2023–2025)",
   "descripcion": "Casos anuales de NNA desvinculados de grupos armados. Total acumulado en el programa: 428. Parcial 2026: 9. Fuente: ICBF.",
-  "tipo_grafico_sugerido": "line",
-  "categoria": "humanitarian",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "categorical",
+  "tema": "humanitarian",
   "datos": [
     {
       "año": "2023",

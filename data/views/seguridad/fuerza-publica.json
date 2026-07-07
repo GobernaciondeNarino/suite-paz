@@ -3,7 +3,8 @@
   "titulo": "Fuerza pública asesinada en el marco del conflicto (2023–2025)",
   "descripcion": "Bajas de policías y militares. Nacional: +156,7% policías y +77,8% militares. Nariño: policías estable, militares −60%. Fuente: Policía Nacional – SIEDCO Plus.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "security",
+  "categoria": "categorical",
+  "tema": "security",
   "datos": [
     {
       "ambito": "Nacional",

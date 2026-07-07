@@ -3,7 +3,7 @@
  * Plugin Name:       Suite PAZ
  * Plugin URI:        https://github.com/GobernaciondeNarino/suite-paz
  * Description:       Publica los datos del proyecto de Paz de Nariño como gráficos, mapas y módulos mediante shortcodes, con editor de datos en el panel.
- * Version:           1.0.1
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Gobernación de Nariño
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Plugin constants.
 // -----------------------------------------------------------------------------
-define( 'SPZ_VERSION', '1.0.1' );
+define( 'SPZ_VERSION', '1.1.0' );
 define( 'SPZ_D3PLUS_VERSION', '3.1.4' );
 // NOTE: must use the /full/ bundle — /umd/d3plus-core.js expects 30+
 // peer deps to already be on window and fails silently with window.d3plus

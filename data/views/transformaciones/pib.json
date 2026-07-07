@@ -3,7 +3,8 @@
   "titulo": "PIB de Nariño por sectores económicos (2024–2025)",
   "descripcion": "PIB a precios corrientes, miles de millones de pesos. Fuente: DANE.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "economic",
+  "categoria": "categorical",
+  "tema": "economic",
   "datos": [
     {
       "sector": "Agricultura, ganadería, caza, silvicultura y pesca",

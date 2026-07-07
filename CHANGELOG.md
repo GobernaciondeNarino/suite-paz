@@ -1,6 +1,15 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.0] — 2026-07-07
+### Fixed
+- `scripts/build-views.py`: categorías estándar para todas las vistas — `humanitarian/security/economic/coexistence` → `categorical`; `nna-desvinculacion` (serie anual con 1 medida) → `categorical` + `bar`; `geographic` y `social` sin cambio. Categoría temática original preservada en campo `tema`.
+- `scripts/build-views.py`: tipos no-d3plus corregidos — `table` → `tabla` en `homicidios-departamental`, `hurtos`, `convivencia`, `indicadores-sociales`; `list` → `tabla` en `estructuras-armadas`.
+- `scripts/build-views.py`: `subsecretaria` convertida a `{"modulo":"diagrama",...}` con `centro` y `ramas`; `narino-360` convertida a `{"modulo":"estrategia",...}` con `lineas` y `comunicaciones`.
+- `scripts/validate-views.py`: `MOD_TYPES` ampliado con `diagrama` y `estrategia`; validación de `tipo_grafico_sugerido` contra lista de tipos conocidos (incluye `tabla`).
+### Added
+- `scripts/verify-compat.php`: script de aceptación con stubs WP mínimos que carga `SPZ_Chart_Types` y replica la inferencia `is_int/is_float` del data-provider para verificar que `tipo_grafico_sugerido ∈ compatible_for(view)` en todas las vistas de gráfico. Las vistas `tabla` se reportan como "pendiente Task 2".
+
 ## [1.0.1] — 2026-07-06
 ### Fixed
 - `README.md` y `readme.txt`: etiqueta correcta de la sección `dni` — "Diálogo, Negociación e Implementación" (eliminada referencia errónea a "Departamento Nacional de Inteligencia").
