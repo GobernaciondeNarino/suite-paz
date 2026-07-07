@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.7] — 2026-07-07
+### Fixed
+- `assets/js/renderer.js`: fuga de listener `keydown` — `attachVerDatos` registraba un listener anónimo irremovible por cada panel. Ahora `onKey` (función nombrada en el closure) se añade en `openPanel()` y se elimina en `closePanel()`, de modo que solo existe un listener mientras el panel está abierto.
+- `assets/js/renderer.js`: `aria-label` con doble-escape — `setAttribute` almacena texto verbatim; se eliminó `escHtml()` del valor del atributo para que lectores de pantalla no lean `&amp;` literal.
+- `assets/js/renderer.js`: campo `fuente` omitido en meta de gráficos — ambas llamadas a `attachVerDatos` (path tabla nativa y path d3plus) ahora incluyen `fuente: payload.fuente || ''`.
+
 ## [1.1.6] — 2026-07-07
 ### Added
 - `assets/js/renderer.js`: función `attachVerDatos(el, dataForPanel, meta)` — adjunta un botón `<button class="spz-verdatos">` y un panel colapsable `<div class="spz-datapanel">` como hermanos de cada elemento renderizado. El botón usa `aria-expanded` y gestión de foco (Esc cierra y devuelve el foco al botón). La función está expuesta en `window.SPZ.util.attachVerDatos` para reutilización desde `modules.js`. Guarda `el.dataset.spzVd` para evitar doble adjunto.

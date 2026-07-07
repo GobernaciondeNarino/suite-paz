@@ -173,7 +173,7 @@
 		panel.id = uid;
 		panel.setAttribute( 'hidden', '' );
 		panel.setAttribute( 'role', 'region' );
-		panel.setAttribute( 'aria-label', 'Datos: ' + escHtml( meta.title || '' ) );
+		panel.setAttribute( 'aria-label', 'Datos: ' + ( meta.title || '' ) );
 		panel.innerHTML =
 			'<div class="spz-datapanel__header">' +
 				'<span class="spz-datapanel__title">' + panelTitle + '</span>' +
@@ -187,9 +187,15 @@
 		el.parentNode.insertBefore( panel, btn.nextSibling );
 
 		// Toggle helpers.
+		function onKey( e ) {
+			if ( e.key === 'Escape' || e.key === 'Esc' ) {
+				closePanel();
+			}
+		}
 		function openPanel() {
 			panel.removeAttribute( 'hidden' );
 			btn.setAttribute( 'aria-expanded', 'true' );
+			document.addEventListener( 'keydown', onKey );
 			var closeBtn = panel.querySelector( '.spz-datapanel__close' );
 			if ( closeBtn ) {
 				closeBtn.focus();
@@ -198,6 +204,7 @@
 		function closePanel() {
 			panel.setAttribute( 'hidden', '' );
 			btn.setAttribute( 'aria-expanded', 'false' );
+			document.removeEventListener( 'keydown', onKey );
 			btn.focus();
 		}
 
@@ -213,12 +220,6 @@
 		if ( closeEl ) {
 			closeEl.addEventListener( 'click', closePanel );
 		}
-
-		document.addEventListener( 'keydown', function ( e ) {
-			if ( ( e.key === 'Escape' || e.key === 'Esc' ) && ! panel.hasAttribute( 'hidden' ) ) {
-				closePanel();
-			}
-		} );
 	}
 
 	// ------------------------------------------------------------------
@@ -272,6 +273,7 @@
 					title:       ( payload.view && payload.view.name )        || 'Datos',
 					descripcion: ( payload.view && payload.view.description ) || '',
 					columns:     ( payload.mapping && payload.mapping.columns ) || null,
+					fuente:      payload.fuente || '',
 				} );
 				return;
 			}
@@ -291,6 +293,7 @@
 				title:       ( payload.view && payload.view.name )        || 'Datos',
 				descripcion: ( payload.view && payload.view.description ) || '',
 				columns:     ( payload.mapping && payload.mapping.columns ) || null,
+				fuente:      payload.fuente || '',
 			} );
 
 			// Wait for the d3plus bundle.
