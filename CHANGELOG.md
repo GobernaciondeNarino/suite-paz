@@ -1,6 +1,11 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.7.1] — 2026-07-06
+### Fixed
+- `includes/class-spz-security.php`: `validate_payload` — PAZ view ahora requiere al menos una clave de datos (`municipios`, `datos` o `data`); tipo estricto para `fuente` (string), `bajar_es_bueno` (bool), `temporal_range` (array), `total_municipios`/`total_valores` (int); límite de tamaño 512 KB para prevenir DoS.
+- `includes/class-spz-rest-api.php`: `/save` y `/reset` devuelven 400 cuando `seccion` no pertenece a `SPZ_Plugin::SECCIONES` (en lugar de normalizar silenciosamente a `dni`).
+
 ## [0.7.0] — 2026-07-06
 ### Added
 - `includes/class-spz-data-store.php`: `SPZ_Data_Store` con `table()`, `create_table()` (dbDelta, UNIQUE KEY sec_slug), `get_override()`, `save_override()` ($wpdb->replace), `delete_override()`, `all_overrides()`. Todas las queries usan `$wpdb->prepare()`.

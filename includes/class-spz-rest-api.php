@@ -280,8 +280,12 @@ class SPZ_Rest_Api {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_override( WP_REST_Request $request ) {
-		$params  = $request->get_json_params();
-		$seccion = $this->plugin->normalize_seccion( (string) ( $params['seccion'] ?? '' ) );
+		$params      = $request->get_json_params();
+		$raw_seccion = sanitize_key( (string) ( $params['seccion'] ?? '' ) );
+		if ( ! isset( SPZ_Plugin::SECCIONES[ $raw_seccion ] ) ) {
+			return new WP_Error( 'spz_bad_seccion', 'Sección desconocida', [ 'status' => 400 ] );
+		}
+		$seccion = $this->plugin->normalize_seccion( $raw_seccion );
 		$slug    = $this->security->sanitize_slug( (string) ( $params['slug'] ?? '' ) );
 		$payload = $params['payload'] ?? null;
 
@@ -340,8 +344,12 @@ class SPZ_Rest_Api {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function reset_override( WP_REST_Request $request ) {
-		$params  = $request->get_json_params();
-		$seccion = $this->plugin->normalize_seccion( (string) ( $params['seccion'] ?? '' ) );
+		$params      = $request->get_json_params();
+		$raw_seccion = sanitize_key( (string) ( $params['seccion'] ?? '' ) );
+		if ( ! isset( SPZ_Plugin::SECCIONES[ $raw_seccion ] ) ) {
+			return new WP_Error( 'spz_bad_seccion', 'Sección desconocida', [ 'status' => 400 ] );
+		}
+		$seccion = $this->plugin->normalize_seccion( $raw_seccion );
 		$slug    = $this->security->sanitize_slug( (string) ( $params['slug'] ?? '' ) );
 
 		if ( '' === $slug ) {

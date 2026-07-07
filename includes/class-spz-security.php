@@ -228,6 +228,10 @@ class SPZ_Security {
 			return false;
 		}
 
+		if ( strlen( wp_json_encode( $payload ) ) > 512000 ) {
+			return false;
+		}
+
 		// Rule 2 — recursive script/HTML injection check.
 		if ( $this->payload_has_script( $payload ) ) {
 			return false;
@@ -340,6 +344,16 @@ class SPZ_Security {
 			}
 		}
 
+		// fuente must be a string when present.
+		if ( isset( $p['fuente'] ) && ! is_string( $p['fuente'] ) ) {
+			return false;
+		}
+
+		// bajar_es_bueno must be a boolean when present.
+		if ( isset( $p['bajar_es_bueno'] ) && ! is_bool( $p['bajar_es_bueno'] ) ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -352,7 +366,8 @@ class SPZ_Security {
 	 * @return bool
 	 */
 	private function validate_view_shape( array $p ): bool {
-		$is_paz    = isset( $p['vista'] ) && is_string( $p['vista'] );
+		$is_paz    = isset( $p['vista'] ) && is_string( $p['vista'] )
+		             && ( isset( $p['municipios'] ) || isset( $p['datos'] ) || isset( $p['data'] ) );
 		$is_native = isset( $p['id'], $p['name'], $p['data'] )
 		             && is_string( $p['id'] )
 		             && is_string( $p['name'] )
@@ -392,9 +407,21 @@ class SPZ_Security {
 		}
 
 		// Fields that must be arrays when present.
-		$array_fields = [ 'municipios', 'datos', 'data', 'items', 'rows', 'dimensions', 'measures', 'edges' ];
+		$array_fields = [ 'municipios', 'datos', 'data', 'items', 'rows', 'dimensions', 'measures', 'edges', 'temporal_range' ];
 		foreach ( $array_fields as $field ) {
 			if ( isset( $p[ $field ] ) && ! is_array( $p[ $field ] ) ) {
+				return false;
+			}
+		}
+
+		// fuente must be a string when present.
+		if ( isset( $p['fuente'] ) && ! is_string( $p['fuente'] ) ) {
+			return false;
+		}
+
+		// total_municipios / total_valores must be integers when present.
+		foreach ( [ 'total_municipios', 'total_valores' ] as $int_field ) {
+			if ( isset( $p[ $int_field ] ) && ! is_int( $p[ $int_field ] ) ) {
 				return false;
 			}
 		}
