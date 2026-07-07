@@ -145,8 +145,9 @@ class SPZ_Security {
 			return null;
 		}
 
-		// Anti path-traversal: resolved path must start with the base directory.
-		if ( strpos( $path, $base ) !== 0 ) {
+		// Anti path-traversal: resolved path must start with the base directory
+		// (with separator appended so a sibling dir like ".../viewsX/" is rejected).
+		if ( strpos( $path, $base . DIRECTORY_SEPARATOR ) !== 0 ) {
 			return null;
 		}
 

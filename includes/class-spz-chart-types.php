@@ -185,7 +185,7 @@ class SPZ_Chart_Types {
 			'stacked_bar' => [
 				'label'        => __( 'Barras apiladas', 'suite-paz' ),
 				'icon'         => 'chart-bar',
-				'd3plus_class' => 'BarChart',
+				'd3plus_class' => 'BarChart', // renderer must call .stacked(true) to distinguish from plain bar.
 				'categories'   => [ 'categorical', 'statistical', 'geographic', 'hierarchical', 'social' ],
 				'requires'     => [ 'dimensions' => 1, 'measures' => 2 ],
 				'description'  => __( 'Descomposición de categorías en sub-grupos.', 'suite-paz' ),
@@ -267,7 +267,7 @@ class SPZ_Chart_Types {
 				'icon'         => 'randomize',
 				'd3plus_class' => 'Sankey',
 				'categories'   => [ 'categorical', 'network', 'hierarchical' ],
-				'requires'     => [ 'dimensions' => 1, 'measures' => 1 ],
+				'requires'     => [ 'dimensions' => 1, 'measures' => 1, 'edges' => true ],
 				'description'  => __( 'Flujo de valores entre categorías o nodos.', 'suite-paz' ),
 			],
 			'rings'       => [
@@ -290,7 +290,7 @@ class SPZ_Chart_Types {
 				'label'        => __( 'Línea temporal (Priestley)', 'suite-paz' ),
 				'icon'         => 'clock',
 				'd3plus_class' => 'Priestley',
-				'categories'   => [ 'geographic', 'categorical' ],
+				'categories'   => [ 'geographic', 'categorical', 'temporal' ],
 				'requires'     => [ 'dimensions' => 1, 'measures' => 2 ],
 				'description'  => __( 'Barras horizontales para periodos o comparación de vigencias.', 'suite-paz' ),
 			],

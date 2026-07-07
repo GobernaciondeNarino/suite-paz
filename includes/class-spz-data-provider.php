@@ -262,8 +262,9 @@ class SPZ_Data_Provider {
 		$real_base = realpath( $this->views_path() );
 		$real_file = realpath( $file );
 
-		// Path-traversal guard: resolved path must start with the views directory.
-		if ( ! $real_base || ! $real_file || strpos( $real_file, $real_base ) !== 0 ) {
+		// Path-traversal guard: resolved path must start with the views directory
+		// (with separator appended so a sibling dir like ".../viewsX/" is rejected).
+		if ( ! $real_base || ! $real_file || strpos( $real_file, $real_base . DIRECTORY_SEPARATOR ) !== 0 ) {
 			return [];
 		}
 

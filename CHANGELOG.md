@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.3.1] — 2026-07-06
+### Fixed
+- `class-spz-chart-types.php`: sankey ahora requiere `edges => true`; sin aristas no se ofrece para datos categóricos planos.
+- `class-spz-data-provider.php` + `class-spz-security.php`: endurecer guard anti-traversal — se exige `DIRECTORY_SEPARATOR` tras la base para rechazar directorios hermanos (e.g. `.../viewsX/`).
+- `class-spz-chart-types.php`: priestley incluye categoría `temporal`; stacked_bar documenta que el renderer debe llamar `.stacked(true)`.
+
 ## [0.3.0] — 2026-07-06
 ### Added
 - `includes/class-spz-data-provider.php`: `SPZ_Data_Provider(SPZ_Security, string $seccion)` con `list_views()`, `get_view(string):?array`, `get_raw(string):?array`. Caché en memoria `<seccion>:<key>`. Detecta módulos (`modulo` key) y los devuelve con `is_module=true` sin inferir dims/measures. Para vistas PAZ respeta el campo `categoria` explícito; inferencia de dims/measures usa `is_int`/`is_float` (no `is_numeric`) para no promover DIVIPOLA strings a medidas.
