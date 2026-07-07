@@ -102,6 +102,45 @@
   <div class="status" id="sm4">Cargando…</div>
 </div>
 
+<!-- ============================================================
+     TEST 7 — Tabla nativa: Ranking departamental de homicidios
+     Datos: data/views/seguridad/homicidios-departamental.json
+     Esperado: .spz-tabla con encabezado violeta + filas de datos
+     ============================================================ -->
+<div class="card">
+  <h2>Test 7 — Tabla nativa: Homicidios departamental</h2>
+  <p class="desc">Vista: seguridad/homicidios-departamental · tipo_grafico_sugerido: tabla<br>
+     Se esperan &ge; 2 filas &lt;tr&gt; (encabezado + datos), sin d3plus.</p>
+  <div id="c7" style="padding:4px"></div>
+  <div class="status" id="s7">Cargando&hellip;</div>
+</div>
+
+<!-- ============================================================
+     TEST 8 — Módulo diagrama: Subsecretaría de Seguridad
+     Datos: data/views/estrategia/subsecretaria.json
+     Esperado: .spz-diagrama con .spz-diagrama__centro + ramas
+     ============================================================ -->
+<div class="card">
+  <h2>Test 8 — Módulo Diagrama: Subsecretaría de Seguridad Ciudadana</h2>
+  <p class="desc">Vista: estrategia/subsecretaria · módulo: diagrama<br>
+     Centro + 7 ramas (algunas con KPI, algunas con sub-ítems).</p>
+  <div class="spz-module" id="m8"></div>
+  <div class="status" id="sm8">Cargando&hellip;</div>
+</div>
+
+<!-- ============================================================
+     TEST 9 — Módulo estrategia: Nariño 360°
+     Datos: data/views/estrategia/narino-360.json
+     Esperado: .spz-estrategia con descripción, líneas numeradas y chips
+     ============================================================ -->
+<div class="card">
+  <h2>Test 9 — Módulo Estrategia: Nariño 360°</h2>
+  <p class="desc">Vista: estrategia/narino-360 · módulo: estrategia<br>
+     Descripción + 5 líneas estratégicas + 5 chips de comunicaciones.</p>
+  <div class="spz-module" id="m9"></div>
+  <div class="status" id="sm9">Cargando&hellip;</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
 <!-- PAZ native module renderer (must load before frontend.js) -->
@@ -251,6 +290,77 @@
       })
       .catch(function(err) {
         console.error('[SPZ harness] module fetch error', err);
+        setStatus(test.status, false, 'Error: ' + err.message);
+      });
+  });
+
+  // ----------------------------------------------------------------
+  // Test 7 — Tabla nativa via renderer.js
+  // tipo_grafico_sugerido:'tabla' in raw seed JSON → .spz-tabla
+  // ----------------------------------------------------------------
+  fetch('../data/views/seguridad/homicidios-departamental.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      SPZ.renderer.render(
+        document.getElementById('c7'),
+        { view: view }   // type inferred from tipo_grafico_sugerido:'tabla'
+      );
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var rows = document.querySelectorAll('#c7 .spz-tabla tr').length;
+        if (rows > 1) {
+          clearInterval(timer);
+          setStatus('s7', true, 'Tabla pintada — ' + rows + ' filas (encabezado + datos)');
+        } else if (attempts > 30) {
+          clearInterval(timer);
+          setStatus('s7', false, 'Tabla no pintada tras 3 s — rows=' + rows);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness] tabla fetch error', err);
+      setStatus('s7', false, 'Error: ' + err.message);
+    });
+
+  // ----------------------------------------------------------------
+  // Tests 8-9 — diagrama + estrategia via modules.js
+  // ----------------------------------------------------------------
+  var modTests2 = [
+    { src: '../data/views/estrategia/subsecretaria.json', el: 'm8', status: 'sm8',
+      check: function() { return document.querySelector('#m8 .spz-diagrama'); },
+      pass:  function(v) { return !!v; },
+      msg:   function()  { return 'Diagrama pintado — centro + ramas'; }
+    },
+    { src: '../data/views/estrategia/narino-360.json', el: 'm9', status: 'sm9',
+      check: function() { return document.querySelector('#m9 .spz-estrategia'); },
+      pass:  function(v) { return !!v; },
+      msg:   function()  { return 'Estrategia pintada — líneas + chips'; }
+    }
+  ];
+
+  modTests2.forEach(function(test) {
+    fetch(test.src)
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        var el = document.getElementById(test.el);
+        if (!el) { setStatus(test.status, false, 'Elemento no encontrado'); return; }
+        SPZ.modules.render(el, payload);
+        var attempts = 0;
+        var timer = setInterval(function() {
+          attempts++;
+          var result = test.check();
+          if (test.pass(result)) {
+            clearInterval(timer);
+            setStatus(test.status, true, test.msg(result));
+          } else if (attempts > 30) {
+            clearInterval(timer);
+            setStatus(test.status, false, 'Timeout — módulo no pintado tras 3 s');
+          }
+        }, 100);
+      })
+      .catch(function(err) {
+        console.error('[SPZ harness] modulo fetch error', err);
         setStatus(test.status, false, 'Error: ' + err.message);
       });
   });

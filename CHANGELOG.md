@@ -1,6 +1,13 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.2] — 2026-07-07
+### Added
+- `assets/js/renderer.js`: rama `tabla` nativa — detecta `tipo_grafico_sugerido:'tabla'` (raw seed) o `chart.class===''` (REST) y renderiza `<table class="spz-tabla">` con encabezado violeta, filas zebra y números formateados `es-CO`, sin invocar d3plus. `SPZ.util.dataTable(rows, columns)` expuesto para reutilización desde Fix-Task 6.
+- `assets/js/modules.js`: módulos `diagrama` (nodo central + ramas con nombre/kpi/sub) y `estrategia` (descripción + líneas numeradas + chips de comunicaciones), ambos escapando texto con el helper `esc`.
+- `assets/css/frontend.css`: `.spz-tabla-wrap/.spz-tabla` (responsive, header violeta `#5B3B8C`, zebra, números right-aligned), `.spz-diagrama` (centro pill + ramas), `.spz-estrategia` (descripción cursiva, lista ol, chips), `.spz-chip`.
+- `tests/harness.html`: Tests 7 (tabla nativa), 8 (diagrama), 9 (estrategia) — con polling de validación y badges de estado.
+
 ## [1.1.1] — 2026-07-07
 ### Added
 - `includes/class-spz-chart-types.php`: tipo nativo `tabla` registrado (`d3plus_class=''`, `native=true`), compatible con todas las categorías estándar (`categorical,temporal,geographic,hierarchical,network,statistical,social`), sin requisitos mínimos de campos. `is_valid_type('tabla')` ahora es `true`.

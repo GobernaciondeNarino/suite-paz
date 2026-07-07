@@ -63,6 +63,65 @@
 	const NF_PCT     = new Intl.NumberFormat( 'es-CO', { minimumFractionDigits: 1, maximumFractionDigits: 1 } );
 
 	// ------------------------------------------------------------------
+	// HTML-escape helper (used by table builder and renderTable).
+	// ------------------------------------------------------------------
+	function escHtml( s ) {
+		return String( s == null ? '' : s ).replace( /[&<>"']/g, function ( c ) {
+			return ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } )[ c ];
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// dataTable( rows, columns ) → HTML string for <table class="spz-tabla">
+	// Exposed as SPZ.util.dataTable so Fix-Task 6 "Ver datos" can reuse it.
+	// ------------------------------------------------------------------
+	function dataTable( rows, columns ) {
+		if ( ! Array.isArray( rows ) || ! rows.length ) {
+			return '<p class="spz-empty">Sin datos.</p>';
+		}
+		// Compute columns from the union of keys if not provided.
+		if ( ! Array.isArray( columns ) || ! columns.length ) {
+			const keySet = Object.create( null );
+			rows.forEach( function ( row ) {
+				Object.keys( row || {} ).forEach( function ( k ) { keySet[ k ] = true; } );
+			} );
+			columns = Object.keys( keySet );
+		}
+		// Determine which columns are numeric (for alignment class).
+		const numericCols = Object.create( null );
+		rows.forEach( function ( row ) {
+			columns.forEach( function ( col ) {
+				if ( typeof row[ col ] === 'number' ) { numericCols[ col ] = true; }
+			} );
+		} );
+
+		let html = '<div class="spz-tabla-wrap"><table class="spz-tabla"><thead><tr>';
+		columns.forEach( function ( col ) {
+			html += '<th>' + escHtml( col ) + '</th>';
+		} );
+		html += '</tr></thead><tbody>';
+		rows.forEach( function ( row ) {
+			html += '<tr>';
+			columns.forEach( function ( col ) {
+				const val   = row[ col ];
+				const isNum = typeof val === 'number';
+				let display;
+				if ( val == null || val === '' ) {
+					display = '&mdash;';
+				} else if ( isNum ) {
+					display = escHtml( val.toLocaleString( 'es-CO' ) );
+				} else {
+					display = escHtml( String( val ) );
+				}
+				html += '<td' + ( isNum ? ' class="spz-num"' : '' ) + '>' + display + '</td>';
+			} );
+			html += '</tr>';
+		} );
+		html += '</tbody></table></div>';
+		return html;
+	}
+
+	// ------------------------------------------------------------------
 	// Renderer object
 	// ------------------------------------------------------------------
 	const Renderer = {
@@ -101,6 +160,17 @@
 
 			// Build the normalised payload.
 			const payload = this.buildPayload( rawView, typeHint );
+
+			// Native table renderer — intercept before d3plus instantiation.
+			// Triggered when: type==='tabla', chart.class==='' (REST native), or chart.class==='native'.
+			if ( payload && payload.chart &&
+				( payload.chart.key === 'tabla' ||
+				  payload.chart.class === '' ||
+				  payload.chart.class === 'native' ) ) {
+				this.renderTable( el, payload );
+				return;
+			}
+
 			if ( ! payload || ! payload.chart || ! payload.chart.class ) {
 				el.innerHTML = `<p class="spz-empty">Tipo de gráfico no soportado: ${ typeHint || '(desconocido)' }</p>`;
 				return;
@@ -232,9 +302,10 @@
 		 * @returns {object}         Normalised payload.
 		 */
 		buildPayload( raw, typeHint ) {
-			// (b) Already a pre-built REST payload — detect by chart.class + data array.
-			if ( raw && raw.chart && raw.chart.class && Array.isArray( raw.data ) ) {
-				// Allow typeHint to override the chart type.
+			// (b) Already a pre-built REST payload — detect by presence of raw.chart + raw.data array.
+			// Native types (tabla) have chart.class==='' so we cannot require it to be truthy.
+			if ( raw && raw.chart && raw.chart.key && Array.isArray( raw.data ) ) {
+				// Allow typeHint to override the chart type (d3plus types only).
 				if ( typeHint && typeHint !== raw.chart.key ) {
 					const cls = CLASS_MAP[ typeHint ];
 					if ( cls ) {
@@ -1031,12 +1102,32 @@
 				}
 			}
 		},
+
+		// ==============================================================
+		// Native table renderer (no d3plus)
+		// ==============================================================
+
+		/**
+		 * Render payload.data as a branded <table class="spz-tabla">.
+		 * Columns come from mapping.columns or are inferred from the row keys.
+		 *
+		 * @param {Element} el      Container element.
+		 * @param {object}  payload Normalised renderer payload.
+		 */
+		renderTable( el, payload ) {
+			const data    = payload.data    || [];
+			const mapping = payload.mapping || {};
+			const columns = mapping.columns || null;
+			el.innerHTML  = dataTable( data, columns );
+		},
 	};
 
 	// ------------------------------------------------------------------
-	// Expose as window.SPZ.renderer
+	// Expose as window.SPZ.renderer + window.SPZ.util.dataTable
 	// ------------------------------------------------------------------
 	window.SPZ = window.SPZ || {};
-	window.SPZ.config   = window.SPZ.config   || {};
-	window.SPZ.renderer = Renderer;
+	window.SPZ.config      = window.SPZ.config || {};
+	window.SPZ.renderer    = Renderer;
+	window.SPZ.util        = window.SPZ.util   || {};
+	window.SPZ.util.dataTable = dataTable;
 } )();
