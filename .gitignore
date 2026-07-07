@@ -1,0 +1,20 @@
+# Credenciales / secretos — NUNCA versionar
+*.token
+.gh_token
+.git-credentials
+*.pem
+
+# Artefactos de build / pruebas
+dist/
+build/
+*.zip
+.playwright-mcp/
+*.log
+__pycache__/
+node_modules/
+
+# Editores / SO
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
