@@ -223,24 +223,25 @@ ANALISIS = {
 
     "homicidios-municipio": (
         "Este mapa muestra la tasa de homicidio por cada 100.000 habitantes en los "
-        "municipios de Nariño en 2025. Los municipios con mayores tasas son Samaniego "
-        "(47,6; 14 casos), San Andrés de Tumaco (14,6; 40 casos), Barbacoas (17,1; "
-        "11 casos), El Charco (13,4; 3 casos) y Pasto (9,7; 39 casos). La gran "
-        "mayoría de los 64 municipios no reportan casos. Samaniego bajó de 98,6 en "
-        "2023 a 47,6 en 2025, un avance notable aunque persiste como la cifra más "
-        "alta del departamento. Reducir estos focos es la prioridad para que todos "
-        "los nariñenses vivan con el mismo derecho a la seguridad."
+        "municipios de Nariño en 2025. Los municipios priorizados son Samaniego "
+        "(47,6; 14 casos), Tumaco (14,6; 40 casos), Barbacoas (17,1; 11 casos), El "
+        "Charco (13,4; 3 casos) y Pasto (9,7; 39 casos): algunos destacan por su "
+        "alta tasa (Samaniego, 47,6), otros por el número de casos (Pasto, 39). La "
+        "mayoría de los 64 municipios no reportan casos. Samaniego bajó de 98,6 "
+        "en 2023 a 47,6 en 2025, avance notable aunque persiste como la cifra más "
+        "alta. Reducir estos focos es la prioridad para que todos los nariñenses "
+        "vivan con el mismo derecho a la seguridad."
     ),
 
     "hist-homicidios-gob": (
         "Este gráfico muestra cómo la tasa de homicidio en Colombia cambió a lo "
         "largo de distintos gobiernos. En los años noventa era extrema: 73 con "
-        "Gaviria, 80 con Samper y 84 con Pastrana. Luego bajó: Uribe II (72), Santos "
-        "II (45), Duque (36). Con el gobierno Petro la tasa es 26,1 por cada 100.000 "
-        "habitantes en 2025, la más baja de la historia reciente. Para Nariño esto "
-        "es relevante porque el departamento comparte esa tendencia: su tasa propia "
-        "es 14,7 en 2025, resultado del trabajo conjunto entre el gobierno "
-        "departamental, la fuerza pública y las comunidades de Nariño."
+        "Gaviria, 80 con Samper y 84 con Pastrana. Luego bajó: Uribe I (82), Uribe "
+        "II (72), Santos I (71), Santos II (45), Duque (36). Con el gobierno Petro "
+        "la tasa es 26,1 por cada 100.000 habitantes en 2025, la más baja de la "
+        "historia reciente. Para Nariño esto es relevante: su tasa propia es 14,7 "
+        "en 2025, resultado del trabajo conjunto por la seguridad. Cada punto menos "
+        "en la tasa nacional es una vida más protegida en Colombia y en Nariño."
     ),
 
     "terrorismo-nacional-narino": (
@@ -258,11 +259,12 @@ ANALISIS = {
         "Este indicador registra policías y militares asesinados en el conflicto. En "
         "Nariño las bajas de policías fueron 1 en 2023, 1 en 2024 y 0 en 2025; los "
         "militares registraron 5 en 2023, 1 en 2024 y 2 en 2025. A nivel nacional "
-        "la situación empeoró: los policías subieron de 30 a 96 y los militares de "
-        "54 a 96. Que Nariño mantenga cifras bajas mientras el país enfrenta un "
-        "aumento del 220% en bajas de fuerza pública demuestra que la estrategia "
-        "de seguridad del departamento está conteniendo el conflicto y protegiendo "
-        "también a quienes tienen la misión de cuidar a la ciudadanía nariñense."
+        "la situación empeoró: los policías subieron de 30 a 96 (+220%) y los "
+        "militares de 54 a 96 (+78%), con un alza combinada del 129% en fuerza "
+        "pública. Que Nariño mantenga cifras bajas mientras el país enfrenta ese "
+        "incremento demuestra que la estrategia de seguridad del departamento está "
+        "conteniendo el conflicto y protegiendo también a quienes tienen la misión "
+        "de cuidar a la ciudadanía nariñense."
     ),
 
     "homicidios-departamental": (
@@ -376,12 +378,12 @@ ANALISIS = {
     "desocupacion": (
         "La tasa de desocupación mide el porcentaje de personas que quieren trabajar "
         "pero no encuentran empleo. En Nariño, esa tasa bajó de 6,5% en 2024 a 6,0% "
-        "en 2025, mientras el promedio nacional es 8%. Nariño tiene así la tasa de "
-        "desempleo más baja del país. Que el desempleo sea bajo significa que más "
-        "familias tienen ingresos, pueden pagar la educación de sus hijos y acceder "
-        "a la salud. Este resultado es fruto de la estabilización de la seguridad, "
+        "en 2025, muy por debajo del promedio nacional de 8%. Que el desempleo sea "
+        "bajo significa más oportunidades laborales, más ingresos para las familias, "
+        "mayor capacidad de acceder a salud y educación, y más arraigo en el "
+        "territorio. Este resultado es fruto de la estabilización de la seguridad, "
         "el impulso a los sectores productivos y las políticas de empleo que se han "
-        "fortalecido en el departamento en los últimos años."
+        "fortalecido en el departamento nariñense en los últimos años."
     ),
 
     "pib": (
