@@ -1,4 +1,4 @@
-/* global d3plus */
+﻿/* global d3plus */
 /**
  * Suite PAZ · Renderer d3plus v3.
  *
@@ -1002,7 +1002,7 @@
 			}
 			return String( value )
 				.normalize( 'NFD' )
-				.replace( /[̀-ͯ]/g, '' )
+				.replace( /[\u0300-\u036f]/g, '' )
 				.toUpperCase()
 				.trim()
 				.replace( /\s+/g, ' ' );

@@ -1,6 +1,13 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.4.1] — 2026-07-07
+### Fixed
+- `assets/js/renderer.js`: regex normalización robusta — reemplaza combinadores literales invisibles por escapes Unicode explícitos (`/[̀-ͯ]/g`), funcionalmente idéntico pero seguro ante re-encodings.
+- `assets/js/frontend.js`: selector incluye `[data-seccion]` para evitar hidratar elementos de terceros que coincidan con `.spz-chart[data-view][data-type]`.
+- `assets/css/frontend.css`: añade `min-height: 400px` a `.spz-chart` para que el div de shortcode no colapse (~24px) antes del render.
+- `assets/js/renderer.js` (stacked_area): verificado via Playwright — `window.d3plus.StackedArea` es función en v3.1.4; no se requiere cambio (`StackedArea` permanece).
+
 ## [0.4.0] — 2026-07-06
 ### Added
 - `assets/js/renderer.js`: `SPZ.renderer.render(el, {view, type, options})` — renderer d3plus v3 adaptado de tic-suite. Acepta payloads REST pre-construidos o el JSON semilla PAZ crudo (normalización interna: extrae filas de `municipios|datos|data`, infiere dims/measures, construye mapping). CLASS_MAP con los 15 tipos verificados contra el bundle v3.1.4 (`BarChart`, `LinePlot`, `AreaPlot`, `StackedArea`, `Pie`, `Donut`, `Treemap`, `Geomap`, `Network`, `Tree`, `Sankey`, `Rings`, `BoxWhisker`, `Priestley`). Geomap: `viz.tiles(false)` + `viz.ocean('transparent')` (sin basemap), join `_municipio_id` por NFD-normalize, `topojsonId('id')` (key `properties.id` del topojson). Topojson URL leída de `SPZ.config.topojsonUrl` (default relativo para harness; la Task 5 inyecta la URL del plugin WP). Paleta de marca SPZ.

@@ -26,7 +26,7 @@
 	'use strict';
 
 	document.addEventListener( 'DOMContentLoaded', function () {
-		document.querySelectorAll( '.spz-chart[data-view][data-type]' ).forEach( initChart );
+		document.querySelectorAll( '.spz-chart[data-view][data-type][data-seccion]' ).forEach( initChart );
 	} );
 
 	// ------------------------------------------------------------------
