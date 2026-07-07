@@ -1,0 +1,81 @@
+{
+  "vista": "hurtos",
+  "titulo": "Hurtos — Nariño vs Colombia (2023–2025)",
+  "descripcion": "Casos de hurto a residencias, comercio, automotores y motocicletas. null = dato no disponible en la fuente. Fuente: SIEDCO Plus.",
+  "tipo_grafico_sugerido": "table",
+  "categoria": "coexistence",
+  "datos": [
+    {
+      "indicador": "Hurto a residencias",
+      "año": "2023",
+      "casos_nacional": 39701,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a residencias",
+      "año": "2024",
+      "casos_nacional": 41720,
+      "casos_narino": 1329
+    },
+    {
+      "indicador": "Hurto a residencias",
+      "año": "2025",
+      "casos_nacional": 25807,
+      "casos_narino": 517
+    },
+    {
+      "indicador": "Hurto a comercio",
+      "año": "2023",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a comercio",
+      "año": "2024",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a comercio",
+      "año": "2025",
+      "casos_nacional": 24406,
+      "casos_narino": 517
+    },
+    {
+      "indicador": "Hurto a automotores",
+      "año": "2023",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a automotores",
+      "año": "2024",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a automotores",
+      "año": "2025",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a motocicletas",
+      "año": "2023",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a motocicletas",
+      "año": "2024",
+      "casos_nacional": null,
+      "casos_narino": null
+    },
+    {
+      "indicador": "Hurto a motocicletas",
+      "año": "2025",
+      "casos_nacional": null,
+      "casos_narino": null
+    }
+  ]
+}

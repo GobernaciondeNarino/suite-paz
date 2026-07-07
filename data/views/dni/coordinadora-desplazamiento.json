@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "coordinadora-desplazamiento",
+  "titulo": "Desplazamiento CNEB — Ene-Jun 2025→2026",
+  "unidad": "personas",
+  "from": {
+    "y": "Ene-Jun 25",
+    "v": 1036
+  },
+  "to": {
+    "y": "Ene-Jun 26",
+    "v": 329
+  },
+  "delta": -68.3,
+  "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+}

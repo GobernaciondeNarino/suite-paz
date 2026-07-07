@@ -1,0 +1,266 @@
+{
+  "vista": "desaparecidos-cuerpos",
+  "titulo": "Recuperación de cuerpos — UBPD (2025–2026)",
+  "descripcion": "Cuerpos recuperados por municipio en búsqueda de personas desaparecidas. Total: 39; 14 con identidad confirmada; 6 entregas dignas; 26 lugares de interés. Fuente: UBPD.",
+  "tipo_grafico_sugerido": "geomap",
+  "categoria": "geographic",
+  "total_municipios": 64,
+  "municipios": [
+    {
+      "municipio": "ALBÁN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "ALDANA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "ANCUYA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "ARBOLEDA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "BARBACOAS",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "BELÉN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "BUESACO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CHACHAGÜÍ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "COLÓN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CONSACÁ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CONTADERO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CÓRDOBA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CUASPUD CARLOSAMA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "CUMBAL",
+      "cuerpos_recuperados": 13
+    },
+    {
+      "municipio": "CUMBITARA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "EL CHARCO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "EL PEÑOL",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "EL ROSARIO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "EL TABLÓN DE GÓMEZ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "EL TAMBO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "FRANCISCO PIZARRO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "FUNES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "GUACHUCAL",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "GUAITARILLA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "GUALMATÁN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "ILES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "IMUÉS",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "IPIALES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LA CRUZ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LA FLORIDA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LA LLANADA",
+      "cuerpos_recuperados": 2
+    },
+    {
+      "municipio": "LA TOLA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LA UNIÓN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LEIVA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LINARES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "LOS ANDES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "MAGÜÍ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "MALLAMA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "MOSQUERA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "NARIÑO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "OLAYA HERRERA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "OSPINA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "PASTO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "POLICARPA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "POTOSÍ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "PROVIDENCIA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "PUERRES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "PUPIALES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "RICAURTE",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "ROBERTO PAYÁN",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SAMANIEGO",
+      "cuerpos_recuperados": 12
+    },
+    {
+      "municipio": "SAN ANDRÉS DE TUMACO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SAN BERNARDO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SAN LORENZO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SAN PABLO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SAN PEDRO DE CARTAGO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SANDONÁ",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SANTA BÁRBARA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "SANTACRUZ",
+      "cuerpos_recuperados": 12
+    },
+    {
+      "municipio": "SAPUYES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "TAMINANGO",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "TANGUA",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "TÚQUERRES",
+      "cuerpos_recuperados": 0
+    },
+    {
+      "municipio": "YACUANQUER",
+      "cuerpos_recuperados": 0
+    }
+  ]
+}

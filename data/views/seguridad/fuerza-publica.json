@@ -1,0 +1,81 @@
+{
+  "vista": "fuerza-publica",
+  "titulo": "Fuerza pública asesinada en el marco del conflicto (2023–2025)",
+  "descripcion": "Bajas de policías y militares. Nacional: +156,7% policías y +77,8% militares. Nariño: policías estable, militares −60%. Fuente: Policía Nacional – SIEDCO Plus.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "security",
+  "datos": [
+    {
+      "ambito": "Nacional",
+      "rol": "Policía",
+      "año": "2023",
+      "bajas": 30
+    },
+    {
+      "ambito": "Nacional",
+      "rol": "Policía",
+      "año": "2024",
+      "bajas": 71
+    },
+    {
+      "ambito": "Nacional",
+      "rol": "Policía",
+      "año": "2025",
+      "bajas": 96
+    },
+    {
+      "ambito": "Nacional",
+      "rol": "Militares",
+      "año": "2023",
+      "bajas": 54
+    },
+    {
+      "ambito": "Nacional",
+      "rol": "Militares",
+      "año": "2024",
+      "bajas": 77
+    },
+    {
+      "ambito": "Nacional",
+      "rol": "Militares",
+      "año": "2025",
+      "bajas": 96
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Policía",
+      "año": "2023",
+      "bajas": 1
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Policía",
+      "año": "2024",
+      "bajas": 1
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Policía",
+      "año": "2025",
+      "bajas": 0
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Militares",
+      "año": "2023",
+      "bajas": 5
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Militares",
+      "año": "2024",
+      "bajas": 1
+    },
+    {
+      "ambito": "Nariño",
+      "rol": "Militares",
+      "año": "2025",
+      "bajas": 2
+    }
+  ]
+}

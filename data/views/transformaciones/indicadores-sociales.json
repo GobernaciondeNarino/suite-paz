@@ -1,0 +1,39 @@
+{
+  "vista": "indicadores-sociales",
+  "titulo": "Indicadores sociales — Nariño (2024–2025)",
+  "descripcion": "Variación en educación, acceso a agua y calidad de vivienda según el IPM. Fuente: DANE.",
+  "tipo_grafico_sugerido": "table",
+  "categoria": "social",
+  "datos": [
+    {
+      "indicador": "Analfabetismo",
+      "valor_2024": 14.7,
+      "valor_2025": 8.8,
+      "impacto": "−5,9 p.p. · 76.000 personas"
+    },
+    {
+      "indicador": "Bajo logro educativo",
+      "valor_2024": 60.5,
+      "valor_2025": 55.5,
+      "impacto": "−5 p.p."
+    },
+    {
+      "indicador": "Rezago escolar",
+      "valor_2024": 22.4,
+      "valor_2025": 18.2,
+      "impacto": "−4,2 p.p."
+    },
+    {
+      "indicador": "Sin acceso a agua mejorada",
+      "valor_2024": 23.0,
+      "valor_2025": 20.1,
+      "impacto": "−2,9 p.p."
+    },
+    {
+      "indicador": "Material inadecuado de pisos",
+      "valor_2024": 4.0,
+      "valor_2025": 1.8,
+      "impacto": "−2,2 p.p."
+    }
+  ]
+}

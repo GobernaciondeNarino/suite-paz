@@ -1,0 +1,19 @@
+{
+  "vista": "desocupacion",
+  "titulo": "Tasa de desocupación — Nariño vs Colombia (2024–2025)",
+  "descripcion": "Tasa de desocupación (%). Nariño 6,0% en 2025, la más baja del país (nacional: 8%). Fuente: DANE.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "economic",
+  "datos": [
+    {
+      "año": "2024",
+      "narino": 6.5,
+      "nacional": 9
+    },
+    {
+      "año": "2025",
+      "narino": 6.0,
+      "nacional": 8
+    }
+  ]
+}

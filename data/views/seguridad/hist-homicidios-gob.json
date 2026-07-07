@@ -1,0 +1,45 @@
+{
+  "vista": "hist-homicidios-gob",
+  "titulo": "Histórico de homicidios por gobierno — Colombia (1990–2025)",
+  "descripcion": "Tasa de homicidio por 100.000 hab. en Colombia por período presidencial. Gobierno actual (Petro): 25,6 (2023) · 25,7 (2024) · 26,1 (2025). Fuente: Policía Nacional.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "security",
+  "datos": [
+    {
+      "gobierno": "Gaviria",
+      "tasa": 73
+    },
+    {
+      "gobierno": "Samper",
+      "tasa": 80
+    },
+    {
+      "gobierno": "Pastrana",
+      "tasa": 84
+    },
+    {
+      "gobierno": "Uribe I",
+      "tasa": 82
+    },
+    {
+      "gobierno": "Uribe II",
+      "tasa": 72
+    },
+    {
+      "gobierno": "Santos I",
+      "tasa": 71
+    },
+    {
+      "gobierno": "Santos II",
+      "tasa": 45
+    },
+    {
+      "gobierno": "Duque",
+      "tasa": 36
+    },
+    {
+      "gobierno": "Petro",
+      "tasa": 26.1
+    }
+  ]
+}

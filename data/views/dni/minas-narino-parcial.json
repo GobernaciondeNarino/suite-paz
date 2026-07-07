@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "minas-narino-parcial",
+  "titulo": "Personas afectadas por minas antipersonal — parcial (Nariño) 2025→2026",
+  "unidad": "civiles",
+  "from": {
+    "y": "2025",
+    "v": 6
+  },
+  "to": {
+    "y": "2026",
+    "v": 6
+  },
+  "delta": 0,
+  "fuente": "Comités de Justicia Transicional Ley 1448 de 2011"
+}

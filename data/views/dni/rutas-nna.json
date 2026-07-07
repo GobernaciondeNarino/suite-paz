@@ -1,0 +1,23 @@
+{
+  "modulo": "kpi",
+  "id": "rutas-nna",
+  "titulo": "Rutas de prevención NNA — Alto Comisionado de Reincorporación",
+  "valor": 7,
+  "unidad": "casos",
+  "leyenda": "Ene–Jun 2026",
+  "serie": [
+    {
+      "y": "2023",
+      "v": 25
+    },
+    {
+      "y": "2024",
+      "v": 17
+    },
+    {
+      "y": "2025",
+      "v": 7
+    }
+  ],
+  "fuente": "Alto Comisionado de Reincorporación"
+}

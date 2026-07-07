@@ -1,0 +1,27 @@
+{
+  "modulo": "kpi",
+  "id": "confinamiento-fcs-100",
+  "titulo": "Confinamiento — Injerencia Comuneros del Sur",
+  "valor": 100,
+  "unidad": "%",
+  "leyenda": "Reducción total",
+  "serie": [
+    {
+      "y": "2023",
+      "v": 6772
+    },
+    {
+      "y": "2024",
+      "v": 0
+    },
+    {
+      "y": "2025",
+      "v": 0
+    },
+    {
+      "y": "2026",
+      "v": 0
+    }
+  ],
+  "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+}

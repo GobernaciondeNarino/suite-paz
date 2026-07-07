@@ -1,0 +1,522 @@
+{
+  "vista": "homicidios-municipio",
+  "titulo": "Tasa de homicidio por municipio (2025)",
+  "descripcion": "Tasa por 100.000 hab. en municipios priorizados; 0 = sin dato reportado. Fuente: Policía Nacional.",
+  "tipo_grafico_sugerido": "geomap",
+  "categoria": "geographic",
+  "total_municipios": 64,
+  "municipios": [
+    {
+      "municipio": "ALBÁN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "ALDANA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "ANCUYA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "ARBOLEDA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "BARBACOAS",
+      "tasa_homicidio_2025": 17.1,
+      "tasa_homicidio_2024": 28.3,
+      "tasa_homicidio_2023": 36.7,
+      "casos_2025": 11,
+      "priorizado": true
+    },
+    {
+      "municipio": "BELÉN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "BUESACO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CHACHAGÜÍ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "COLÓN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CONSACÁ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CONTADERO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CÓRDOBA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CUASPUD CARLOSAMA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CUMBAL",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "CUMBITARA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "EL CHARCO",
+      "tasa_homicidio_2025": 13.4,
+      "tasa_homicidio_2024": 26.8,
+      "tasa_homicidio_2023": 40.3,
+      "casos_2025": 3,
+      "priorizado": true
+    },
+    {
+      "municipio": "EL PEÑOL",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "EL ROSARIO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "EL TABLÓN DE GÓMEZ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "EL TAMBO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "FRANCISCO PIZARRO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "FUNES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "GUACHUCAL",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "GUAITARILLA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "GUALMATÁN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "ILES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "IMUÉS",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "IPIALES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LA CRUZ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LA FLORIDA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LA LLANADA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LA TOLA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LA UNIÓN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LEIVA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LINARES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "LOS ANDES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "MAGÜÍ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "MALLAMA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "MOSQUERA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "NARIÑO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "OLAYA HERRERA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "OSPINA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "PASTO",
+      "tasa_homicidio_2025": 9.7,
+      "tasa_homicidio_2024": 7.9,
+      "tasa_homicidio_2023": 10.0,
+      "casos_2025": 39,
+      "priorizado": true
+    },
+    {
+      "municipio": "POLICARPA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "POTOSÍ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "PROVIDENCIA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "PUERRES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "PUPIALES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "RICAURTE",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "ROBERTO PAYÁN",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SAMANIEGO",
+      "tasa_homicidio_2025": 47.6,
+      "tasa_homicidio_2024": 40.8,
+      "tasa_homicidio_2023": 98.6,
+      "casos_2025": 14,
+      "priorizado": true
+    },
+    {
+      "municipio": "SAN ANDRÉS DE TUMACO",
+      "tasa_homicidio_2025": 14.6,
+      "tasa_homicidio_2024": 21.3,
+      "tasa_homicidio_2023": 33.4,
+      "casos_2025": 40,
+      "priorizado": true
+    },
+    {
+      "municipio": "SAN BERNARDO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SAN LORENZO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SAN PABLO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SAN PEDRO DE CARTAGO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SANDONÁ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SANTA BÁRBARA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SANTACRUZ",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "SAPUYES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "TAMINANGO",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "TANGUA",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "TÚQUERRES",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    },
+    {
+      "municipio": "YACUANQUER",
+      "tasa_homicidio_2025": 0,
+      "tasa_homicidio_2024": 0,
+      "tasa_homicidio_2023": 0,
+      "casos_2025": 0,
+      "priorizado": false
+    }
+  ]
+}

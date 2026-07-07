@@ -1,0 +1,51 @@
+{
+  "vista": "estructuras-armadas",
+  "titulo": "Estructuras armadas ilegales presentes en Nariño",
+  "descripcion": "4 grupos armados al margen de la ley + 1 estructura de crimen de alto impacto. CNEB: 3200 combatientes; 2000 en proceso de paz (62.5%).",
+  "tipo_grafico_sugerido": "list",
+  "categoria": "security",
+  "datos": [
+    {
+      "grupo": "Coordinadora Nacional Ejército Bolivariano",
+      "estructuras": [
+        "Alfonso Cano",
+        "Ariel Aldana",
+        "Iván Ríos",
+        "Oliver Sinisterra",
+        "Manuel Sucre",
+        "Comisión 48"
+      ]
+    },
+    {
+      "grupo": "Estado Mayor Central",
+      "estructuras": [
+        "Franco Benavides",
+        "Urías Rondón",
+        "Fredy Gutiérrez",
+        "Alán Rodríguez",
+        "Rafael Aguilera"
+      ]
+    },
+    {
+      "grupo": "ELN",
+      "estructuras": [
+        "Compañía Manuel Vásquez Castaño"
+      ]
+    },
+    {
+      "grupo": "Crimen alto impacto",
+      "estructuras": [
+        "AUN – Autodefensas Unidas de Nariño"
+      ]
+    },
+    {
+      "grupo": "Frente Comuneros del Sur",
+      "estructuras": [
+        "Comuneros del Sur",
+        "José Luis Cabrera",
+        "Elder Santos",
+        "Jaime Toño Obando"
+      ]
+    }
+  ]
+}

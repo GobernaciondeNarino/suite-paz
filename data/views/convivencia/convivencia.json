@@ -1,0 +1,81 @@
+{
+  "vista": "convivencia",
+  "titulo": "Convivencia y seguridad ciudadana — Nariño vs Colombia (2023–2025)",
+  "descripcion": "Casos y tasa por 100.000 hab. de violencia intrafamiliar, lesiones personales y feminicidio. Fuente: SIEDCO Plus · Observatorio Gobernación de Nariño.",
+  "tipo_grafico_sugerido": "table",
+  "categoria": "coexistence",
+  "datos": [
+    {
+      "indicador": "Violencia intrafamiliar",
+      "año": "2023",
+      "casos_nacional": 119466,
+      "tasa_nacional": 229.2,
+      "casos_narino": 3148,
+      "tasa_narino": 185.8
+    },
+    {
+      "indicador": "Violencia intrafamiliar",
+      "año": "2024",
+      "casos_nacional": 136032,
+      "tasa_nacional": 238.5,
+      "casos_narino": 3339,
+      "tasa_narino": 195.9
+    },
+    {
+      "indicador": "Violencia intrafamiliar",
+      "año": "2025",
+      "casos_nacional": 141640,
+      "tasa_nacional": 267,
+      "casos_narino": 3284,
+      "tasa_narino": 191.6
+    },
+    {
+      "indicador": "Lesiones personales",
+      "año": "2023",
+      "casos_nacional": 98886,
+      "tasa_nacional": 189.7,
+      "casos_narino": 2499,
+      "tasa_narino": 147.5
+    },
+    {
+      "indicador": "Lesiones personales",
+      "año": "2024",
+      "casos_nacional": 90945,
+      "tasa_nacional": 172.9,
+      "casos_narino": 2585,
+      "tasa_narino": 151.7
+    },
+    {
+      "indicador": "Lesiones personales",
+      "año": "2025",
+      "casos_nacional": 89636,
+      "tasa_nacional": 168.9,
+      "casos_narino": 2411,
+      "tasa_narino": 140.7
+    },
+    {
+      "indicador": "Feminicidio",
+      "año": "2023",
+      "casos_nacional": 190,
+      "tasa_nacional": 0.4,
+      "casos_narino": 5,
+      "tasa_narino": 0.3
+    },
+    {
+      "indicador": "Feminicidio",
+      "año": "2024",
+      "casos_nacional": 196,
+      "tasa_nacional": 0.4,
+      "casos_narino": 8,
+      "tasa_narino": 0.5
+    },
+    {
+      "indicador": "Feminicidio",
+      "año": "2025",
+      "casos_nacional": 168,
+      "tasa_nacional": 0.3,
+      "casos_narino": 5,
+      "tasa_narino": 0.3
+    }
+  ]
+}

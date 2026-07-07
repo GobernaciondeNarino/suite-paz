@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "coordinadora-confinamiento",
+  "titulo": "Confinamiento CGSB — Ene-Jun 2025→2026",
+  "unidad": "personas",
+  "from": {
+    "y": "Ene-Jun 25",
+    "v": 142
+  },
+  "to": {
+    "y": "Ene-Jun 26",
+    "v": 0
+  },
+  "delta": -100,
+  "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+}
