@@ -1,6 +1,14 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.5.0] — 2026-07-06
+### Added
+- `includes/class-spz-shortcode.php`: `[spz_grafico view type seccion height title theme]` — emite `<div class="spz-chart" data-view data-type data-seccion data-height style="min-height:...px">` sin datos inline; encola `spz-frontend` + `spz-frontend` CSS de forma lazy en `wp_footer`. Atributos sanitizados con `sanitize_slug`/`sanitize_key`/`absint`/`sanitize_text_field`/`sanitize_html_class`; `type` validado contra `SPZ_Chart_Types::is_valid_type`.
+- `includes/class-spz-rest-api.php`: `GET /suite-paz/v1/render?seccion&view&type` → `{chart, view, data, mapping, compatible, seccion}` (público con whitelist interna); `GET /suite-paz/v1/views?seccion` → lista (admin). Usa `compatible_for()` (no `compatible_with_view`). Geomap mapping usa `SPZ_PLUGIN_URL` para topojson.
+- `includes/class-spz-plugin.php`: instancia `SPZ_Shortcode` y `SPZ_Rest_Api` en `__construct()`; `run()` registra shortcode + `rest_api_init`; `enqueue_public_assets()` registra `spz-d3plus` (handle correcto), `spz-renderer`, `spz-frontend`, `spz-frontend` CSS y `wp_localize_script('spz-frontend','SPZ_FRONTEND',{restUrl, nonce, topojsonUrl, pluginUrl, i18n})`.
+### Changed
+- `suite-paz.php`: versión `0.4.1` → `0.5.0`.
+
 ## [0.4.1] — 2026-07-07
 ### Fixed
 - `assets/js/renderer.js`: regex normalización robusta — reemplaza combinadores literales invisibles por escapes Unicode explícitos (`/[̀-ͯ]/g`), funcionalmente idéntico pero seguro ante re-encodings.

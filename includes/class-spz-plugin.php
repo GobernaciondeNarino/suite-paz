@@ -63,8 +63,21 @@ final class SPZ_Plugin {
 	 */
 	private array $data_providers = [];
 
-	// Tarea 6 cablea SPZ_Shortcode.
-	// Tarea 8 cablea SPZ_Admin y SPZ_Rest_Api.
+	/**
+	 * Shortcode handler.
+	 *
+	 * @var SPZ_Shortcode
+	 */
+	public SPZ_Shortcode $shortcode;
+
+	/**
+	 * REST API controller.
+	 *
+	 * @var SPZ_Rest_Api
+	 */
+	public SPZ_Rest_Api $rest_api;
+
+	// Tarea 8 cablea SPZ_Admin.
 
 	/**
 	 * Get the singleton.
@@ -86,6 +99,8 @@ final class SPZ_Plugin {
 		foreach ( array_keys( self::SECCIONES ) as $sec ) {
 			$this->data_providers[ $sec ] = new SPZ_Data_Provider( $this->security, $sec );
 		}
+		$this->shortcode = new SPZ_Shortcode( $this, $this->chart_types, $this->security );
+		$this->rest_api  = new SPZ_Rest_Api( $this, $this->chart_types, $this->security );
 	}
 
 	/**
@@ -127,13 +142,18 @@ final class SPZ_Plugin {
 	public function run(): void {
 		load_plugin_textdomain( 'suite-paz', false, dirname( SPZ_PLUGIN_BASENAME ) . '/languages' );
 
-		// Assets (registered now; enqueued conditionally by shortcode/admin — Tarea 6/8).
+		// Shortcode [spz_grafico] + lazy asset enqueue hook.
+		$this->shortcode->register();
+
+		// REST API routes.
+		add_action( 'rest_api_init', [ $this->rest_api, 'register_routes' ] );
+
+		// Assets (scripts/styles registered here; actually enqueued by the
+		// shortcode on-demand via SPZ_Shortcode::maybe_enqueue_assets).
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_assets' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
-		// Tarea 6 añade: $this->shortcode->register();
 		// Tarea 8 añade: if ( is_admin() ) { $this->admin->register(); }
-		// Tarea 8 añade: add_action( 'rest_api_init', [ $this->rest_api, 'register_routes' ] );
 		// Tarea 8 añade: add_filter( 'plugin_action_links_' . SPZ_PLUGIN_BASENAME, [...] );
 	}
 
@@ -175,15 +195,59 @@ final class SPZ_Plugin {
 	 * (SPZ_Shortcode handles the conditional enqueue — Tarea 6).
 	 */
 	public function enqueue_public_assets(): void {
+		// d3plus CDN bundle — full build required (peer deps embedded).
 		wp_register_script(
-			'd3plus',
+			'spz-d3plus',
 			SPZ_D3PLUS_URL,
 			[],
 			SPZ_D3PLUS_VERSION,
 			true
 		);
 
-		// Tarea 6 registra spz-renderer y spz-frontend aquí.
+		// d3plus renderer (SPZ.renderer.render).
+		wp_register_script(
+			'spz-renderer',
+			SPZ_PLUGIN_URL . 'assets/js/renderer.js',
+			[ 'spz-d3plus' ],
+			SPZ_VERSION,
+			true
+		);
+
+		// Frontend hydrator — fetches REST payload and calls the renderer.
+		wp_register_script(
+			'spz-frontend',
+			SPZ_PLUGIN_URL . 'assets/js/frontend.js',
+			[ 'spz-d3plus', 'spz-renderer' ],
+			SPZ_VERSION,
+			true
+		);
+
+		// Frontend stylesheet.
+		wp_register_style(
+			'spz-frontend',
+			SPZ_PLUGIN_URL . 'assets/css/frontend.css',
+			[],
+			SPZ_VERSION
+		);
+
+		// Localize the frontend script with WordPress-side config.
+		// restUrl includes /render so frontend.js can append ?seccion=&view=&type=
+		// topojsonUrl injects the real WP plugin path so renderer.js resolves the map.
+		wp_localize_script(
+			'spz-frontend',
+			'SPZ_FRONTEND',
+			[
+				'restUrl'     => esc_url_raw( rest_url( SPZ_REST_NAMESPACE . '/render' ) ),
+				'nonce'       => wp_create_nonce( 'wp_rest' ),
+				'topojsonUrl' => SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson',
+				'pluginUrl'   => SPZ_PLUGIN_URL,
+				'i18n'        => [
+					'loading' => __( 'Cargando gráfico…', 'suite-paz' ),
+					'error'   => __( 'No fue posible cargar el gráfico.', 'suite-paz' ),
+					'empty'   => __( 'Sin datos disponibles.', 'suite-paz' ),
+				],
+			]
+		);
 	}
 
 	/**
