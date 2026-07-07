@@ -14,6 +14,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from paz_catalog import CATALOGO  # noqa: E402
+from analisis import ANALISIS    # noqa: E402
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 _lookup_path = ROOT / "data" / "topo" / "narino_municipios.lookup.json"
@@ -30,6 +31,10 @@ def norm(s: str) -> str:
 
 
 def write(seccion: str, slug: str, obj: dict) -> None:
+    # Inject citizen analysis paragraph if available
+    analisis_text = ANALISIS.get(slug, "")
+    if analisis_text:
+        obj["analisis"] = analisis_text
     d = ROOT / "data" / "views" / seccion
     d.mkdir(parents=True, exist_ok=True)
     # Silence index.php (WordPress direct-access protection)
