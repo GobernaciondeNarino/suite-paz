@@ -350,14 +350,12 @@
 				</figure>
 			`;
 
-			// Use the frontend renderer (SPZRenderer) which is enqueued on the builder screen.
-			if ( window.SPZRenderer && window.SPZRenderer.render ) {
-				window.SPZRenderer.render( containerId, payload, {
-					legend:      opts.legend,
-					legendStyle: opts.legend_style || 'text',
-					xTitle:      opts.x_title || '',
-					yTitle:      opts.y_title || '',
-				} );
+			// Use the frontend renderer (window.SPZ.renderer) which is enqueued on the builder screen.
+			if ( window.SPZ && window.SPZ.renderer && typeof window.SPZ.renderer.render === 'function' ) {
+				window.SPZ.renderer.render(
+					document.getElementById( containerId ),
+					{ view: payload, type: state.chartKey, options: { legend: opts.legend, legendStyle: opts.legend_style || 'text', xTitle: opts.x_title || '', yTitle: opts.y_title || '' } }
+				);
 			}
 
 			// Wire type-selector if present.
@@ -659,7 +657,9 @@
 			if ( modType === 'kpi' || modType === 'compare' ) {
 				html += fieldRow( 'titulo',  payload.titulo  || '', i18n.labelTitle || 'Título', 'text' );
 				html += fieldRow( 'unidad',  payload.unidad  || '', i18n.labelUnit  || 'Unidad', 'text' );
-				html += fieldRow( 'valor',   payload.valor   != null ? payload.valor : '',   'Valor actual', 'number' );
+				if ( modType === 'kpi' ) {
+					html += fieldRow( 'valor',   payload.valor   != null ? payload.valor : '',   'Valor actual', 'number' );
+				}
 				if ( modType === 'compare' ) {
 					html += fieldRow( 'from_v', ( payload['from'] && payload['from'].v != null ) ? payload['from'].v : '', 'Valor anterior (from.v)', 'number' );
 					html += fieldRow( 'to_v',   ( payload['to']   && payload['to'].v   != null ) ? payload['to'].v   : '', 'Valor actual (to.v)',    'number' );
@@ -695,7 +695,6 @@
 			// Logro
 			if ( modType === 'logro' ) {
 				html += fieldRow( 'titulo',    payload.titulo    || '', i18n.labelTitle   || 'Título', 'text' );
-				html += fieldRow( 'subtitulo', payload.subtitulo || '', i18n.labelSub     || 'Subtítulo', 'text' );
 				html += fieldRow( 'texto',     payload.texto     || '', i18n.labelText    || 'Texto', 'text' );
 				html += fieldRow( 'fuente',    payload.fuente    || '', i18n.labelSource  || 'Fuente', 'text' );
 			}
@@ -775,6 +774,11 @@
 					edited[ key ] = inp.type === 'number' && ! isNaN( n ) ? n : inp.value;
 				}
 			} );
+
+			// Strip keys disallowed by the module whitelist.
+			const editedModType = edited.modulo || '';
+			if ( editedModType && editedModType !== 'kpi' ) { delete edited.valor; }
+			delete edited.subtitulo;
 
 			return edited;
 		}

@@ -161,7 +161,7 @@ Inserta automáticamente todos los módulos y gráficos de una sección en orden
 
 | ID               | Etiqueta              | Vistas | Descripción |
 |------------------|-----------------------|--------|-------------|
-| `dni`            | DNI / Paz             | 19     | Datos del Departamento Nacional de Inteligencia y Paz: desplazamiento, confinamiento, minas antipersonal, NNA, firmantes, UBPD |
+| `dni`            | Diálogo, Negociación e Implementación | 19     | Desplazamiento, confinamiento, minas antipersonal, niñez (NNA), firmantes de paz, búsqueda de personas desaparecidas (UBPD), acuerdos de paz. |
 | `seguridad`      | Seguridad             | 6      | Homicidios por municipio (mapa), histórico departamental, estructuras armadas, fuerza pública, terrorismo nacional vs Nariño |
 | `convivencia`    | Convivencia           | 3      | Convivencia ciudadana, hurtos, hallazgos clave |
 | `estrategia`     | Estrategia            | 2      | Subsecretaría de Paz, Nariño 360 |

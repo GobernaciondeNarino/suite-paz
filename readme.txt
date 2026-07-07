@@ -16,7 +16,7 @@ Suite PAZ es un plugin de WordPress para la Gobernación de Nariño que expone l
 
 **Características principales:**
 
-* 34 vistas de datos organizadas en 5 secciones temáticas (DNI/Paz, Seguridad, Convivencia, Estrategia, Transformaciones).
+* 34 vistas de datos organizadas en 5 secciones temáticas (Diálogo, Negociación e Implementación, Seguridad, Convivencia, Estrategia, Transformaciones).
 * 15 tipos de gráfico d3plus v3: bar, stacked_bar, line, area, stacked_area, pie, donut, treemap, geomap (mapa coroplético con los 64 municipios de Nariño), network, tree, sankey, rings, box_whisker, priestley.
 * 4 tipos de módulo nativo: KPI (count-up animado + delta), Compare (antes/después + %), Timeline (hitos), Logro (tarjeta destacada).
 * Editor de datos en el panel de administración: editar, guardar, exportar y restablecer cualquier vista directamente en la BD de WordPress.

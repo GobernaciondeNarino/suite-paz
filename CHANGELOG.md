@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.0.1] — 2026-07-06
+### Fixed
+- `README.md` y `readme.txt`: etiqueta correcta de la sección `dni` — "Diálogo, Negociación e Implementación" (eliminada referencia errónea a "Departamento Nacional de Inteligencia").
+- `assets/js/admin.js`: editor guarda correctamente los módulos `compare` (sin campo `valor`) y `logro` (sin campo `subtitulo`); `collectPayload` elimina claves no permitidas antes de enviar al servidor.
+- `assets/js/admin.js`: preview del constructor usa `window.SPZ.renderer.render(el, {view, type, options})` en lugar del objeto no existente `window.SPZRenderer`.
+
 ## [1.0.0] — 2026-07-06
 ### Added
 - `README.md`: documentación completa en español — descripción, instalación, tabla de shortcodes, las 5 secciones, editor de datos, árbol de archivos, rutas REST, seguridad, guía de prueba en WordPress, limitación conocida (vistas radial/strategy de Estrategia), paleta de marca.

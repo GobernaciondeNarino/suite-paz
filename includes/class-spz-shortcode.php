@@ -253,12 +253,14 @@ class SPZ_Shortcode {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * [spz_seccion id] — render all modules and views in a sección in order.
+	 * [spz_seccion id] — render all modules and views in a sección.
 	 *
-	 * Modules are emitted as .spz-module placeholders (hydrated by modules.js).
-	 * Chart views are emitted as .spz-chart placeholders (hydrated by renderer.js)
-	 * using the first compatible chart type. Views with no compatible type (e.g.
-	 * "strategy"/"radial" tipo_grafico_sugerido) are skipped with a data-only note.
+	 * Items (modules and chart views) are emitted in alphabetical order by view
+	 * name, as returned by DataProvider::list_views(). Modules are rendered as
+	 * .spz-module placeholders (hydrated by modules.js); chart views as
+	 * .spz-chart placeholders (hydrated by renderer.js) using the first
+	 * compatible chart type. Views with no compatible type (e.g. "strategy"/
+	 * "radial" tipo_grafico_sugerido) are silently skipped.
 	 *
 	 * @param array|string $atts Shortcode attributes.
 	 * @return string HTML output.
