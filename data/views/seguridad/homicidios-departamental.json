@@ -1,0 +1,64 @@
+{
+  "vista": "homicidios-departamental",
+  "titulo": "Ranking departamental de homicidios — Colombia (2023, 2024, 2025)",
+  "descripcion": "Tasa de homicidio por 100.000 hab. por departamento y año (selección con Nariño). Fuente: Policía Nacional – DANE.",
+  "tipo_grafico_sugerido": "table",
+  "categoria": "security",
+  "datos": [
+    {
+      "año": "2023",
+      "departamento": "San Andrés y Providencia",
+      "tasa": 65.1
+    },
+    {
+      "año": "2023",
+      "departamento": "Putumayo",
+      "tasa": 61.2
+    },
+    {
+      "año": "2023",
+      "departamento": "Valle del Cauca",
+      "tasa": 58.4
+    },
+    {
+      "año": "2023",
+      "departamento": "Nariño",
+      "tasa": 26.2
+    },
+    {
+      "año": "2024",
+      "departamento": "Guaviare",
+      "tasa": 64.1
+    },
+    {
+      "año": "2024",
+      "departamento": "Valle del Cauca",
+      "tasa": 48.6
+    },
+    {
+      "año": "2024",
+      "departamento": "Nariño",
+      "tasa": 21.0
+    },
+    {
+      "año": "2025",
+      "departamento": "Guaviare",
+      "tasa": 67.3
+    },
+    {
+      "año": "2025",
+      "departamento": "San Andrés y Providencia",
+      "tasa": 65.1
+    },
+    {
+      "año": "2025",
+      "departamento": "Valle del Cauca",
+      "tasa": 55.4
+    },
+    {
+      "año": "2025",
+      "departamento": "Nariño",
+      "tasa": 14.7
+    }
+  ]
+}

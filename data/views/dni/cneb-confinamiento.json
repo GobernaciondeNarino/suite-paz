@@ -1,0 +1,25 @@
+{
+  "vista": "cneb-confinamiento",
+  "titulo": "Confinamiento en zona de injerencia CNEB (2023–2026)",
+  "descripcion": "Personas confinadas en municipios de influencia de la Coordinadora Nacional Ejército Bolivariano. Fuente: Comité de Justicia Transicional Ley 1448 de 2011.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "humanitarian",
+  "datos": [
+    {
+      "año": "2023",
+      "personas": 2787
+    },
+    {
+      "año": "2024",
+      "personas": 286
+    },
+    {
+      "año": "2025",
+      "personas": 142
+    },
+    {
+      "año": "2026",
+      "personas": 0
+    }
+  ]
+}

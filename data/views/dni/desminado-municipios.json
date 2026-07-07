@@ -1,0 +1,266 @@
+{
+  "vista": "desminado-municipios",
+  "titulo": "Municipios en proceso de desminado humanitario",
+  "descripcion": "Municipios de Nariño con procesos activos de desminado humanitario (injerencia FCS). 1 = en desminado; 0 = sin dato. San Pablo declarado libre de minas.",
+  "tipo_grafico_sugerido": "geomap",
+  "categoria": "geographic",
+  "total_municipios": 64,
+  "municipios": [
+    {
+      "municipio": "ALBÁN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "ALDANA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "ANCUYA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "ARBOLEDA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "BARBACOAS",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "BELÉN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "BUESACO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CHACHAGÜÍ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "COLÓN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CONSACÁ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CONTADERO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CÓRDOBA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CUASPUD CARLOSAMA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "CUMBAL",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "CUMBITARA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "EL CHARCO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "EL PEÑOL",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "EL ROSARIO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "EL TABLÓN DE GÓMEZ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "EL TAMBO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "FRANCISCO PIZARRO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "FUNES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "GUACHUCAL",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "GUAITARILLA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "GUALMATÁN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "ILES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "IMUÉS",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "IPIALES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LA CRUZ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LA FLORIDA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LA LLANADA",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "LA TOLA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LA UNIÓN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LEIVA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LINARES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "LOS ANDES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "MAGÜÍ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "MALLAMA",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "MOSQUERA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "NARIÑO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "OLAYA HERRERA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "OSPINA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "PASTO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "POLICARPA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "POTOSÍ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "PROVIDENCIA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "PUERRES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "PUPIALES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "RICAURTE",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "ROBERTO PAYÁN",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SAMANIEGO",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "SAN ANDRÉS DE TUMACO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SAN BERNARDO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SAN LORENZO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SAN PABLO",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "SAN PEDRO DE CARTAGO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SANDONÁ",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SANTA BÁRBARA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "SANTACRUZ",
+      "en_desminado": 1
+    },
+    {
+      "municipio": "SAPUYES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "TAMINANGO",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "TANGUA",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "TÚQUERRES",
+      "en_desminado": 0
+    },
+    {
+      "municipio": "YACUANQUER",
+      "en_desminado": 0
+    }
+  ]
+}

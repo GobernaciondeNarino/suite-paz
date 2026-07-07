@@ -1,0 +1,27 @@
+{
+  "modulo": "kpi",
+  "id": "firmantes-100",
+  "titulo": "Homicidios de firmantes de paz",
+  "valor": 100,
+  "unidad": "%",
+  "leyenda": "Reducción",
+  "serie": [
+    {
+      "y": "2023",
+      "v": 2
+    },
+    {
+      "y": "2024",
+      "v": 0
+    },
+    {
+      "y": "2025",
+      "v": 0
+    },
+    {
+      "y": "2026",
+      "v": 0
+    }
+  ],
+  "fuente": "Consejo Departamental de Reincorporación"
+}

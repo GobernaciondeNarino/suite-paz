@@ -1,0 +1,99 @@
+{
+  "vista": "terrorismo-nacional-narino",
+  "titulo": "Acciones terroristas — Colombia vs Nariño (2022–2024)",
+  "descripcion": "Número de acciones terroristas por departamento/nación. Nariño: −53% (2022→2023) y −20,5% (2023→2024), tendencia opuesta al resto del país. Fuente: Fuerzas Militares.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "security",
+  "datos": [
+    {
+      "ambito": "Nacional",
+      "año": "2022",
+      "acciones": 839,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Nacional",
+      "año": "2023",
+      "acciones": 1126,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Nacional",
+      "año": "2024",
+      "acciones": 1398,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Chocó",
+      "año": "2022",
+      "acciones": 53,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Chocó",
+      "año": "2023",
+      "acciones": 81,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Chocó",
+      "año": "2024",
+      "acciones": 87,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Valle del Cauca",
+      "año": "2022",
+      "acciones": 57,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Valle del Cauca",
+      "año": "2023",
+      "acciones": 100,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Valle del Cauca",
+      "año": "2024",
+      "acciones": 193,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Cauca",
+      "año": "2022",
+      "acciones": 158,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Cauca",
+      "año": "2023",
+      "acciones": 385,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Cauca",
+      "año": "2024",
+      "acciones": null,
+      "tendencia_buena": false
+    },
+    {
+      "ambito": "Nariño",
+      "año": "2022",
+      "acciones": 83,
+      "tendencia_buena": true
+    },
+    {
+      "ambito": "Nariño",
+      "año": "2023",
+      "acciones": 39,
+      "tendencia_buena": true
+    },
+    {
+      "ambito": "Nariño",
+      "año": "2024",
+      "acciones": 31,
+      "tendencia_buena": true
+    }
+  ]
+}

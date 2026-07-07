@@ -1,0 +1,32 @@
+{
+  "modulo": "timeline",
+  "id": "acuerdos-fcs",
+  "titulo": "Línea de tiempo — Acuerdos con el Frente Comuneros del Sur",
+  "total": 12,
+  "eventos": [
+    {
+      "fecha": "Sep 2024",
+      "texto": "Instalación / primeros acuerdos"
+    },
+    {
+      "fecha": "Oct 2024",
+      "texto": "Acuerdos"
+    },
+    {
+      "fecha": "Nov 2024",
+      "texto": "Acuerdos"
+    },
+    {
+      "fecha": "Dic 2024",
+      "texto": "Acuerdos"
+    },
+    {
+      "fecha": "Ene 2025",
+      "texto": "Acuerdos"
+    },
+    {
+      "fecha": "Jun 2025",
+      "texto": "Acuerdos"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "modulo": "timeline",
+  "id": "acuerdos-cneb",
+  "titulo": "Línea de tiempo — Acuerdos con la CNEB",
+  "total": null,
+  "eventos": [
+    {
+      "fecha": "Ene 2025",
+      "texto": "Instalación de mesas"
+    },
+    {
+      "fecha": "Feb 2025",
+      "texto": "Protocolos"
+    },
+    {
+      "fecha": "May 2025",
+      "texto": "Cese"
+    },
+    {
+      "fecha": "Jul 2025",
+      "texto": "Avances"
+    },
+    {
+      "fecha": "Dic 2025",
+      "texto": "Acuerdos"
+    },
+    {
+      "fecha": "Mar 2026",
+      "texto": "Avances"
+    },
+    {
+      "fecha": "Jun 2026",
+      "texto": "Continuidad"
+    }
+  ]
+}

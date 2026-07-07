@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "desplazamiento-interanual",
+  "titulo": "Desplazamiento forzado (Nariño) 2024→2025",
+  "unidad": "personas",
+  "from": {
+    "y": "2024",
+    "v": 17441
+  },
+  "to": {
+    "y": "2025",
+    "v": 4227
+  },
+  "delta": -75.8,
+  "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+}

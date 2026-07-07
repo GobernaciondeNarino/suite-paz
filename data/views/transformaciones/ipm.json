@@ -1,0 +1,45 @@
+{
+  "vista": "ipm",
+  "titulo": "Índice de Pobreza Multidimensional (IPM) — Nariño vs Nacional (2024–2025)",
+  "descripcion": "IPM total, urbano y rural en Nariño y Colombia. Rural de Nariño bajó a 17,2, por debajo del promedio nacional (22,4). Fuente: DANE.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "social",
+  "datos": [
+    {
+      "indicador": "IPM total",
+      "año": "2024",
+      "narino": 18.1,
+      "nacional": 11.5
+    },
+    {
+      "indicador": "IPM total",
+      "año": "2025",
+      "narino": 13.2,
+      "nacional": 9.9
+    },
+    {
+      "indicador": "IPM urbano (cabeceras)",
+      "año": "2024",
+      "narino": 10.0,
+      "nacional": 7.8
+    },
+    {
+      "indicador": "IPM urbano (cabeceras)",
+      "año": "2025",
+      "narino": 8.2,
+      "nacional": 6.3
+    },
+    {
+      "indicador": "IPM rural",
+      "año": "2024",
+      "narino": 24.5,
+      "nacional": 24.3
+    },
+    {
+      "indicador": "IPM rural",
+      "año": "2025",
+      "narino": 17.2,
+      "nacional": 22.4
+    }
+  ]
+}

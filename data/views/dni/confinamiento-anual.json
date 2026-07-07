@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "confinamiento-anual",
+  "titulo": "Confinamiento forzado (Nariño) 2023→2024",
+  "unidad": "personas",
+  "from": {
+    "y": "2023",
+    "v": 6772
+  },
+  "to": {
+    "y": "2024",
+    "v": 3999
+  },
+  "delta": -40.9,
+  "fuente": "Comité de Justicia Transicional Ley 1448 de 2011"
+}

@@ -1,0 +1,29 @@
+{
+  "vista": "pib",
+  "titulo": "PIB de Nariño por sectores económicos (2024–2025)",
+  "descripcion": "PIB a precios corrientes, miles de millones de pesos. Fuente: DANE.",
+  "tipo_grafico_sugerido": "bar",
+  "categoria": "economic",
+  "datos": [
+    {
+      "sector": "Agricultura, ganadería, caza, silvicultura y pesca",
+      "valor_2024": 26130,
+      "valor_2025": 28593
+    },
+    {
+      "sector": "Explotación de minas y canteras",
+      "valor_2024": 5185,
+      "valor_2025": 5852
+    },
+    {
+      "sector": "Industrias manufactureras",
+      "valor_2024": 217,
+      "valor_2025": 243
+    },
+    {
+      "sector": "Comercio y reparación de vehículos",
+      "valor_2024": 525,
+      "valor_2025": 569
+    }
+  ]
+}

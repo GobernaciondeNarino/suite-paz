@@ -1,0 +1,16 @@
+{
+  "modulo": "compare",
+  "id": "minas-narino",
+  "titulo": "Personas afectadas por minas antipersonal (Nariño) 2023→2024",
+  "unidad": "civiles",
+  "from": {
+    "y": "2023",
+    "v": 42
+  },
+  "to": {
+    "y": "2024",
+    "v": 26
+  },
+  "delta": -38.1,
+  "fuente": "Comités de Justicia Transicional Ley 1448 de 2011"
+}
