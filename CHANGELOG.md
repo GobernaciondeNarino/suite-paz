@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.5] — 2026-07-07
+### Fixed
+- `templates/admin/builder.php`: `MutationObserver` ahora revela simétricamente el bloque `[spz_analisis]` cuando el shortcode principal se vuelve visible (`mainBox.hidden === false`), invocando `syncAnalisis()` con el valor actual. Previamente solo ocultaba el análisis cuando el shortcode se ocultaba.
+
 ## [1.1.4] — 2026-07-07
 ### Added
 - `includes/class-spz-shortcode.php`: shortcode `[spz_analisis id seccion]` — renderizado server-side del campo `analisis` de la vista/módulo; texto escapado con `esc_html()`; retorna vacío si el campo no existe o está en blanco (tolerante a datos sin `analisis` hasta Fix-Task 5). Registrado con `add_shortcode('spz_analisis', ...)`.

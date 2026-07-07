@@ -204,8 +204,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( mainBox ) {
 						new MutationObserver( function ( muts ) {
 							muts.forEach( function ( m ) {
-								if ( m.attributeName === 'hidden' && mainBox.hidden ) {
-									analisisBox.hidden = true;
+								if ( m.attributeName === 'hidden' ) {
+									if ( mainBox.hidden ) {
+										analisisBox.hidden = true;
+									} else {
+										syncAnalisis( mainInput.value );
+									}
 								}
 							} );
 						} ).observe( mainBox, { attributes: true } );
