@@ -764,10 +764,12 @@
 				// Handle nested compare fields: from_v → from.v, to_v → to.v.
 				if ( key === 'from_v' ) {
 					if ( ! edited['from'] ) { edited['from'] = {}; }
-					edited['from'].v = parseFloat( inp.value );
+					const fv = parseFloat( inp.value );
+					edited['from'].v = ! isNaN( fv ) ? fv : inp.value;
 				} else if ( key === 'to_v' ) {
 					if ( ! edited['to'] ) { edited['to'] = {}; }
-					edited['to'].v = parseFloat( inp.value );
+					const tv = parseFloat( inp.value );
+					edited['to'].v = ! isNaN( tv ) ? tv : inp.value;
 				} else {
 					const n = parseFloat( inp.value );
 					edited[ key ] = inp.type === 'number' && ! isNaN( n ) ? n : inp.value;

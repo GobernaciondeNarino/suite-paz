@@ -1,6 +1,11 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.8.1] — 2026-07-06
+### Fixed
+- `includes/class-spz-rest-api.php`: ruta REST `GET /views/{slug}?seccion=` añadida para que el Constructor pueda obtener `{ view, compatible }` al seleccionar una vista (corrige 404 en `onSelectView`). Usa el mismo permission callback `rest_admin_permission` que `GET /views`.
+- `assets/js/admin.js`: guard `isNaN` aplicado a `from_v`/`to_v` en `collectPayload()` para evitar que un campo vacío almacene `NaN` (comportamiento consistente con los demás campos numéricos).
+
 ## [0.8.0] — 2026-07-06
 ### Added
 - `includes/class-spz-admin.php`: `SPZ_Admin` con `register()` → `admin_menu` hook. Top-level menu "Suite PAZ" (dashicon `chart-area`, posición 58, capacidad `manage_options`) + 4 submenús: **Constructor** (slug `suite-paz`), **Shortcodes** (`suite-paz-shortcodes`), **Editar datos** (`suite-paz-editor`), **Ajustes** (`suite-paz-settings`). Cada callback llama `guard()` (capability check) antes de incluir su template.

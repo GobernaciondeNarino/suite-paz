@@ -81,6 +81,21 @@ class SPZ_Rest_Api {
 			]
 		);
 
+		// GET /suite-paz/v1/views/{slug}?seccion= — single view + compatible types (admin).
+		register_rest_route(
+			SPZ_REST_NAMESPACE,
+			'/views/(?P<slug>[a-zA-Z0-9_-]+)',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'get_single_view' ],
+				'permission_callback' => [ $this->security, 'rest_admin_permission' ],
+				'args'                => [
+					'seccion' => [ 'sanitize_callback' => 'sanitize_key' ],
+					'slug'    => [ 'sanitize_callback' => 'sanitize_key' ],
+				],
+			]
+		);
+
 		// POST /suite-paz/v1/save — save (upsert) a DB override (admin + nonce).
 		register_rest_route(
 			SPZ_REST_NAMESPACE,
@@ -175,6 +190,31 @@ class SPZ_Rest_Api {
 		$seccion = $this->seccion_from( $request );
 		$dp      = $this->plugin->data_provider( $seccion );
 		return new WP_REST_Response( $dp->list_views(), 200 );
+	}
+
+	/**
+	 * GET /suite-paz/v1/views/{slug}?seccion= — return a single view + compatible chart types (admin).
+	 *
+	 * Response shape (consumed by admin.js onSelectView):
+	 *   { view: { ... }, compatible: [ { key, label, icon, class, description }, … ] }
+	 * For module views, compatible is an empty array.
+	 *
+	 * @param WP_REST_Request $request Incoming request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_single_view( WP_REST_Request $request ) {
+		$seccion = $this->plugin->normalize_seccion( (string) $request->get_param( 'seccion' ) );
+		$slug    = $this->security->sanitize_slug( (string) $request['slug'] );
+		$dp      = $this->plugin->data_provider( $seccion );
+		$view    = $dp->get_view( $slug );
+
+		if ( empty( $view ) ) {
+			return new WP_Error( 'spz_not_found', 'Vista no encontrada', [ 'status' => 404 ] );
+		}
+
+		$compatible = empty( $view['is_module'] ) ? $this->chart_types->compatible_for( $view ) : [];
+
+		return rest_ensure_response( [ 'view' => $view, 'compatible' => $compatible ] );
 	}
 
 	/**
