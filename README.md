@@ -196,10 +196,12 @@ Muestra el texto de análisis ciudadano (~594 caracteres) asociado a una vista o
 
 Las dos vistas de la sección **Estrategia** son módulos nativos (no gráficos d3plus), insertados con sus propios shortcodes:
 
-| Módulo       | Vista slug      | Shortcode                                    | Descripción |
-|--------------|-----------------|----------------------------------------------|-------------|
-| `diagrama`   | `subsecretaria` | `[spz_grafico view="subsecretaria" seccion="estrategia"]` o módulo `spz_diagrama` | Nodo central "Subsecretaría" con ramas que muestran nombre, KPI y sub-descripción de cada área. Renderizado con HTML/CSS nativo sin d3plus. |
-| `estrategia` | `narino-360`    | `[spz_grafico view="narino-360" seccion="estrategia"]` o módulo `spz_estrategia` | Descripción estratégica, lista numerada de líneas de acción y chips de canales de comunicación. Renderizado con HTML/CSS nativo sin d3plus. |
+| Módulo       | Vista slug      | Shortcode correcto                                              | Descripción |
+|--------------|-----------------|----------------------------------------------------------------|-------------|
+| `diagrama`   | `subsecretaria` | `[spz_diagrama id="subsecretaria" seccion="estrategia"]`       | Nodo central "Subsecretaría" con ramas que muestran nombre, KPI y sub-descripción de cada área. Renderizado con HTML/CSS nativo sin d3plus. |
+| `estrategia` | `narino-360`    | `[spz_estrategia id="narino-360" seccion="estrategia"]`        | Descripción estratégica, lista numerada de líneas de acción y chips de canales de comunicación. Renderizado con HTML/CSS nativo sin d3plus. |
+
+> **Nota:** `[spz_grafico view="subsecretaria"]` y `[spz_grafico view="narino-360"]` **no funcionan** — estas vistas son módulos nativos, no gráficos d3plus. Use `[spz_diagrama]` / `[spz_estrategia]` o el shortcode de sección `[spz_seccion id="estrategia"]`.
 
 ---
 
@@ -252,7 +254,7 @@ suite-paz/
 │   ├── class-spz-data-store.php    # CRUD en wp_spz_views ($wpdb->prepare en todas las queries)
 │   ├── class-spz-chart-types.php   # Registro de 15 tipos d3plus + 1 nativo (tabla); compatible_for(view)
 │   ├── class-spz-modules.php       # Registro de tipos de módulo (kpi/compare/timeline/logro/diagrama/estrategia)
-│   ├── class-spz-shortcode.php     # Handlers de los 7 shortcodes (incluye spz_analisis)
+│   ├── class-spz-shortcode.php     # Handlers de los 9 shortcodes (incluye spz_diagrama, spz_estrategia, spz_analisis)
 │   ├── class-spz-rest-api.php      # Rutas REST (suite-paz/v1)
 │   └── class-spz-admin.php         # Menú de administración (4 subpáginas)
 │
@@ -348,9 +350,10 @@ suite-paz/
 10. Verificar que cada vista tiene un botón **"Ver datos"** (pill violeta debajo del gráfico); hacer clic abre un panel con las filas de datos y la fuente.
 11. Para probar módulos de Estrategia:
     ```
-    [spz_grafico view="subsecretaria" seccion="estrategia"]
-    [spz_grafico view="narino-360" seccion="estrategia"]
+    [spz_diagrama id="subsecretaria" seccion="estrategia"]
+    [spz_estrategia id="narino-360" seccion="estrategia"]
     ```
+    O insertarlos a la vez con `[spz_seccion id="estrategia"]`.
 12. Para probar el **editor de datos**: ir a **Suite PAZ → Editar datos**, seleccionar `seguridad` → `homicidios-municipio`, modificar un valor, guardar, y recargar el mapa para confirmar que el cambio se refleja.
 13. Usar **Restablecer** para volver a los datos originales.
 14. Verificar que el menú principal y los 4 submenús son visibles únicamente para usuarios con rol **Administrador**.
@@ -365,7 +368,7 @@ suite-paz/
 
 La causa más frecuente es tener una versión anterior al **v1.1.x** del plugin. Antes de la versión 1.1.0, la semilla de datos usaba categorías temáticas no estándar (`humanitarian`, `security`, `economic`, `coexistence`) que `compatible_for()` no reconocía; como resultado, el endpoint REST `/render` devolvía **409 Conflict** para todas esas vistas.
 
-**Verificar:** ir a **Plugins → Plugins instalados** y confirmar que Suite PAZ muestra la versión **1.1.7** o posterior.
+**Verificar:** ir a **Plugins → Plugins instalados** y confirmar que Suite PAZ muestra la versión **1.1.8** o posterior.
 
 **Otras causas:**
 - La librería d3plus no cargó desde CDN (revisar conexión a `cdn.jsdelivr.net`). Las vistas `tabla`, `diagrama` y `estrategia` no requieren d3plus y siempre renderizan.
@@ -373,7 +376,11 @@ La causa más frecuente es tener una versión anterior al **v1.1.x** del plugin.
 
 ### Los módulos `diagrama` y `estrategia` no aparecen
 
-Confirmar que la sección es `estrategia` (slug exacto). Estas dos vistas son módulos nativos y no usan d3plus; renderizan siempre que el plugin esté activo, sin necesidad de conexión a Internet.
+Confirmar que se usan los shortcodes correctos:
+- `[spz_diagrama id="subsecretaria" seccion="estrategia"]`
+- `[spz_estrategia id="narino-360" seccion="estrategia"]`
+
+**No usar** `[spz_grafico view="subsecretaria"]` ni `[spz_grafico view="narino-360"]` — estas vistas son módulos nativos, no gráficos d3plus. Alternativamente, `[spz_seccion id="estrategia"]` los inserta ambos automáticamente. Estas dos vistas no usan d3plus y renderizan siempre que el plugin esté activo.
 
 ### El análisis ciudadano `[spz_analisis]` no muestra texto
 

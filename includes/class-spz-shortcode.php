@@ -4,12 +4,14 @@
  *
  * Registered shortcodes:
  *   [spz_grafico  view type seccion height title theme]
- *   [spz_kpi      id seccion]
- *   [spz_compare  id seccion]
- *   [spz_timeline id seccion]
- *   [spz_logro    id seccion]
- *   [spz_seccion  id]
- *   [spz_analisis id seccion]
+ *   [spz_kpi       id seccion]
+ *   [spz_compare   id seccion]
+ *   [spz_timeline  id seccion]
+ *   [spz_logro     id seccion]
+ *   [spz_diagrama  id seccion]
+ *   [spz_estrategia id seccion]
+ *   [spz_seccion   id]
+ *   [spz_analisis  id seccion]
  *
  * Chart shortcode ([spz_grafico]):
  *   The server emits only a lightweight placeholder div with data-* attrs;
@@ -17,7 +19,8 @@
  *   fetches the view payload from the REST endpoint. This keeps the HTML free of
  *   inline JSON (cache-safe) and avoids exposing raw data in the page source.
  *
- * Module shortcodes ([spz_kpi], [spz_compare], [spz_timeline], [spz_logro]):
+ * Module shortcodes ([spz_kpi], [spz_compare], [spz_timeline], [spz_logro],
+ *                    [spz_diagrama], [spz_estrategia]):
  *   Each emits <div class="spz-module" data-modulo data-id data-seccion>.
  *   frontend.js finds these, fetches the payload from REST /render, and calls
  *   SPZ.modules.render(el, payload). Each verifies the target view is actually
@@ -71,13 +74,15 @@ class SPZ_Shortcode {
 	 * Register all shortcodes and the footer hook for lazy asset enqueue.
 	 */
 	public function register(): void {
-		add_shortcode( 'spz_grafico',  [ $this, 'render_grafico' ] );
-		add_shortcode( 'spz_kpi',      [ $this, 'render_kpi' ] );
-		add_shortcode( 'spz_compare',  [ $this, 'render_compare' ] );
-		add_shortcode( 'spz_timeline', [ $this, 'render_timeline' ] );
-		add_shortcode( 'spz_logro',    [ $this, 'render_logro' ] );
-		add_shortcode( 'spz_seccion',  [ $this, 'render_seccion' ] );
-		add_shortcode( 'spz_analisis', [ $this, 'render_analisis' ] );
+		add_shortcode( 'spz_grafico',   [ $this, 'render_grafico' ] );
+		add_shortcode( 'spz_kpi',       [ $this, 'render_kpi' ] );
+		add_shortcode( 'spz_compare',   [ $this, 'render_compare' ] );
+		add_shortcode( 'spz_timeline',  [ $this, 'render_timeline' ] );
+		add_shortcode( 'spz_logro',     [ $this, 'render_logro' ] );
+		add_shortcode( 'spz_diagrama',  [ $this, 'render_diagrama' ] );
+		add_shortcode( 'spz_estrategia', [ $this, 'render_estrategia' ] );
+		add_shortcode( 'spz_seccion',   [ $this, 'render_seccion' ] );
+		add_shortcode( 'spz_analisis',  [ $this, 'render_analisis' ] );
 		add_action( 'wp_footer', [ $this, 'maybe_enqueue_assets' ] );
 	}
 
@@ -158,7 +163,7 @@ class SPZ_Shortcode {
 	 * Emit a generic module placeholder after validating id + seccion + type.
 	 *
 	 * @param array|string $atts       Raw shortcode attributes.
-	 * @param string       $modulo_key Expected module type (kpi|compare|timeline|logro).
+	 * @param string       $modulo_key Expected module type (kpi|compare|timeline|logro|diagrama|estrategia).
 	 * @param string       $tag        Shortcode tag name (for error messages).
 	 * @return string HTML placeholder or error div.
 	 */
@@ -248,6 +253,26 @@ class SPZ_Shortcode {
 	 */
 	public function render_logro( $atts ): string {
 		return $this->render_module( $atts, 'logro', 'spz_logro' );
+	}
+
+	/**
+	 * [spz_diagrama id seccion] — strategy diagram (Subsecretaría).
+	 *
+	 * @param array|string $atts Shortcode attributes.
+	 * @return string
+	 */
+	public function render_diagrama( $atts ): string {
+		return $this->render_module( $atts, 'diagrama', 'spz_diagrama' );
+	}
+
+	/**
+	 * [spz_estrategia id seccion] — strategy overview (Nariño 360).
+	 *
+	 * @param array|string $atts Shortcode attributes.
+	 * @return string
+	 */
+	public function render_estrategia( $atts ): string {
+		return $this->render_module( $atts, 'estrategia', 'spz_estrategia' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -361,14 +386,21 @@ class SPZ_Shortcode {
 					);
 				}
 			} else {
-				// Chart view — pick first compatible type.
-				$view       = $dp->get_view( $id );
-				$compatible = $view ? $this->chart_types->compatible_for( $view ) : [];
+				// Chart view — pick the best compatible type.
+				// Prefer the view's own tipo_grafico_sugerido when it is in the
+				// compatible list (e.g. 'tabla' views must not be rendered as 'bar').
+				// Fall back to the first compatible type when the hint is absent or
+				// not in the compatible list.
+				$view        = $dp->get_view( $id );
+				$compatible  = $view ? $this->chart_types->compatible_for( $view ) : [];
 				if ( empty( $compatible ) ) {
 					// No compatible chart type (e.g. strategy/radial views).
 					continue;
 				}
-				$first_type = sanitize_key( (string) ( $compatible[0]['key'] ?? '' ) );
+				$compat_keys = array_column( $compatible, 'key' );
+				$hint        = $view ? (string) ( $view['tipo_grafico_sugerido'] ?? '' ) : '';
+				$type        = in_array( $hint, $compat_keys, true ) ? $hint : ( $compat_keys[0] ?? '' );
+				$first_type  = sanitize_key( $type );
 				if ( '' === $first_type ) {
 					continue;
 				}

@@ -24,6 +24,13 @@ La semilla de datos usaba categorías temáticas (`humanitarian`, `security`, `e
 
 ---
 
+## [1.1.8] — 2026-07-07
+### Fixed
+- `includes/class-spz-modules.php`: `TYPES` ampliado con `'diagrama'` y `'estrategia'`; `is_valid('diagrama')` e `is_valid('estrategia')` ahora devuelven `true`, desbloqueando `[spz_seccion id="estrategia"]` y los nuevos shortcodes de módulo.
+- `includes/class-spz-shortcode.php`: registrados `[spz_diagrama id seccion]` y `[spz_estrategia id seccion]` en el path WP (WordPress shortcode registry); cada uno delega a `render_module` con su clave de módulo correspondiente, siguiendo exactamente el mismo patrón que `spz_kpi`/`spz_compare`/`spz_timeline`/`spz_logro`.
+- `includes/class-spz-shortcode.php`: `render_seccion` ahora prefiere `tipo_grafico_sugerido` de la vista cuando ese tipo está en la lista de compatibles, en lugar de tomar siempre `compatible[0]` (que era `bar` para vistas categóricas). Las 5 vistas con `tipo_grafico_sugerido:"tabla"` ahora se renderizan correctamente como tablas.
+- `README.md`: tabla de módulos de Estrategia actualizada con los shortcodes correctos `[spz_diagrama]`/`[spz_estrategia]`; eliminadas referencias erróneas a `[spz_grafico view="subsecretaria"]` y `[spz_grafico view="narino-360"]`.
+
 ## [1.1.7] — 2026-07-07
 ### Fixed
 - `assets/js/renderer.js`: fuga de listener `keydown` — `attachVerDatos` registraba un listener anónimo irremovible por cada panel. Ahora `onKey` (función nombrada en el closure) se añade en `openPanel()` y se elimina en `closePanel()`, de modo que solo existe un listener mientras el panel está abierto.
