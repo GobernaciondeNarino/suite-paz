@@ -98,6 +98,27 @@ $secciones     = SPZ_Plugin::instance()->secciones();
 							</button>
 						</div>
 					</article>
+					<article class="spz-shortcode-card">
+						<header class="spz-shortcode-card__header">
+							<span class="dashicons dashicons-editor-quote" aria-hidden="true"></span>
+							<h3><?php esc_html_e( 'Análisis ciudadano', 'suite-paz' ); ?></h3>
+						</header>
+						<p class="spz-shortcode-card__desc">
+							<?php esc_html_e( 'Párrafo de análisis ciudadano de este módulo.', 'suite-paz' ); ?>
+						</p>
+						<div class="spz-shortcode-row">
+							<input
+								type="text"
+								readonly
+								value="<?php echo esc_attr( sprintf( '[spz_analisis id="%s" seccion="%s"]', esc_attr( $summary['id'] ), esc_attr( $seccion ) ) ); ?>"
+								aria-label="<?php esc_attr_e( 'Shortcode análisis ciudadano', 'suite-paz' ); ?>"
+							/>
+							<button type="button" class="button spz-copy-btn" data-spz-copy>
+								<span class="dashicons dashicons-admin-page" aria-hidden="true"></span>
+								<?php esc_html_e( 'Copiar', 'suite-paz' ); ?>
+							</button>
+						</div>
+					</article>
 				</div>
 			</details>
 		<?php else :
@@ -146,6 +167,27 @@ $secciones     = SPZ_Plugin::instance()->secciones();
 								</div>
 							</article>
 						<?php endforeach; ?>
+					<article class="spz-shortcode-card">
+						<header class="spz-shortcode-card__header">
+							<span class="dashicons dashicons-editor-quote" aria-hidden="true"></span>
+							<h3><?php esc_html_e( 'Análisis ciudadano', 'suite-paz' ); ?></h3>
+						</header>
+						<p class="spz-shortcode-card__desc">
+							<?php esc_html_e( 'Párrafo de análisis ciudadano de esta vista.', 'suite-paz' ); ?>
+						</p>
+						<div class="spz-shortcode-row">
+							<input
+								type="text"
+								readonly
+								value="<?php echo esc_attr( sprintf( '[spz_analisis id="%s"%s]', esc_attr( $summary['id'] ), $seccion_attr ) ); ?>"
+								aria-label="<?php esc_attr_e( 'Shortcode análisis ciudadano', 'suite-paz' ); ?>"
+							/>
+							<button type="button" class="button spz-copy-btn" data-spz-copy>
+								<span class="dashicons dashicons-admin-page" aria-hidden="true"></span>
+								<?php esc_html_e( 'Copiar', 'suite-paz' ); ?>
+							</button>
+						</div>
+					</article>
 					</div>
 
 					<h4 class="spz-data-heading">

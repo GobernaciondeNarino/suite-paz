@@ -564,6 +564,26 @@
 }
 
 /* ------------------------------------------------------------- */
+/* Citizen-analysis block (.spz-analisis)                         */
+/* ------------------------------------------------------------- */
+
+.spz-analisis {
+	margin: 1.2em 0;
+	padding: .9em 1.2em .9em 1.4em;
+	background: #f9f7fd;
+	border-left: 4px solid #5B3B8C;
+	border-radius: 0 8px 8px 0;
+	color: var( --spz-ink, #1E2233 );
+	font-size: 15px;
+	line-height: 1.75;
+	max-width: 68ch;
+}
+
+.spz-analisis p {
+	margin: 0;
+}
+
+/* ------------------------------------------------------------- */
 /* Tabla nativa (.spz-tabla)                                      */
 /* ------------------------------------------------------------- */
 

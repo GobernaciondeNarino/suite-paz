@@ -3,12 +3,13 @@
  * Shortcode handler.
  *
  * Registered shortcodes:
- *   [spz_grafico view type seccion height title theme]
+ *   [spz_grafico  view type seccion height title theme]
  *   [spz_kpi      id seccion]
  *   [spz_compare  id seccion]
  *   [spz_timeline id seccion]
  *   [spz_logro    id seccion]
  *   [spz_seccion  id]
+ *   [spz_analisis id seccion]
  *
  * Chart shortcode ([spz_grafico]):
  *   The server emits only a lightweight placeholder div with data-* attrs;
@@ -76,6 +77,7 @@ class SPZ_Shortcode {
 		add_shortcode( 'spz_timeline', [ $this, 'render_timeline' ] );
 		add_shortcode( 'spz_logro',    [ $this, 'render_logro' ] );
 		add_shortcode( 'spz_seccion',  [ $this, 'render_seccion' ] );
+		add_shortcode( 'spz_analisis', [ $this, 'render_analisis' ] );
 		add_action( 'wp_footer', [ $this, 'maybe_enqueue_assets' ] );
 	}
 
@@ -246,6 +248,59 @@ class SPZ_Shortcode {
 	 */
 	public function render_logro( $atts ): string {
 		return $this->render_module( $atts, 'logro', 'spz_logro' );
+	}
+
+	// -------------------------------------------------------------------------
+	// Citizen-analysis shortcode
+	// -------------------------------------------------------------------------
+
+	/**
+	 * [spz_analisis id seccion] — render the citizen-facing analysis paragraph.
+	 *
+	 * Reads the `analisis` field from the view/module identified by `id` inside
+	 * `seccion` and outputs it as a server-side–rendered block. The text is
+	 * escaped with esc_html() so it is safe for public display even if it was
+	 * user-edited. No REST request is made; no JS assets are needed.
+	 *
+	 * Returns an empty string when:
+	 *   - `id` is missing or invalid.
+	 *   - The view does not exist.
+	 *   - The `analisis` field is absent or blank.
+	 *
+	 * @param array|string $atts Shortcode attributes: id, seccion.
+	 * @return string HTML output (or empty string).
+	 */
+	public function render_analisis( $atts ): string {
+		$atts = shortcode_atts(
+			[
+				'id'      => '',
+				'seccion' => SPZ_Plugin::DEFAULT_SECCION,
+			],
+			is_array( $atts ) ? $atts : [],
+			'spz_analisis'
+		);
+
+		$id      = $this->security->sanitize_slug( (string) $atts['id'] );
+		$seccion = $this->plugin->normalize_seccion( (string) $atts['seccion'] );
+
+		if ( '' === $id ) {
+			return '';
+		}
+
+		$view = $this->plugin->data_provider( $seccion )->get_view( $id );
+		if ( empty( $view ) ) {
+			return '';
+		}
+
+		$analisis = trim( (string) ( $view['analisis'] ?? '' ) );
+		if ( '' === $analisis ) {
+			return '';
+		}
+
+		return sprintf(
+			'<div class="spz-analisis"><p>%s</p></div>',
+			esc_html( $analisis )
+		);
 	}
 
 	// -------------------------------------------------------------------------

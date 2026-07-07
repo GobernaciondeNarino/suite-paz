@@ -1,6 +1,13 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.4] — 2026-07-07
+### Added
+- `includes/class-spz-shortcode.php`: shortcode `[spz_analisis id seccion]` — renderizado server-side del campo `analisis` de la vista/módulo; texto escapado con `esc_html()`; retorna vacío si el campo no existe o está en blanco (tolerante a datos sin `analisis` hasta Fix-Task 5). Registrado con `add_shortcode('spz_analisis', ...)`.
+- `templates/admin/builder.php`: segunda caja de shortcode (`#spz-analisis-box`) que muestra `[spz_analisis id="..." seccion="..."]` copiable cada vez que admin.js genera el shortcode principal; sincronización via interceptor `Object.defineProperty` en el setter de `#spz-shortcode-input`; se oculta/muestra junto con la caja principal via `MutationObserver`.
+- `templates/admin/shortcodes.php`: artículo extra `[spz_analisis …]` copiable añadido en la galería de shortcodes — dentro del `spz-shortcode-grid` de cada módulo PAZ y de cada vista de gráfico (tras el loop de tipos compatibles).
+- `assets/css/frontend.css`: `.spz-analisis` — bloque de párrafo ciudadano con borde izquierdo violeta `#5B3B8C`, fondo lavanda claro `#f9f7fd`, `line-height: 1.75`, `max-width: 68ch`, radio de borde derecho para legibilidad pública.
+
 ## [1.1.3] — 2026-07-07
 ### Fixed
 - `assets/js/modules.js`: escapar `payload.modulo` con `esc()` en fallback "no soportado" (XSS).
