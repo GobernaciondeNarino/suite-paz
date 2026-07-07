@@ -141,6 +141,19 @@
   <div class="status" id="sm9">Cargando&hellip;</div>
 </div>
 
+<!-- ============================================================
+     TEST 10 — Botón "Ver datos" + panel de datos
+     Cada elemento renderizado (gráfico/módulo/tabla) debe recibir
+     un botón .spz-verdatos; al pulsarlo aparece .spz-datapanel.
+     ============================================================ -->
+<div class="card">
+  <h2>Test 10 — Botón "Ver datos" + panel de datos</h2>
+  <p class="desc">Cada elemento renderizado debe tener un botón <code>.spz-verdatos</code>
+     (adjunto por renderer/modules). Al pulsarlo debe abrirse <code>.spz-datapanel</code>
+     con la tabla de datos consumidos.</p>
+  <div class="status" id="s10">Esperando renders&hellip;</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
 <!-- PAZ native module renderer (must load before frontend.js) -->
@@ -364,6 +377,38 @@
         setStatus(test.status, false, 'Error: ' + err.message);
       });
   });
+
+  // ----------------------------------------------------------------
+  // Test 10 — "Ver datos" buttons appear and open data panels
+  // Poll until at least one .spz-verdatos button is found (modules
+  // render synchronously so they attach immediately; d3plus charts
+  // attach before the async wait so they appear quickly too).
+  // ----------------------------------------------------------------
+  var t10start = Date.now();
+  var t10timer = setInterval(function() {
+    var btns = document.querySelectorAll('.spz-verdatos');
+    if (btns.length > 0) {
+      clearInterval(t10timer);
+      setStatus('s10', true, btns.length + ' botones "Ver datos" encontrados — probando el primero…');
+      // Click the first button and verify the panel opens with content.
+      btns[0].click();
+      setTimeout(function() {
+        var panel = document.querySelector('.spz-datapanel:not([hidden])');
+        if (panel) {
+          var hasContent = !!panel.querySelector('table') || !!panel.querySelector('dl') || !!panel.querySelector('.spz-empty');
+          setStatus('s10', hasContent,
+            hasContent
+              ? 'Panel abierto con contenido de datos ✓ (' + btns.length + ' botones en total)'
+              : 'Panel abierto pero sin contenido de datos');
+        } else {
+          setStatus('s10', false, btns.length + ' botones presentes pero el panel no se abrió');
+        }
+      }, 200);
+    } else if (Date.now() - t10start > 8000) {
+      clearInterval(t10timer);
+      setStatus('s10', false, 'Sin botones .spz-verdatos tras 8 s — revisar renderer.js / modules.js');
+    }
+  }, 200);
 
 })();
 </script>

@@ -1,6 +1,14 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.6] — 2026-07-07
+### Added
+- `assets/js/renderer.js`: función `attachVerDatos(el, dataForPanel, meta)` — adjunta un botón `<button class="spz-verdatos">` y un panel colapsable `<div class="spz-datapanel">` como hermanos de cada elemento renderizado. El botón usa `aria-expanded` y gestión de foco (Esc cierra y devuelve el foco al botón). La función está expuesta en `window.SPZ.util.attachVerDatos` para reutilización desde `modules.js`. Guarda `el.dataset.spzVd` para evitar doble adjunto.
+- `assets/js/renderer.js`: llamada a `attachVerDatos` en `Renderer.render()` — para el path de tabla nativa (sincrono, tras `renderTable`) y para el path d3plus (antes del await `waitForD3plus`, de modo que el botón aparece inmediatamente sin esperar a que d3plus cargue).
+- `assets/js/modules.js`: función privada `moduleDataForPanel(modulo, payload)` — extrae las filas significativas de cada tipo de módulo (`kpi→[{valor,unidad}]`, `compare→[{período,valor}×2]`, `timeline→eventos`, `logro→[{titulo,texto}]`, `diagrama→ramas`, `estrategia→lineas`). `SPZ.modules.render` llama a `SPZ.util.attachVerDatos` tras renderizar cada módulo.
+- `assets/css/frontend.css`: `.spz-verdatos` (botón pill violeta `#5B3B8C`, hover fondo violeta, `aria-expanded=true` fondo violeta), `.spz-datapanel` (panel con cabecera `#F4F1FA` + botón cerrar ×, cuerpo scrollable `max-height:380px`), `.spz-datapanel__src` (fuente en cursiva con borde teal), `.spz-datapanel__dl` (grid 2 columnas). Responsive: panel reduce a 260 px y dl a 1 columna en ≤ 640 px.
+- `tests/harness.html`: Bloque Test 10 — card con `#s10` que espera botones `.spz-verdatos`, hace clic en el primero y verifica que `.spz-datapanel:not([hidden])` contiene tabla o dl.
+
 ## [1.1.5] — 2026-07-07
 ### Fixed
 - `templates/admin/builder.php`: `MutationObserver` ahora revela simétricamente el bloque `[spz_analisis]` cuando el shortcode principal se vuelve visible (`mainBox.hidden === false`), invocando `syncAnalisis()` con el valor actual. Previamente solo ocultaba el análisis cuando el shortcode se ocultaba.

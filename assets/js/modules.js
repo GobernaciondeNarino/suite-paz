@@ -71,6 +71,42 @@ SPZ.modules = (function(){
     el.innerHTML=html;
   }
   const R={kpi,compare,timeline,logro,diagrama,estrategia};
-  return { render(el,payload){ const fn=R[payload.modulo]; if(fn) fn(el,payload);
-    else el.innerHTML='<p class="spz-empty">Módulo no soportado: '+esc(String(payload.modulo||'?'))+'</p>'; } };
+
+  // Build a plain-object rows array for the "Ver datos" panel per module type.
+  function moduleDataForPanel(modulo,d){
+    switch(modulo){
+      case 'kpi':
+        if(d.serie&&Array.isArray(d.serie))return d.serie;
+        var kRows=[{campo:'Valor',valor:d.valor,unidad:d.unidad||''}];
+        if(d.leyenda)kRows.push({campo:'Leyenda',valor:d.leyenda});
+        return kRows;
+      case 'compare':
+        return[
+          {período:String(d.from&&d.from.y||''),valor:d.from&&d.from.v},
+          {período:String(d.to&&d.to.y||''),valor:d.to&&d.to.v}
+        ];
+      case 'timeline':
+        return(d.eventos||[]).map(function(e){return{fecha:e.fecha,texto:e.texto};});
+      case 'logro':
+        return[{titulo:d.titulo,texto:d.texto}];
+      case 'diagrama':
+        return(d.ramas||[]).map(function(r){
+          return{nombre:r.nombre||'',kpi:r.kpi||'',sub:(r.sub||[]).join(', ')};
+        });
+      case 'estrategia':
+        return(d.lineas||[]).map(function(l,i){return{'#':i+1,línea:l};});
+      default:return[];
+    }
+  }
+
+  return { render(el,payload){ const fn=R[payload.modulo]; if(fn){
+    fn(el,payload);
+    if(window.SPZ&&window.SPZ.util&&typeof window.SPZ.util.attachVerDatos==='function'){
+      window.SPZ.util.attachVerDatos(el,moduleDataForPanel(payload.modulo,payload),{
+        title:payload.titulo||String(payload.modulo||'Módulo'),
+        fuente:payload.fuente||'',
+        descripcion:payload.descripcion||''
+      });
+    }
+  } else el.innerHTML='<p class="spz-empty">Módulo no soportado: '+esc(String(payload.modulo||'?'))+'</p>'; } };
 })();
