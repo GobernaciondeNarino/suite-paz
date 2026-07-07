@@ -49,8 +49,63 @@
   <div class="status" id="s2">Cargando…</div>
 </div>
 
+<!-- ============================================================
+     TEST 3 — KPI module: Homicidios de firmantes (100% reducción)
+     Datos: data/views/dni/firmantes-100.json
+     Esperado: .spz-kpi__v contiene el número "100" (count-up corrió)
+     ============================================================ -->
+<div class="card">
+  <h2>Test 3 — Módulo KPI: Firmantes de Paz</h2>
+  <p class="desc">Vista: dni/firmantes-100 · módulo: kpi · valor: 100 · unidad: %<br>
+     El counter debe animarse hasta 100; bajar = verde (no aplica aquí).</p>
+  <div class="spz-module" id="m1" data-modulo="kpi" data-id="firmantes-100" data-seccion="dni"
+       data-spz-src="../data/views/dni/firmantes-100.json"></div>
+  <div class="status" id="sm1">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 4 — Compare module: Desplazamiento 2023→2024
+     Datos: data/views/dni/desplazamiento-anual.json
+     Esperado: .spz-compare con delta ▼ 31.1% en verde (good)
+     ============================================================ -->
+<div class="card">
+  <h2>Test 4 — Módulo Compare: Desplazamiento forzado</h2>
+  <p class="desc">Vista: dni/desplazamiento-anual · módulo: compare · delta: −31.1% (bueno = verde)</p>
+  <div class="spz-module" id="m2" data-modulo="compare" data-id="desplazamiento-anual" data-seccion="dni"
+       data-spz-src="../data/views/dni/desplazamiento-anual.json"></div>
+  <div class="status" id="sm2">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 5 — Timeline module: Acuerdos FCS
+     Datos: data/views/dni/acuerdos-fcs.json
+     Esperado: .spz-timeline con ≥ 1 <li> con hitos
+     ============================================================ -->
+<div class="card">
+  <h2>Test 5 — Módulo Timeline: Acuerdos Frente Comuneros del Sur</h2>
+  <p class="desc">Vista: dni/acuerdos-fcs · módulo: timeline · 6 hitos Sep 2024 – Jun 2025</p>
+  <div class="spz-module" id="m3" data-modulo="timeline" data-id="acuerdos-fcs" data-seccion="dni"
+       data-spz-src="../data/views/dni/acuerdos-fcs.json"></div>
+  <div class="status" id="sm3">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 6 — Logro module: San Pablo libre de minas
+     Datos: data/views/dni/san-pablo-libre-minas.json
+     Esperado: .spz-logro con h4 + p
+     ============================================================ -->
+<div class="card">
+  <h2>Test 6 — Módulo Logro: San Pablo libre de minas</h2>
+  <p class="desc">Vista: dni/san-pablo-libre-minas · módulo: logro · tarjeta con borde teal</p>
+  <div class="spz-module" id="m4" data-modulo="logro" data-id="san-pablo-libre-minas" data-seccion="dni"
+       data-spz-src="../data/views/dni/san-pablo-libre-minas.json"></div>
+  <div class="status" id="sm4">Cargando…</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
+<!-- PAZ native module renderer (must load before frontend.js) -->
+<script src="../assets/js/modules.js"></script>
 
 <script>
 (function () {
@@ -138,6 +193,67 @@
       console.error('[SPZ harness] bar fetch error', err);
       setStatus('s2', false, 'Error al cargar JSON: ' + err.message);
     });
+
+  // ----------------------------------------------------------------
+  // Tests 3–6 — Native PAZ modules
+  // All four modules load their JSON via data-spz-src; we use the
+  // same fetch-then-render pattern frontend.js uses in standalone mode.
+  // ----------------------------------------------------------------
+  var moduleTests = [
+    { src: '../data/views/dni/firmantes-100.json',       el: 'm1', status: 'sm1',
+      check: function() {
+        var v = document.querySelector('#m1 .spz-kpi__v');
+        if (!v) return null;
+        var n = parseFloat(v.textContent.replace(/\./g,'').replace(',','.'));
+        return isNaN(n) ? null : n;
+      },
+      pass: function(n) { return n > 0; },
+      msg:  function(n) { return 'KPI count-up corrió → ' + n + ' (esperaba > 0)'; }
+    },
+    { src: '../data/views/dni/desplazamiento-anual.json', el: 'm2', status: 'sm2',
+      check: function() { return document.querySelector('#m2 .spz-delta.good'); },
+      pass:  function(v) { return !!v; },
+      msg:   function()  { return 'Compare pintado — delta ▼ con clase .good (verde)'; }
+    },
+    { src: '../data/views/dni/acuerdos-fcs.json',        el: 'm3', status: 'sm3',
+      check: function() { return document.querySelectorAll('#m3 .spz-timeline li').length; },
+      pass:  function(n) { return n > 0; },
+      msg:   function(n) { return 'Timeline pintada — ' + n + ' hitos'; }
+    },
+    { src: '../data/views/dni/san-pablo-libre-minas.json', el: 'm4', status: 'sm4',
+      check: function() { return document.querySelector('#m4 .spz-logro'); },
+      pass:  function(v) { return !!v; },
+      msg:   function()  { return 'Logro pintado — tarjeta con borde teal'; }
+    }
+  ];
+
+  moduleTests.forEach(function(test) {
+    fetch(test.src)
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        var el = document.getElementById(test.el);
+        if (!el) { setStatus(test.status, false, 'Elemento no encontrado'); return; }
+        SPZ.modules.render(el, payload);
+
+        // Poll until rendered or timeout.
+        var attempts = 0;
+        var timer = setInterval(function() {
+          attempts++;
+          var result = test.check();
+          if (test.pass(result)) {
+            clearInterval(timer);
+            setStatus(test.status, true, test.msg(result));
+          } else if (attempts > 30) {
+            clearInterval(timer);
+            setStatus(test.status, false, 'Timeout — módulo no pintado tras 3 s');
+          }
+        }, 100);
+      })
+      .catch(function(err) {
+        console.error('[SPZ harness] module fetch error', err);
+        setStatus(test.status, false, 'Error: ' + err.message);
+      });
+  });
 
 })();
 </script>

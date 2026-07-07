@@ -1,6 +1,17 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.6.0] — 2026-07-06
+### Added
+- `includes/class-spz-modules.php`: `SPZ_Modules` con `types():array` → `['kpi','compare','timeline','logro']` e `is_valid(string):bool`.
+- `assets/js/modules.js`: `SPZ.modules.render(el, payload)` — dispatcher para kpi (count-up + delta, bajar=verde), compare (antes→después + %), timeline (hitos con `<ol>`), logro (tarjeta). Respeta `prefers-reduced-motion`. Verbatim del brief.
+- `includes/class-spz-shortcode.php`: shortcodes `[spz_kpi id seccion]`, `[spz_compare id seccion]`, `[spz_timeline id seccion]`, `[spz_logro id seccion]` — emiten `.spz-module[data-modulo][data-id][data-seccion]`; verifican que la vista exista y sea del tipo correcto via data-provider. `[spz_seccion id]` lista todos los módulos/vistas de la sección en orden (módulos como `.spz-module`, vistas como `.spz-chart` con el primer tipo compatible). `maybe_enqueue_assets()` ahora encola también `spz-modules`.
+- `assets/js/frontend.js`: DOMContentLoaded escanea también `.spz-module[data-modulo][data-id][data-seccion]`; `initModule(el)` fetches via `data-spz-src` (harness) o REST `/render?seccion&view` (WP) y llama `SPZ.modules.render(el, payload)`.
+- `assets/css/frontend.css`: estilos de módulos — `.spz-kpi__v{font-size:clamp(2rem,5vw,3.4rem);font-weight:800;color:#5B3B8C}`, `.spz-delta.good{color:#2FA87A}`, `.spz-delta.bad{color:#E63946}`, `.spz-compare`, `.spz-timeline`, `.spz-logro` con paleta de marca. `.spz-seccion` como columna de módulos.
+- `includes/class-spz-plugin.php`: `$this->modules = new SPZ_Modules()` en `__construct()`; `spz-modules` registrado en `enqueue_public_assets()`; pasado a `SPZ_Shortcode`.
+- `includes/class-spz-rest-api.php`: `type` ahora es opcional en `/render`; cuando la vista tiene `is_module=true` retorna el JSON raw del módulo directamente (sin validación de tipo de gráfico).
+- `tests/harness.html`: Bloques 3–6 para kpi/compare/timeline/logro cargando los JSONs reales de `dni/`; assertions Playwright: `.spz-kpi__v` contiene número (count-up corrió), `.spz-timeline li` count > 0, `.spz-delta.good` visible.
+
 ## [0.5.1] — 2026-07-06
 ### Fixed
 - `includes/class-spz-rest-api.php`: nodos network/rings ahora preservan todos los atributos del row (label, group, value, etc.); garantiza clave `id` sin descartar el resto.

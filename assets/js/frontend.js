@@ -27,6 +27,7 @@
 
 	document.addEventListener( 'DOMContentLoaded', function () {
 		document.querySelectorAll( '.spz-chart[data-view][data-type][data-seccion]' ).forEach( initChart );
+		document.querySelectorAll( '.spz-module[data-modulo][data-id][data-seccion]' ).forEach( initModule );
 	} );
 
 	// ------------------------------------------------------------------
@@ -109,6 +110,65 @@
 			} )
 			.catch( function ( err ) {
 				console.error( '[SPZ frontend]', err );
+				el.innerHTML = '<p class="spz-empty">' + i18n( 'error' ) + '</p>';
+			} );
+	}
+
+	// ------------------------------------------------------------------
+	// Per-module initialisation
+	// ------------------------------------------------------------------
+
+	function initModule( el ) {
+		const id      = el.getAttribute( 'data-id' );
+		const seccion = el.getAttribute( 'data-seccion' ) || 'dni';
+
+		if ( ! id ) {
+			return;
+		}
+
+		// Resolve the fetch URL.
+		// Standalone / harness: prefer a direct data-spz-src attribute.
+		// WordPress: call /render without type (module path returns raw JSON).
+		const src = el.getAttribute( 'data-spz-src' );
+		let fetchUrl;
+
+		if ( src ) {
+			fetchUrl = src;
+		} else if ( typeof SPZ_FRONTEND !== 'undefined' && SPZ_FRONTEND.restUrl ) {
+			fetchUrl = SPZ_FRONTEND.restUrl
+				+ '?seccion=' + encodeURIComponent( seccion )
+				+ '&view='    + encodeURIComponent( id );
+		} else {
+			return;
+		}
+
+		const headers = {};
+		if ( typeof SPZ_FRONTEND !== 'undefined' && SPZ_FRONTEND.nonce ) {
+			headers[ 'X-WP-Nonce' ] = SPZ_FRONTEND.nonce;
+		}
+
+		fetch( fetchUrl, { headers: headers, credentials: 'same-origin' } )
+			.then( function ( r ) {
+				if ( ! r.ok ) {
+					throw new Error( 'HTTP ' + r.status );
+				}
+				return r.json();
+			} )
+			.then( function ( payload ) {
+				if ( ! payload || ! payload.modulo ) {
+					el.innerHTML = '<p class="spz-empty">' + i18n( 'empty' ) + '</p>';
+					return;
+				}
+
+				if ( ! window.SPZ || ! window.SPZ.modules ) {
+					el.innerHTML = '<p class="spz-empty">' + i18n( 'error' ) + '</p>';
+					return;
+				}
+
+				window.SPZ.modules.render( el, payload );
+			} )
+			.catch( function ( err ) {
+				console.error( '[SPZ modules]', err );
 				el.innerHTML = '<p class="spz-empty">' + i18n( 'error' ) + '</p>';
 			} );
 	}

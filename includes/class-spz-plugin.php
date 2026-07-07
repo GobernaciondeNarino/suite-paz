@@ -57,6 +57,13 @@ final class SPZ_Plugin {
 	public SPZ_Chart_Types $chart_types;
 
 	/**
+	 * PAZ native module registry (kpi, compare, timeline, logro).
+	 *
+	 * @var SPZ_Modules
+	 */
+	public SPZ_Modules $modules;
+
+	/**
 	 * One data provider per sección, keyed by sección slug.
 	 *
 	 * @var array<string, SPZ_Data_Provider>
@@ -96,10 +103,11 @@ final class SPZ_Plugin {
 	private function __construct() {
 		$this->security    = new SPZ_Security();
 		$this->chart_types = new SPZ_Chart_Types();
+		$this->modules     = new SPZ_Modules();
 		foreach ( array_keys( self::SECCIONES ) as $sec ) {
 			$this->data_providers[ $sec ] = new SPZ_Data_Provider( $this->security, $sec );
 		}
-		$this->shortcode = new SPZ_Shortcode( $this, $this->chart_types, $this->security );
+		$this->shortcode = new SPZ_Shortcode( $this, $this->chart_types, $this->security, $this->modules );
 		$this->rest_api  = new SPZ_Rest_Api( $this, $this->chart_types, $this->security );
 	}
 
@@ -218,6 +226,15 @@ final class SPZ_Plugin {
 			'spz-frontend',
 			SPZ_PLUGIN_URL . 'assets/js/frontend.js',
 			[ 'spz-d3plus', 'spz-renderer' ],
+			SPZ_VERSION,
+			true
+		);
+
+		// PAZ native module renderer (SPZ.modules.render).
+		wp_register_script(
+			'spz-modules',
+			SPZ_PLUGIN_URL . 'assets/js/modules.js',
+			[],
 			SPZ_VERSION,
 			true
 		);

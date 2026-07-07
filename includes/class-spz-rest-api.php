@@ -85,10 +85,13 @@ class SPZ_Rest_Api {
 						'sanitize_callback' => 'sanitize_key',
 					],
 					'type'    => [
-						'required'          => true,
+						'required'          => false,
+						'default'           => '',
 						'sanitize_callback' => 'sanitize_key',
 						'validate_callback' => function ( $value ) {
-							return $this->chart_types->is_valid_type( sanitize_key( (string) $value ) );
+							$v = sanitize_key( (string) $value );
+							// Allow empty type (module requests do not supply a type).
+							return '' === $v || $this->chart_types->is_valid_type( $v );
 						},
 					],
 				],
@@ -146,10 +149,10 @@ class SPZ_Rest_Api {
 		$type_raw   = sanitize_key( (string) $request->get_param( 'type' ) );
 		$chart_type = $this->chart_types->is_valid_type( $type_raw ) ? $type_raw : '';
 
-		if ( '' === $view_id || '' === $chart_type ) {
+		if ( '' === $view_id ) {
 			return new WP_Error(
 				'spz_bad_request',
-				__( 'Parámetros inválidos: se requieren "view" y "type" con valores reconocidos.', 'suite-paz' ),
+				__( 'Parámetro inválido: se requiere "view".', 'suite-paz' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -160,6 +163,20 @@ class SPZ_Rest_Api {
 				'spz_view_not_found',
 				__( 'Vista no encontrada.', 'suite-paz' ),
 				[ 'status' => 404 ]
+			);
+		}
+
+		// Native module — return the raw module JSON directly (no chart type needed).
+		if ( ! empty( $view['is_module'] ) ) {
+			return new WP_REST_Response( $view, 200 );
+		}
+
+		// Chart view — type is now required.
+		if ( '' === $chart_type ) {
+			return new WP_Error(
+				'spz_bad_request',
+				__( 'Parámetro inválido: se requiere "type" para vistas de gráfico.', 'suite-paz' ),
+				[ 'status' => 400 ]
 			);
 		}
 
