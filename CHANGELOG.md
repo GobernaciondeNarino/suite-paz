@@ -1,6 +1,13 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [0.5.1] — 2026-07-06
+### Fixed
+- `includes/class-spz-rest-api.php`: nodos network/rings ahora preservan todos los atributos del row (label, group, value, etc.); garantiza clave `id` sin descartar el resto.
+- `includes/class-spz-plugin.php`: `topojsonUrl` y `pluginUrl` envueltos con `esc_url_raw()` para consistencia con `restUrl`.
+- `includes/class-spz-rest-api.php`: argumento `type` del endpoint `/render` incluye `validate_callback` que rechaza tipos inválidos con 400 en la capa de enrutamiento.
+- `includes/class-spz-plugin.php`: docblock de `enqueue_public_assets()` corregido de "Tarea 6" a "Task 5".
+
 ## [0.5.0] — 2026-07-06
 ### Added
 - `includes/class-spz-shortcode.php`: `[spz_grafico view type seccion height title theme]` — emite `<div class="spz-chart" data-view data-type data-seccion data-height style="min-height:...px">` sin datos inline; encola `spz-frontend` + `spz-frontend` CSS de forma lazy en `wp_footer`. Atributos sanitizados con `sanitize_slug`/`sanitize_key`/`absint`/`sanitize_text_field`/`sanitize_html_class`; `type` validado contra `SPZ_Chart_Types::is_valid_type`.

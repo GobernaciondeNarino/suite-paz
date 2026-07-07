@@ -87,6 +87,9 @@ class SPZ_Rest_Api {
 					'type'    => [
 						'required'          => true,
 						'sanitize_callback' => 'sanitize_key',
+						'validate_callback' => function ( $value ) {
+							return $this->chart_types->is_valid_type( sanitize_key( (string) $value ) );
+						},
 					],
 				],
 			]
@@ -225,7 +228,13 @@ class SPZ_Rest_Api {
 			case 'network':
 			case 'rings':
 				$mapping['nodes'] = array_map(
-					static fn( $row ) => [ 'id' => $row['id'] ?? '' ],
+					static function ( $row ) {
+						if ( is_array( $row ) && ! isset( $row['id'] ) ) {
+							$first    = reset( $row );
+							$row['id'] = is_scalar( $first ) ? (string) $first : '';
+						}
+						return $row;
+					},
 					$view['data']
 				);
 				$mapping['links'] = $view['edges'] ?? [];

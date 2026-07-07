@@ -192,7 +192,7 @@ final class SPZ_Plugin {
 	/**
 	 * Register/enqueue public (frontend) assets.
 	 * d3plus is registered but only loaded on pages with an SPZ shortcode
-	 * (SPZ_Shortcode handles the conditional enqueue — Tarea 6).
+	 * (SPZ_Shortcode handles the conditional enqueue — Task 5).
 	 */
 	public function enqueue_public_assets(): void {
 		// d3plus CDN bundle — full build required (peer deps embedded).
@@ -239,8 +239,8 @@ final class SPZ_Plugin {
 			[
 				'restUrl'     => esc_url_raw( rest_url( SPZ_REST_NAMESPACE . '/render' ) ),
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
-				'topojsonUrl' => SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson',
-				'pluginUrl'   => SPZ_PLUGIN_URL,
+				'topojsonUrl' => esc_url_raw( SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson' ),
+				'pluginUrl'   => esc_url_raw( SPZ_PLUGIN_URL ),
 				'i18n'        => [
 					'loading' => __( 'Cargando gráfico…', 'suite-paz' ),
 					'error'   => __( 'No fue posible cargar el gráfico.', 'suite-paz' ),
