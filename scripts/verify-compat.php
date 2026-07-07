@@ -10,9 +10,8 @@
  * Ejecutar desde la raíz del plugin:
  *   php scripts/verify-compat.php
  *
- * Salida esperada:
- *   COMPAT OK: N vistas de gráfico
- *   (con listado de vistas tabla marcadas como "pendiente Task 2")
+ * Salida esperada (v1.1.1+):
+ *   COMPAT OK: N vistas de gráfico  (incluyendo las 5 vistas 'tabla')
  */
 
 declare(strict_types=1);
@@ -47,6 +46,29 @@ if (!file_exists($class_file)) {
 require $class_file;
 
 $chart_types = new SPZ_Chart_Types();
+
+// ── Assertions inline: 'tabla' debe ser válido y universal ───────────────────
+if (!$chart_types->is_valid_type('tabla')) {
+    fwrite(STDERR, "ASSERT FAIL: is_valid_type('tabla') debe ser true — registrar 'tabla' en SPZ_Chart_Types\n");
+    exit(1);
+}
+
+// Verificar que compatible_for ofrece 'tabla' para una vista categorical típica.
+$_test_view = [
+    'category'              => 'categorical',
+    'dimensions'            => ['region'],
+    'measures'              => [42],
+    'tipo_grafico_sugerido' => 'tabla',
+    'edges'                 => [],
+    'temporal_range'        => false,
+    'is_module'             => false,
+];
+$_test_compat = array_column($chart_types->compatible_for($_test_view), 'key');
+if (!in_array('tabla', $_test_compat, true)) {
+    fwrite(STDERR, "ASSERT FAIL: compatible_for(categorical tabla view) no incluye 'tabla'\n");
+    exit(1);
+}
+unset($_test_view, $_test_compat);
 
 // ── Helpers (replica de SPZ_Data_Provider) ───────────────────────────────────
 
@@ -102,7 +124,6 @@ $views_root = dirname(__DIR__) . '/data/views';
 $secciones  = ['dni', 'seguridad', 'convivencia', 'estrategia', 'transformaciones'];
 
 $failures  = [];
-$pending   = [];  // tabla views — pendiente Task 2
 $ok_count  = 0;
 
 foreach ($secciones as $seccion) {
@@ -143,13 +164,7 @@ foreach ($secciones as $seccion) {
 
         $tipo = (string)($raw['tipo_grafico_sugerido'] ?? '');
 
-        // ── Vistas tabla: pendiente Task 2 ───────────────────────────────────
-        if ($tipo === 'tabla') {
-            $pending[] = "{$seccion}/{$slug}";
-            continue;
-        }
-
-        // ── Vistas de gráfico d3plus: verificar compatibilidad ────────────────
+        // ── Vistas de gráfico (d3plus o nativas): verificar compatibilidad ────
         $first = spzv_first_row($raw);
         if (null === $first) {
             $failures[] = "{$seccion}/{$slug}: sin filas de datos (no se puede inferir dims/measures)";
@@ -194,14 +209,6 @@ foreach ($secciones as $seccion) {
 }
 
 // ── Informe ───────────────────────────────────────────────────────────────────
-if (!empty($pending)) {
-    echo "--- Pendiente Task 2 (tipo='tabla', is_valid_type=false hasta que se registre) ---\n";
-    foreach ($pending as $v) {
-        echo "  [pendiente Task 2] {$v}\n";
-    }
-    echo "\n";
-}
-
 if (!empty($failures)) {
     echo 'COMPAT FAILURES: ' . count($failures) . " vistas\n";
     foreach ($failures as $f) {

@@ -1,6 +1,12 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.1] — 2026-07-07
+### Added
+- `includes/class-spz-chart-types.php`: tipo nativo `tabla` registrado (`d3plus_class=''`, `native=true`), compatible con todas las categorías estándar (`categorical,temporal,geographic,hierarchical,network,statistical,social`), sin requisitos mínimos de campos. `is_valid_type('tabla')` ahora es `true`.
+- `includes/class-spz-rest-api.php`: `build_mapping()` — nuevo `case 'tabla':` que devuelve `['columns' => array_merge(dimensions, measures)]`.
+- `scripts/verify-compat.php`: assertions inline que verifican `is_valid_type('tabla')===true` y que `compatible_for` incluye `tabla` para vistas `categorical`; las 5 vistas tabla se procesan ahora en el flujo normal (ya no marcadas como "pendiente Task 2").
+
 ## [1.1.0] — 2026-07-07
 ### Fixed
 - `scripts/build-views.py`: categorías estándar para todas las vistas — `humanitarian/security/economic/coexistence` → `categorical`; `nna-desvinculacion` (serie anual con 1 medida) → `categorical` + `bar`; `geographic` y `social` sin cambio. Categoría temática original preservada en campo `tema`.

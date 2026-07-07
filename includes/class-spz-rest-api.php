@@ -535,6 +535,11 @@ class SPZ_Rest_Api {
 				$mapping['topojsonKey'] = 'objects.municipios';
 				$mapping['join']        = 'municipio';
 				break;
+
+			case 'tabla':
+				// Native table view: expose all fields as ordered columns.
+				$mapping['columns'] = array_merge( $dims, $measures );
+				break;
 		}
 
 		return $mapping;
