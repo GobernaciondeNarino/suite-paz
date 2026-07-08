@@ -176,6 +176,30 @@
   <div class="status" id="s11">Cargando&hellip;</div>
 </div>
 
+<!-- ============================================================
+     TEST 12a — Timeline ON: bar chart con tasa_homicidio_2023/24/25
+     data-timeline="true" → el.dataset.spzTimeline === 'on'
+     ============================================================ -->
+<div class="card">
+  <h2>Test 12a — Timeline ON: Homicidios municipio (bar + timeline)</h2>
+  <p class="desc">Vista: seguridad/homicidios-municipio · tipo: bar · data-timeline="true"<br>
+     Se espera <code>el.dataset.spzTimeline === 'on'</code> y SVG con elementos.</p>
+  <div class="spz-chart" id="c12a" data-timeline="true" style="height:380px;min-height:380px;"></div>
+  <div class="status" id="s12a">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 12b — Timeline OFF: mismo chart, sin slider
+     data-timeline="false" → el.dataset.spzTimeline === 'off'
+     ============================================================ -->
+<div class="card">
+  <h2>Test 12b — Timeline OFF: Homicidios municipio (bar sin timeline)</h2>
+  <p class="desc">Vista: seguridad/homicidios-municipio · tipo: bar · data-timeline="false"<br>
+     Se espera <code>el.dataset.spzTimeline === 'off'</code> y SVG con elementos.</p>
+  <div class="spz-chart" id="c12b" data-timeline="false" style="height:380px;min-height:380px;"></div>
+  <div class="status" id="s12b">Cargando…</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
 <!-- PAZ native module renderer (must load before frontend.js) -->
@@ -434,6 +458,74 @@
       setStatus('s10', false, 'Sin botones .spz-verdatos tras 8 s — revisar renderer.js / modules.js');
     }
   }, 200);
+
+  // ----------------------------------------------------------------
+  // Test 12a — Timeline ON (data-timeline="true")
+  // Uses homicidios-municipio which has tasa_homicidio_2023/2024/2025.
+  // Rendered as 'bar' (not in SKIP list) so applyTimeline fires.
+  // Assertion: el.dataset.spzTimeline === 'on' (set by renderer).
+  // ----------------------------------------------------------------
+  fetch('../data/views/seguridad/homicidios-municipio.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c12a = document.getElementById('c12a');
+      if (!c12a) { setStatus('s12a', false, '#c12a no encontrado'); return; }
+      c12a.scrollIntoView({ behavior: 'instant', block: 'center' });
+      if (!c12a.id) { c12a.id = 'spz-c12a-' + Date.now(); }
+      SPZ.renderer.render(c12a, { view: view, type: 'bar', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var marker = c12a.dataset.spzTimeline;
+        var svgEls = c12a.querySelectorAll('svg *').length;
+        if (marker === 'on') {
+          clearInterval(timer);
+          setStatus('s12a', true, 'Timeline ON confirmado (spzTimeline=on) — ' + svgEls + ' elementos SVG');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s12a', false, 'Timeout — spzTimeline="' + (marker || 'no seteado') + '" svgEls=' + svgEls);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness] t12a error', err);
+      setStatus('s12a', false, 'Error: ' + err.message);
+    });
+
+  // ----------------------------------------------------------------
+  // Test 12b — Timeline OFF (data-timeline="false")
+  // Assertion: el.dataset.spzTimeline === 'off', SVG still renders.
+  // ----------------------------------------------------------------
+  fetch('../data/views/seguridad/homicidios-municipio.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c12b = document.getElementById('c12b');
+      if (!c12b) { setStatus('s12b', false, '#c12b no encontrado'); return; }
+      c12b.scrollIntoView({ behavior: 'instant', block: 'center' });
+      if (!c12b.id) { c12b.id = 'spz-c12b-' + Date.now(); }
+      SPZ.renderer.render(c12b, { view: view, type: 'bar', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var marker = c12b.dataset.spzTimeline;
+        var svgEls = c12b.querySelectorAll('svg *').length;
+        if (marker === 'off') {
+          clearInterval(timer);
+          var hasChart = svgEls > 5;
+          setStatus('s12b', hasChart,
+            hasChart
+              ? 'Timeline OFF confirmado (spzTimeline=off) — ' + svgEls + ' elementos SVG, sin slider'
+              : 'spzTimeline=off pero sin SVG (' + svgEls + ' elementos)');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s12b', false, 'Timeout — spzTimeline="' + (marker || 'no seteado') + '" svgEls=' + svgEls);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness] t12b error', err);
+      setStatus('s12b', false, 'Error: ' + err.message);
+    });
 
 })();
 
