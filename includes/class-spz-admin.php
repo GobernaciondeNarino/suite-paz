@@ -207,12 +207,14 @@ class SPZ_Admin {
 				$palette_clean = SPZ_DEFAULT_PALETTE;
 			}
 
+			$tl_raw = sanitize_key( (string) ( $_POST['timeline_default'] ?? 'auto' ) );
 			$saved = [
 				'allow_shortcode_roles' => array_map( 'sanitize_key', (array) ( $_POST['allow_shortcode_roles'] ?? [] ) ),
 				'default_theme'         => sanitize_key( (string) ( $_POST['default_theme'] ?? 'suite-paz' ) ),
 				'enable_cache'          => ! empty( $_POST['enable_cache'] ),
 				'cache_ttl'             => absint( $_POST['cache_ttl'] ?? 600 ),
 				'palette'               => $palette_clean,
+				'timeline_default'      => in_array( $tl_raw, [ 'auto', 'on', 'off' ], true ) ? $tl_raw : 'auto',
 			];
 			update_option( 'spz_settings', $saved );
 			add_settings_error( 'spz_settings', 'saved', __( 'Ajustes guardados.', 'suite-paz' ), 'success' );
@@ -226,6 +228,7 @@ class SPZ_Admin {
 				'enable_cache'          => true,
 				'cache_ttl'             => 600,
 				'palette'               => SPZ_DEFAULT_PALETTE,
+				'timeline_default'      => 'auto',
 			]
 		);
 

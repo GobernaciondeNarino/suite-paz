@@ -284,12 +284,13 @@ final class SPZ_Plugin {
 			'spz-frontend',
 			'SPZ_FRONTEND',
 			[
-				'restUrl'     => esc_url_raw( rest_url( SPZ_REST_NAMESPACE . '/render' ) ),
-				'nonce'       => wp_create_nonce( 'wp_rest' ),
-				'topojsonUrl' => esc_url_raw( SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson' ),
-				'pluginUrl'   => esc_url_raw( SPZ_PLUGIN_URL ),
-				'palette'     => $palette_for_js,
-				'i18n'        => [
+				'restUrl'         => esc_url_raw( rest_url( SPZ_REST_NAMESPACE . '/render' ) ),
+				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'topojsonUrl'     => esc_url_raw( SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson' ),
+				'pluginUrl'       => esc_url_raw( SPZ_PLUGIN_URL ),
+				'palette'         => $palette_for_js,
+				'timelineDefault' => $settings['timeline_default'] ?? 'auto',
+				'i18n'            => [
 					'loading' => __( 'Cargando gráfico…', 'suite-paz' ),
 					'error'   => __( 'No fue posible cargar el gráfico.', 'suite-paz' ),
 					'empty'   => __( 'Sin datos disponibles.', 'suite-paz' ),
