@@ -133,6 +133,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</label>
 				</div>
 
+				<div class="spz-options__row">
+					<label class="spz-select-inline">
+						<span><?php esc_html_e( 'Línea de tiempo:', 'suite-paz' ); ?></span>
+						<select data-spz-opt="timeline">
+							<option value="auto"><?php esc_html_e( 'Auto (global)', 'suite-paz' ); ?></option>
+							<option value="true"><?php esc_html_e( 'Sí (forzar)', 'suite-paz' ); ?></option>
+							<option value="false"><?php esc_html_e( 'No (ocultar)', 'suite-paz' ); ?></option>
+						</select>
+					</label>
+				</div>
+
 				<div class="spz-options__row spz-options__actions">
 					<span class="spz-options__label"><?php esc_html_e( 'Acciones:', 'suite-paz' ); ?></span>
 					<label class="spz-chip"><input type="checkbox" data-spz-action-opt="detalle" checked /><span class="dashicons dashicons-info-outline" aria-hidden="true"></span><?php esc_html_e( 'Detalle', 'suite-paz' ); ?></label>

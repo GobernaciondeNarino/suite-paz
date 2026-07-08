@@ -137,6 +137,7 @@
 				actions:      DEFAULT_ACTIONS.slice(),
 				x_title:      '',
 				y_title:      '',
+				timeline:     'auto',
 			},
 		};
 
@@ -433,6 +434,7 @@
 			}
 			if ( opts.x_title ) { parts.push( `x_title="${ String( opts.x_title ).replace( /"/g, "'" ) }"` ); }
 			if ( opts.y_title ) { parts.push( `y_title="${ String( opts.y_title ).replace( /"/g, "'" ) }"` ); }
+			if ( opts.timeline && opts.timeline !== 'auto' ) { parts.push( `timeline="${ opts.timeline }"` ); }
 
 			els.shortcodeInput.value = `[spz_grafico ${ parts.join( ' ' ) }]`;
 			if ( els.shortcodeBox ) { els.shortcodeBox.hidden = false; }

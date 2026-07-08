@@ -113,6 +113,29 @@ settings_errors( 'spz_settings' );
 					</td>
 				</tr>
 
+				<!-- Timeline default -->
+				<tr>
+					<th scope="row">
+						<label for="spz-timeline-default"><?php esc_html_e( 'Línea de tiempo en gráficas temporales', 'suite-paz' ); ?></label>
+					</th>
+					<td>
+						<select id="spz-timeline-default" name="timeline_default">
+							<option value="auto" <?php selected( $settings['timeline_default'] ?? 'auto', 'auto' ); ?>>
+								<?php esc_html_e( 'Auto (mostrar si hay datos por año)', 'suite-paz' ); ?>
+							</option>
+							<option value="on" <?php selected( $settings['timeline_default'] ?? 'auto', 'on' ); ?>>
+								<?php esc_html_e( 'Siempre mostrar', 'suite-paz' ); ?>
+							</option>
+							<option value="off" <?php selected( $settings['timeline_default'] ?? 'auto', 'off' ); ?>>
+								<?php esc_html_e( 'Nunca mostrar', 'suite-paz' ); ?>
+							</option>
+						</select>
+						<p class="description">
+							<?php esc_html_e( 'Controla si el deslizador de tiempo d3plus aparece en gráficas con columnas de año (ej. tasa_homicidio_2023/2024/2025). El shortcode puede sobreescribir este valor con el atributo timeline="true|false".', 'suite-paz' ); ?>
+						</p>
+					</td>
+				</tr>
+
 				<!-- Chart color palette -->
 				<tr>
 					<th scope="row">
