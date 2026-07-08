@@ -47,6 +47,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SPZ_Shortcode {
 
+	private const VALID_ACTIONS = [ 'detalle', 'compartir', 'datos', 'imagen', 'descarga', 'cambiar' ];
+
 	private SPZ_Plugin $plugin;
 	private SPZ_Chart_Types $chart_types;
 	private SPZ_Security $security;
@@ -104,24 +106,36 @@ class SPZ_Shortcode {
 	public function render_grafico( $atts, $content = null ): string {
 		$atts = shortcode_atts(
 			[
-				'view'    => '',
-				'type'    => '',
-				'seccion' => SPZ_Plugin::DEFAULT_SECCION,
-				'height'  => '420',
-				'title'   => '',
-				'theme'   => 'suite-paz',
+				'view'         => '',
+				'type'         => '',
+				'seccion'      => SPZ_Plugin::DEFAULT_SECCION,
+				'height'       => '420',
+				'title'        => '',
+				'theme'        => 'suite-paz',
+				'legend'       => 'true',
+				'legend_style' => 'text',
+				'toolbar'      => 'true',
+				'actions'      => 'detalle,compartir,datos,imagen,descarga,cambiar',
+				'x_title'      => '',
+				'y_title'      => '',
 			],
 			is_array( $atts ) ? $atts : [],
 			'spz_grafico'
 		);
 
-		$view_id    = $this->security->sanitize_slug( (string) $atts['view'] );
-		$type_raw   = sanitize_key( (string) $atts['type'] );
-		$chart_type = $this->chart_types->is_valid_type( $type_raw ) ? $type_raw : '';
-		$seccion    = $this->plugin->normalize_seccion( (string) $atts['seccion'] );
-		$height     = max( 160, min( 1600, absint( $atts['height'] ) ) );
-		$title      = sanitize_text_field( (string) $atts['title'] );
-		$theme      = sanitize_html_class( (string) $atts['theme'], 'suite-paz' );
+		$view_id      = $this->security->sanitize_slug( (string) $atts['view'] );
+		$type_raw     = sanitize_key( (string) $atts['type'] );
+		$chart_type   = $this->chart_types->is_valid_type( $type_raw ) ? $type_raw : '';
+		$seccion      = $this->plugin->normalize_seccion( (string) $atts['seccion'] );
+		$height       = max( 160, min( 1600, absint( $atts['height'] ) ) );
+		$title        = sanitize_text_field( (string) $atts['title'] );
+		$theme        = sanitize_html_class( (string) $atts['theme'], 'suite-paz' );
+		$show_legend  = $this->to_bool( $atts['legend'] );
+		$show_tools   = $this->to_bool( $atts['toolbar'] );
+		$legend_style = in_array( $atts['legend_style'], [ 'text', 'icons' ], true ) ? $atts['legend_style'] : 'text';
+		$actions      = $this->sanitize_actions( (string) $atts['actions'] );
+		$x_title      = sanitize_text_field( (string) $atts['x_title'] );
+		$y_title      = sanitize_text_field( (string) $atts['y_title'] );
 
 		if ( '' === $view_id || '' === $chart_type ) {
 			return sprintf(
@@ -133,21 +147,37 @@ class SPZ_Shortcode {
 		$this->needs_assets = true;
 
 		$chart_div = sprintf(
-			'<div class="spz-chart" data-view="%s" data-type="%s" data-seccion="%s" data-height="%d" style="min-height:%dpx;" aria-label="%s" role="img"><div class="spz-chart__loading">%s</div></div>',
+			'<div class="spz-chart"'
+			. ' data-view="%s" data-type="%s" data-seccion="%s" data-height="%d"'
+			. ' data-legend="%s" data-legend-style="%s" data-toolbar="%s"'
+			. ' data-actions="%s" data-x-title="%s" data-y-title="%s"'
+			. ' style="min-height:%dpx;" aria-label="%s" role="img">'
+			. '<div class="spz-chart__loading">%s</div></div>',
 			esc_attr( $view_id ),
 			esc_attr( $chart_type ),
 			esc_attr( $seccion ),
 			$height,
+			esc_attr( $show_legend ? '1' : '0' ),
+			esc_attr( $legend_style ),
+			esc_attr( $show_tools ? '1' : '0' ),
+			esc_attr( implode( ',', $actions ) ),
+			esc_attr( $x_title ),
+			esc_attr( $y_title ),
 			$height,
 			esc_attr( $title ?: __( 'Gráfico Suite PAZ', 'suite-paz' ) ),
 			esc_html__( 'Cargando…', 'suite-paz' )
 		);
 
-		if ( '' !== $title ) {
+		// Wrap in <figure> when a title is set or the toolbar is active
+		// so the toolbar (JS-built) and modal (JS-built) have a styled container.
+		if ( '' !== $title || $show_tools ) {
+			$title_html = '' !== $title
+				? sprintf( '<figcaption class="spz-figure__title">%s</figcaption>', esc_html( $title ) )
+				: '';
 			return sprintf(
-				'<figure class="spz-figure spz-theme-%s"><figcaption class="spz-figure__title">%s</figcaption>%s</figure>',
+				'<figure class="spz-figure spz-theme-%s">%s%s</figure>',
 				esc_attr( $theme ),
-				esc_html( $title ),
+				$title_html,
 				$chart_div
 			);
 		}
@@ -435,5 +465,59 @@ class SPZ_Shortcode {
 		wp_enqueue_script( 'spz-modules' );
 		wp_enqueue_script( 'spz-frontend' );
 		wp_enqueue_style( 'spz-frontend' );
+	}
+
+	// -------------------------------------------------------------------------
+	// Attribute helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Truthy: "1", "true", "yes", "on", "si", "sí".
+	 */
+	private function to_bool( $raw ): bool {
+		if ( is_bool( $raw ) ) {
+			return $raw;
+		}
+		$v = strtolower( trim( (string) $raw ) );
+		return in_array( $v, [ '1', 'true', 'yes', 'on', 'si', 'sí' ], true );
+	}
+
+	/**
+	 * Sanitize the comma-separated actions list into an ordered, whitelisted array.
+	 */
+	private function sanitize_actions( string $raw ): array {
+		$items = array_filter( array_map( 'trim', explode( ',', $raw ) ) );
+		$out   = [];
+		foreach ( $items as $i ) {
+			$i = strtolower( sanitize_key( $i ) );
+			if ( in_array( $i, self::VALID_ACTIONS, true ) && ! in_array( $i, $out, true ) ) {
+				$out[] = $i;
+			}
+		}
+		return $out;
+	}
+
+	private function action_label( string $action ): string {
+		$map = [
+			'detalle'   => __( 'Detalle', 'suite-paz' ),
+			'compartir' => __( 'Compartir', 'suite-paz' ),
+			'datos'     => __( 'Datos', 'suite-paz' ),
+			'imagen'    => __( 'Imagen', 'suite-paz' ),
+			'descarga'  => __( 'Descarga', 'suite-paz' ),
+			'cambiar'   => __( 'Tipo', 'suite-paz' ),
+		];
+		return $map[ $action ] ?? $action;
+	}
+
+	private function action_icon( string $action ): string {
+		$map = [
+			'detalle'   => 'info-outline',
+			'compartir' => 'share',
+			'datos'     => 'editor-table',
+			'imagen'    => 'format-image',
+			'descarga'  => 'download',
+			'cambiar'   => 'update',
+		];
+		return $map[ $action ] ?? 'admin-generic';
 	}
 }

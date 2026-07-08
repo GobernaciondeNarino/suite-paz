@@ -154,6 +154,28 @@
   <div class="status" id="s10">Esperando renders&hellip;</div>
 </div>
 
+<!-- ============================================================
+     TEST 11 — Toolbar de acciones del gráfico
+     Payload REST con compatible=[bar,pie,tabla].
+     Toolbar: detalle, compartir, datos, imagen, descarga, cambiar.
+     Validación: ≥ 4 botones [data-spz-action], select con ≥ 3 opciones,
+     click datos → panel aparece, click descarga → sin error.
+     ============================================================ -->
+<div class="card" id="card11">
+  <h2>Test 11 — Toolbar de acciones del gráfico</h2>
+  <p class="desc">Fixture REST: fuerza-publica (bar) · compatible: [bar, pie, tabla].<br>
+     Se esperan ≥ 4 botones <code>[data-spz-action]</code>, select cambiar con ≥ 3 opciones,
+     botón datos abre el panel de datos, descarga no lanza error.</p>
+  <figure class="spz-figure" id="fig11">
+    <div class="spz-chart" id="c11"
+         data-view="fuerza-publica" data-type="bar" data-seccion="seguridad"
+         data-toolbar="1" data-actions="detalle,compartir,datos,imagen,descarga,cambiar"
+         data-legend="1" data-legend-style="text"
+         style="min-height:360px;"></div>
+  </figure>
+  <div class="status" id="s11">Cargando&hellip;</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
 <!-- PAZ native module renderer (must load before frontend.js) -->
@@ -386,7 +408,10 @@
   // ----------------------------------------------------------------
   var t10start = Date.now();
   var t10timer = setInterval(function() {
-    var btns = document.querySelectorAll('.spz-verdatos');
+    // Exclude buttons hidden by the toolbar (Test 11 hides its own .spz-verdatos).
+    var btns = Array.prototype.slice.call(document.querySelectorAll('.spz-verdatos')).filter(function(b) {
+      return !b.hidden;
+    });
     if (btns.length > 0) {
       clearInterval(t10timer);
       setStatus('s10', true, btns.length + ' botones "Ver datos" encontrados — probando el primero…');
@@ -410,6 +435,109 @@
     }
   }, 200);
 
+})();
+
+// ----------------------------------------------------------------
+// Test 11 — Toolbar de acciones
+// Load frontend.js dynamically (after DOMContentLoaded has fired
+// so initChart/initModule do not run on existing harness elements).
+// Then fetch the REST-format fixture and call buildToolbar directly.
+// ----------------------------------------------------------------
+(function () {
+  'use strict';
+
+  function setStatus(id, ok, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = (ok ? '✓ ' : '✗ ') + msg;
+    el.className = 'status ' + (ok ? 'ok' : 'err');
+  }
+
+  var s = document.createElement('script');
+  s.src = '../assets/js/frontend.js';
+  s.onload = function () {
+    // frontend.js loaded; DOMContentLoaded already fired so initChart won't auto-run.
+    fetch('../tests/fixtures/bar-toolbar.json')
+      .then(function (r) { return r.json(); })
+      .then(function (payload) {
+        var el = document.getElementById('c11');
+        if (!el) { setStatus('s11', false, '#c11 no encontrado'); return; }
+
+        // Render chart via renderer.
+        SPZ.renderer.render(el, { view: payload, type: 'bar', options: { legend: true } });
+
+        // Build toolbar via exposed API.
+        if (window.SPZ && window.SPZ.frontend && window.SPZ.frontend.buildToolbar) {
+          window.SPZ.frontend.buildToolbar(el, payload);
+        } else {
+          setStatus('s11', false, 'SPZ.frontend.buildToolbar no disponible');
+          return;
+        }
+
+        // Poll for toolbar buttons.
+        var t11start = Date.now();
+        var t11timer = setInterval(function () {
+          // Toolbar is inserted before el, inside #fig11.
+          var fig = document.getElementById('fig11');
+          var actionBtns = fig ? fig.querySelectorAll('[data-spz-action]') : [];
+          var cambiarSel = fig ? fig.querySelector('[data-spz-type-selector]') : null;
+          var optionCount = cambiarSel ? cambiarSel.options.length : 0;
+
+          if (actionBtns.length > 0) {
+            clearInterval(t11timer);
+
+            // Assertion 1: ≥ 4 action buttons.
+            var btnCount = actionBtns.length;
+            if (btnCount < 4) {
+              setStatus('s11', false, 'Solo ' + btnCount + ' botones de acción (esperaban ≥ 4)');
+              return;
+            }
+
+            // Assertion 2: cambiar select has ≥ 3 options.
+            if (optionCount < 3) {
+              setStatus('s11', false, btnCount + ' botones OK pero select cambiar tiene solo ' + optionCount + ' opciones (esperaban ≥ 3)');
+              return;
+            }
+
+            // Assertion 3: click datos → panel opens.
+            var datosBtn = fig.querySelector('[data-spz-action="datos"]');
+            if (datosBtn) { datosBtn.click(); }
+            setTimeout(function () {
+              var panel = fig ? fig.querySelector('.spz-datapanel:not([hidden])') : null;
+              var panelOk = !!panel;
+
+              // Assertion 4: click descarga → no error (download triggered, cannot assert file).
+              var descBtn = fig ? fig.querySelector('[data-spz-action="descarga"]') : null;
+              var descErr = null;
+              try {
+                if (descBtn) { descBtn.click(); }
+              } catch (e) {
+                descErr = e.message;
+              }
+
+              if (descErr) {
+                setStatus('s11', false, 'descarga lanzó excepción: ' + descErr);
+              } else {
+                setStatus('s11', panelOk,
+                  btnCount + ' botones ✓ · cambiar ' + optionCount + ' opciones ✓ · datos panel ' +
+                  (panelOk ? 'abierto ✓' : 'no abierto ✗') + ' · descarga OK');
+              }
+            }, 300);
+          } else if (Date.now() - t11start > 5000) {
+            clearInterval(t11timer);
+            setStatus('s11', false, 'Timeout — sin [data-spz-action] en fig11 tras 5 s');
+          }
+        }, 100);
+      })
+      .catch(function (err) {
+        console.error('[SPZ harness test 11]', err);
+        setStatus('s11', false, 'Error cargando fixture: ' + err.message);
+      });
+  };
+  s.onerror = function () {
+    setStatus('s11', false, 'No se pudo cargar frontend.js');
+  };
+  document.body.appendChild(s);
 })();
 </script>
 
