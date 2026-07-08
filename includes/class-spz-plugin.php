@@ -275,6 +275,11 @@ final class SPZ_Plugin {
 		// Localize the frontend script with WordPress-side config.
 		// restUrl includes /render so frontend.js can append ?seccion=&view=&type=
 		// topojsonUrl injects the real WP plugin path so renderer.js resolves the map.
+		$settings         = (array) get_option( 'spz_settings', [] );
+		$palette_setting  = $settings['palette'] ?? null;
+		$palette_for_js   = ( is_array( $palette_setting ) && ! empty( $palette_setting ) )
+			? array_values( array_filter( $palette_setting, 'is_string' ) )
+			: SPZ_DEFAULT_PALETTE;
 		wp_localize_script(
 			'spz-frontend',
 			'SPZ_FRONTEND',
@@ -283,6 +288,7 @@ final class SPZ_Plugin {
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'topojsonUrl' => esc_url_raw( SPZ_PLUGIN_URL . 'data/topo/narino_municipios.topojson' ),
 				'pluginUrl'   => esc_url_raw( SPZ_PLUGIN_URL ),
+				'palette'     => $palette_for_js,
 				'i18n'        => [
 					'loading' => __( 'Cargando gráfico…', 'suite-paz' ),
 					'error'   => __( 'No fue posible cargar el gráfico.', 'suite-paz' ),

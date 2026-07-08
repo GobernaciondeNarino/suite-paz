@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.3.0] — 2026-07-08
+### Added
+- feat: paleta de colores de gráficas configurable en Ajustes (v1.3.0). Nueva constante `SPZ_DEFAULT_PALETTE` (24 colores) en `suite-paz.php`. Campo "Paleta de colores de las gráficas" (`<textarea name="palette">`) en la pantalla Ajustes (`templates/admin/settings.php`). Sanitización en `class-spz-admin.php`: divide por coma/salto de línea, valida `/^#[0-9a-fA-F]{6}$/` (expande 3 dígitos), descarta inválidos, deduplica; si el resultado queda vacío usa los 24 defaults. `class-spz-plugin.php` pasa `palette` en `SPZ_FRONTEND` al script frontend. `assets/js/renderer.js`: `PALETTE` prefiere `SPZ_FRONTEND.palette` y usa los 24 colores como fallback integrado.
+
 ## [1.2.1] — 2026-07-07
 ### Fixed
 - fix: accesibilidad del modal Detalle — foco al abrir/cerrar, trap de foco, listener Esc por-apertura; quitar métodos PHP muertos `action_label()` y `action_icon()`.

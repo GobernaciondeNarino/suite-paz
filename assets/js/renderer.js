@@ -47,11 +47,18 @@
 		priestley:    'Priestley',
 	};
 
-	// Suite PAZ brand palette (violeta, teal, coral, ámbar + extras).
-	const PALETTE = [
-		'#5B3B8C', '#3FCF97', '#E63946', '#F4A93C',
-		'#2563eb', '#0ea5e9', '#14b8a6', '#22c55e',
-		'#ec4899', '#6366f1',
+	// Suite PAZ chart color palette.
+	// Prefers the value localized from PHP (SPZ_FRONTEND.palette) when available;
+	// falls back to the 24-color default that matches SPZ_DEFAULT_PALETTE in PHP.
+	const PALETTE = (
+		typeof SPZ_FRONTEND !== 'undefined' &&
+		Array.isArray( SPZ_FRONTEND.palette ) &&
+		SPZ_FRONTEND.palette.length
+	) ? SPZ_FRONTEND.palette : [
+		'#844e80', '#ff7300', '#ffc53b', '#3eba6a', '#0080c3', '#e74c3c',
+		'#9b59b6', '#1abc9c', '#348AFB', '#e84393', '#fdcb6e', '#2ecc71',
+		'#00cec9', '#0984e3', '#6c5ce7', '#d63031', '#e17055', '#ff4757',
+		'#2ed573', '#1e90ff', '#ffa502', '#ff6b81', '#70a1ff', '#78e08f',
 	];
 
 	// Data key candidates when extracting rows from a PAZ seed JSON.

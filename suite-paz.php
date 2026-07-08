@@ -3,7 +3,7 @@
  * Plugin Name:       Suite PAZ
  * Plugin URI:        https://github.com/GobernaciondeNarino/suite-paz
  * Description:       Publica los datos del proyecto de Paz de Nariño como gráficos, mapas y módulos mediante shortcodes, con editor de datos en el panel.
- * Version:           1.2.1
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Gobernación de Nariño
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Plugin constants.
 // -----------------------------------------------------------------------------
-define( 'SPZ_VERSION', '1.2.1' );
+define( 'SPZ_VERSION', '1.3.0' );
 define( 'SPZ_D3PLUS_VERSION', '3.1.4' );
 // NOTE: must use the /full/ bundle — /umd/d3plus-core.js expects 30+
 // peer deps to already be on window and fails silently with window.d3plus
@@ -39,6 +39,20 @@ define( 'SPZ_MIN_CAPABILITY', 'manage_options' );
 define( 'SPZ_REST_NAMESPACE', 'suite-paz/v1' );
 define( 'SPZ_NONCE_ACTION', 'spz_nonce_action' );
 define( 'SPZ_DATA_DIR', SPZ_PLUGIN_DIR . 'data/' );
+
+/**
+ * Default chart color palette (24 colors).
+ * Used when no custom palette has been saved in spz_settings.
+ */
+define(
+	'SPZ_DEFAULT_PALETTE',
+	[
+		'#844e80', '#ff7300', '#ffc53b', '#3eba6a', '#0080c3', '#e74c3c',
+		'#9b59b6', '#1abc9c', '#348AFB', '#e84393', '#fdcb6e', '#2ecc71',
+		'#00cec9', '#0984e3', '#6c5ce7', '#d63031', '#e17055', '#ff4757',
+		'#2ed573', '#1e90ff', '#ffa502', '#ff6b81', '#70a1ff', '#78e08f',
+	]
+);
 
 // -----------------------------------------------------------------------------
 // PSR-4-ish autoloader for plugin classes.

@@ -113,6 +113,24 @@ settings_errors( 'spz_settings' );
 					</td>
 				</tr>
 
+				<!-- Chart color palette -->
+				<tr>
+					<th scope="row">
+						<label for="spz-palette"><?php esc_html_e( 'Paleta de colores de las gráficas', 'suite-paz' ); ?></label>
+					</th>
+					<td>
+						<textarea
+							id="spz-palette"
+							name="palette"
+							rows="4"
+							class="large-text code"
+						><?php echo esc_textarea( implode( ', ', (array) ( $settings['palette'] ?? [] ) ) ); ?></textarea>
+						<p class="description">
+							<?php esc_html_e( 'Colores hexadecimal separados por comas (ej. #844e80, #ff7300). Se usan en orden para las series de las gráficas.', 'suite-paz' ); ?>
+						</p>
+					</td>
+				</tr>
+
 			</tbody>
 		</table>
 

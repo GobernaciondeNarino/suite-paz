@@ -180,11 +180,39 @@ class SPZ_Admin {
 			isset( $_POST['spz_settings_nonce'] ) &&
 			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['spz_settings_nonce'] ) ), 'spz_save_settings' )
 		) {
+			// Sanitize palette: split on comma/newline, validate hex, dedupe.
+			$palette_raw  = sanitize_textarea_field( wp_unslash( $_POST['palette'] ?? '' ) );
+			$palette_parts = preg_split( '/[\r\n,]+/', $palette_raw, -1, PREG_SPLIT_NO_EMPTY );
+			$palette_clean = [];
+			$palette_seen  = [];
+			foreach ( $palette_parts as $color ) {
+				$color = trim( $color );
+				// Expand 3-digit hex to 6-digit.
+				if ( preg_match( '/^#([0-9a-fA-F]{3})$/', $color, $m ) ) {
+					$c     = $m[1];
+					$color = '#' . $c[0] . $c[0] . $c[1] . $c[1] . $c[2] . $c[2];
+				}
+				if ( ! preg_match( '/^#[0-9a-fA-F]{6}$/', $color ) ) {
+					continue;
+				}
+				$color_lc = strtolower( $color );
+				if ( isset( $palette_seen[ $color_lc ] ) ) {
+					continue;
+				}
+				$palette_seen[ $color_lc ] = true;
+				$palette_clean[]            = $color_lc;
+			}
+			// If result is empty, fall back to the 24 defaults.
+			if ( empty( $palette_clean ) ) {
+				$palette_clean = SPZ_DEFAULT_PALETTE;
+			}
+
 			$saved = [
 				'allow_shortcode_roles' => array_map( 'sanitize_key', (array) ( $_POST['allow_shortcode_roles'] ?? [] ) ),
 				'default_theme'         => sanitize_key( (string) ( $_POST['default_theme'] ?? 'suite-paz' ) ),
 				'enable_cache'          => ! empty( $_POST['enable_cache'] ),
 				'cache_ttl'             => absint( $_POST['cache_ttl'] ?? 600 ),
+				'palette'               => $palette_clean,
 			];
 			update_option( 'spz_settings', $saved );
 			add_settings_error( 'spz_settings', 'saved', __( 'Ajustes guardados.', 'suite-paz' ), 'success' );
@@ -197,6 +225,7 @@ class SPZ_Admin {
 				'default_theme'         => 'suite-paz',
 				'enable_cache'          => true,
 				'cache_ttl'             => 600,
+				'palette'               => SPZ_DEFAULT_PALETTE,
 			]
 		);
 
