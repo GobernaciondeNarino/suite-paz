@@ -565,7 +565,14 @@
 			const dims     = view.dimensions || [];
 			const measures = view.measures   || [];
 
-			const data = this.filterMeaningful( payload.data, chart.key, measures );
+			// Pre-compute the resolved measure for bar so filterMeaningful
+			// can filter on the right column (m1 fix — avoids filtering on
+			// measures[0] when a data-measure override selects a different column).
+			const preResolvedMeasure = chart.key === 'bar'
+				? this.chooseMeasure( measures, ( el && el.getAttribute( 'data-measure' ) ) || '' )
+				: null;
+
+			const data = this.filterMeaningful( payload.data, chart.key, measures, preResolvedMeasure );
 			payload._filteredData = data;
 
 			switch ( chart.key ) {
@@ -586,6 +593,7 @@
 					if ( el ) { el.dataset.spzGroupBy = groupByFieldB; }
 					payload._resolvedGroupBy = groupByFieldB;
 					payload._resolvedMeasure = yFieldB;
+					if ( el ) { el.dataset.spzYfield = yFieldB; }
 					viz
 						.data( data )
 						.groupBy( groupByFieldB )
@@ -639,6 +647,7 @@
 							if ( el ) { el.dataset.spzGroupBy = wantedGBLA; }
 							payload._resolvedGroupBy = wantedGBLA;
 							payload._resolvedMeasure = yFieldLA;
+							if ( el ) { el.dataset.spzYfield = yFieldLA; }
 							viz
 								.data( data )
 								.groupBy( wantedGBLA )
@@ -939,7 +948,7 @@
 		 * @returns {string|null} The year dimension name, or null if none found.
 		 */
 		detectYearDim( dims, data ) {
-			const yearNames = [ 'año', 'anio', 'year', 'vigencia', 'periodo' ];
+			const yearNames = [ 'ano', 'anio', 'year', 'vigencia', 'periodo' ];
 			for ( let i = 0; i < dims.length; i++ ) {
 				const normalized = String( dims[ i ] )
 					.toLowerCase()
@@ -1023,11 +1032,11 @@
 				case 'line':
 				case 'area':
 					xField = hasTime ? '_year' : dims[ 0 ];
-					yField = hasTime ? '_value' : measures[ 0 ];
+					yField = hasTime ? '_value' : ( payload._resolvedMeasure || measures[ 0 ] );
 					break;
 				default:
 					xField = dims[ 0 ];
-					yField = hasTime ? '_value' : measures[ 0 ];
+					yField = hasTime ? '_value' : ( payload._resolvedMeasure || measures[ 0 ] );
 			}
 
 			let xTitle, yTitle;
@@ -1271,7 +1280,7 @@
 		// Data helpers
 		// ==============================================================
 
-		filterMeaningful( rows, chartKey, measures ) {
+		filterMeaningful( rows, chartKey, measures, resolvedMeasure = null ) {
 			if ( ! Array.isArray( rows ) || ! rows.length ) {
 				return rows || [];
 			}
@@ -1293,7 +1302,7 @@
 				if ( yearMeasures.length >= 2 ) {
 					relevant = yearMeasures;
 				} else {
-					relevant = [ measures[ 0 ] ];
+					relevant = [ resolvedMeasure || measures[ 0 ] ];
 				}
 			}
 
