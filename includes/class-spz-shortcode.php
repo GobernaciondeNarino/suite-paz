@@ -119,6 +119,8 @@ class SPZ_Shortcode {
 				'x_title'      => '',
 				'y_title'      => '',
 				'timeline'     => 'auto',
+				'group_by'     => '',
+				'measure'      => '',
 			],
 			is_array( $atts ) ? $atts : [],
 			'spz_grafico'
@@ -139,6 +141,8 @@ class SPZ_Shortcode {
 		$y_title      = sanitize_text_field( (string) $atts['y_title'] );
 		$raw_tl       = strtolower( trim( (string) $atts['timeline'] ) );
 		$timeline     = in_array( $raw_tl, [ 'auto', 'true', 'false' ], true ) ? $raw_tl : 'auto';
+		$group_by     = sanitize_key( (string) $atts['group_by'] );
+		$measure_attr = sanitize_key( (string) $atts['measure'] );
 
 		if ( '' === $view_id || '' === $chart_type ) {
 			return sprintf(
@@ -154,7 +158,7 @@ class SPZ_Shortcode {
 			. ' data-view="%s" data-type="%s" data-seccion="%s" data-height="%d"'
 			. ' data-legend="%s" data-legend-style="%s" data-toolbar="%s"'
 			. ' data-actions="%s" data-x-title="%s" data-y-title="%s"'
-			. ' data-timeline="%s"'
+			. ' data-timeline="%s" data-group-by="%s" data-measure="%s"'
 			. ' style="min-height:%dpx;" aria-label="%s" role="img">'
 			. '<div class="spz-chart__loading">%s</div></div>',
 			esc_attr( $view_id ),
@@ -168,6 +172,8 @@ class SPZ_Shortcode {
 			esc_attr( $x_title ),
 			esc_attr( $y_title ),
 			esc_attr( $timeline ),
+			esc_attr( $group_by ),
+			esc_attr( $measure_attr ),
 			$height,
 			esc_attr( $title ?: __( 'Gráfico Suite PAZ', 'suite-paz' ) ),
 			esc_html__( 'Cargando…', 'suite-paz' )

@@ -144,6 +144,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</label>
 				</div>
 
+				<div class="spz-options__row">
+					<label class="spz-select-inline">
+						<span><?php esc_html_e( 'Agrupar por:', 'suite-paz' ); ?></span>
+						<select data-spz-opt="group_by">
+							<option value=""><?php esc_html_e( 'Auto (año/vigencia)', 'suite-paz' ); ?></option>
+						</select>
+					</label>
+				</div>
+
+				<div class="spz-options__row">
+					<label class="spz-select-inline">
+						<span><?php esc_html_e( 'Medida:', 'suite-paz' ); ?></span>
+						<select data-spz-opt="measure">
+							<option value=""><?php esc_html_e( 'Auto (tasa_narino / primera)', 'suite-paz' ); ?></option>
+						</select>
+					</label>
+				</div>
+
 				<div class="spz-options__row spz-options__actions">
 					<span class="spz-options__label"><?php esc_html_e( 'Acciones:', 'suite-paz' ); ?></span>
 					<label class="spz-chip"><input type="checkbox" data-spz-action-opt="detalle" checked /><span class="dashicons dashicons-info-outline" aria-hidden="true"></span><?php esc_html_e( 'Detalle', 'suite-paz' ); ?></label>

@@ -342,7 +342,7 @@
 					} );
 				}
 
-				this.configure( viz, payload, opts );
+				this.configure( viz, payload, el );
 				this.applyTimeline( viz, payload, el );
 				this.applyAxes( viz, payload, opts );
 				this.applyTooltip( viz, payload );
@@ -560,7 +560,7 @@
 		// Per-chart configuration
 		// ==============================================================
 
-		configure( viz, payload ) {
+		configure( viz, payload, el ) {
 			const { mapping, view, chart } = payload;
 			const dims     = view.dimensions || [];
 			const measures = view.measures   || [];
@@ -569,13 +569,30 @@
 			payload._filteredData = data;
 
 			switch ( chart.key ) {
-				case 'bar':
+				case 'bar': {
+					const yearDimB    = this.detectYearDim( dims, data );
+					const gbOverrideB = ( el && el.getAttribute( 'data-group-by' ) ) || '';
+					const mOverrideB  = ( el && el.getAttribute( 'data-measure' )  ) || '';
+					let groupByFieldB, xFieldB;
+					if ( yearDimB && dims.length >= 2 ) {
+						const wantedGB = ( gbOverrideB && dims.indexOf( gbOverrideB ) !== -1 ) ? gbOverrideB : yearDimB;
+						groupByFieldB  = wantedGB;
+						xFieldB        = dims.find( function ( d ) { return d !== groupByFieldB; } ) || dims[ 0 ];
+					} else {
+						groupByFieldB = ( gbOverrideB && dims.indexOf( gbOverrideB ) !== -1 ) ? gbOverrideB : dims[ 0 ];
+						xFieldB       = groupByFieldB;
+					}
+					const yFieldB = this.chooseMeasure( measures, mOverrideB );
+					if ( el ) { el.dataset.spzGroupBy = groupByFieldB; }
+					payload._resolvedGroupBy = groupByFieldB;
+					payload._resolvedMeasure = yFieldB;
 					viz
 						.data( data )
-						.groupBy( dims[ 0 ] )
-						.x( dims[ 0 ] )
-						.y( measures[ 0 ] );
+						.groupBy( groupByFieldB )
+						.x( xFieldB )
+						.y( yFieldB );
 					break;
+				}
 
 				case 'stacked_bar': {
 					const long = this.reshapeWideToLong( data, dims, measures );
@@ -612,11 +629,28 @@
 							.x( '_year' )
 							.y( '_value' );
 					} else {
-						viz
-							.data( data )
-							.groupBy( dims[ 1 ] || dims[ 0 ] )
-							.x( dims[ 0 ] )
-							.y( measures[ 0 ] );
+						const yearDimLA    = this.detectYearDim( dims, data );
+						const gbOverrideLA = ( el && el.getAttribute( 'data-group-by' ) ) || '';
+						const mOverrideLA  = ( el && el.getAttribute( 'data-measure' )  ) || '';
+						if ( yearDimLA && dims.length >= 2 ) {
+							const wantedGBLA = ( gbOverrideLA && dims.indexOf( gbOverrideLA ) !== -1 ) ? gbOverrideLA : yearDimLA;
+							const xFieldLA   = dims.find( function ( d ) { return d !== wantedGBLA; } ) || dims[ 0 ];
+							const yFieldLA   = this.chooseMeasure( measures, mOverrideLA );
+							if ( el ) { el.dataset.spzGroupBy = wantedGBLA; }
+							payload._resolvedGroupBy = wantedGBLA;
+							payload._resolvedMeasure = yFieldLA;
+							viz
+								.data( data )
+								.groupBy( wantedGBLA )
+								.x( xFieldLA )
+								.y( yFieldLA );
+						} else {
+							viz
+								.data( data )
+								.groupBy( dims[ 1 ] || dims[ 0 ] )
+								.x( dims[ 0 ] )
+								.y( measures[ 0 ] );
+						}
 					}
 					break;
 				}
@@ -893,6 +927,65 @@
 				}
 			} );
 			return Array.from( years ).sort();
+		},
+
+		/**
+		 * Detect a "year/vigencia" dimension in a set of dimension names.
+		 * Matches names like año, anio, year, vigencia, periodo (accent-insensitive).
+		 * Falls back to checking if column values are all 4-digit years (20xx).
+		 *
+		 * @param {string[]} dims Dimension field names.
+		 * @param {object[]} data Sample data rows.
+		 * @returns {string|null} The year dimension name, or null if none found.
+		 */
+		detectYearDim( dims, data ) {
+			const yearNames = [ 'año', 'anio', 'year', 'vigencia', 'periodo' ];
+			for ( let i = 0; i < dims.length; i++ ) {
+				const normalized = String( dims[ i ] )
+					.toLowerCase()
+					.normalize( 'NFD' )
+					.replace( /[̀-ͯ]/g, '' );
+				if ( yearNames.indexOf( normalized ) !== -1 ) {
+					return dims[ i ];
+				}
+			}
+			// Fallback: check if values in the dimension are 4-digit years.
+			if ( Array.isArray( data ) && data.length && dims.length ) {
+				for ( let i = 0; i < dims.length; i++ ) {
+					const sample = data
+						.slice( 0, Math.min( 5, data.length ) )
+						.map( function ( r ) { return String( r[ dims[ i ] ] || '' ); } );
+					if ( sample.length && sample.every( function ( v ) { return /^20\d{2}$/.test( v ); } ) ) {
+						return dims[ i ];
+					}
+				}
+			}
+			return null;
+		},
+
+		/**
+		 * Choose the best measure to plot for a year-over-year chart.
+		 * Priority: explicit override → tasa_narino → any *_narino → measures[0].
+		 *
+		 * @param {string[]} measures Measure field names.
+		 * @param {string}   override Explicit override (from data-measure attr).
+		 * @returns {string}
+		 */
+		chooseMeasure( measures, override ) {
+			if ( override && measures.indexOf( override ) !== -1 ) {
+				return override;
+			}
+			for ( let i = 0; i < measures.length; i++ ) {
+				if ( /tasa_narino$/i.test( measures[ i ] ) ) {
+					return measures[ i ];
+				}
+			}
+			for ( let i = 0; i < measures.length; i++ ) {
+				if ( /narino$/i.test( measures[ i ] ) ) {
+					return measures[ i ];
+				}
+			}
+			return measures[ 0 ] || '';
 		},
 
 		// ==============================================================

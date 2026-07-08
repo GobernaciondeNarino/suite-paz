@@ -510,9 +510,11 @@ def conv_convivencia():
         "vista": "convivencia",
         "titulo": "Convivencia y seguridad ciudadana — Nariño vs Colombia (2023–2025)",
         "descripcion": "Casos y tasa por 100.000 hab. de violencia intrafamiliar, lesiones personales y feminicidio. Fuente: SIEDCO Plus · Observatorio Gobernación de Nariño.",
-        "tipo_grafico_sugerido": "tabla",
+        "tipo_grafico_sugerido": "bar",
         "categoria": "categorical",
         "tema": "coexistence",
+        "group_by_default": "año",
+        "measure_default": "tasa_narino",
         "datos": datos
     })
 
@@ -533,9 +535,11 @@ def conv_hurtos():
         "vista": "hurtos",
         "titulo": "Hurtos — Nariño vs Colombia (2023–2025)",
         "descripcion": "Casos de hurto a residencias, comercio, automotores y motocicletas. null = dato no disponible en la fuente. Fuente: SIEDCO Plus.",
-        "tipo_grafico_sugerido": "tabla",
+        "tipo_grafico_sugerido": "bar",
         "categoria": "categorical",
         "tema": "coexistence",
+        "group_by_default": "año",
+        "measure_default": "casos_narino",
         "datos": datos
     })
 

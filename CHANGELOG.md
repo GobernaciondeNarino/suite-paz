@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.4.0] — 2026-07-08
+### Added
+- feat: énfasis año-a-año — groupBy por vigencia + atributos group_by/measure; Convivencia como gráficos. `renderer.js`: nuevos helpers `detectYearDim` (normaliza tildes, detecta nombres año/anio/year/vigencia/periodo o valores 4-dígitos) y `chooseMeasure` (prefiere tasa_narino/*_narino). `configure(viz, payload, el)` recibe el contenedor DOM; para `bar`/`line`/`area` con formato largo y dimensión año: `groupBy=año`, `x=indicador`, `y=tasa_narino`; soporta overrides `data-group-by`/`data-measure`; expone `el.dataset.spzGroupBy`. Shortcode `[spz_grafico]`: atributos `group_by` (sanitize_key, emitido como `data-group-by`) y `measure` (idem). Constructor admin: selects "Agrupar por" y "Medida" poblados desde dims/measures de la vista; generan `group_by="…"`/`measure="…"` en el shortcode cuando no son auto. `scripts/build-views.py`: convivencia y hurtos cambian de `tipo_grafico_sugerido:"tabla"` a `"bar"` + hint fields `group_by_default:"año"` y `measure_default`. Harness Playwright: Tests 13 (bar groupBy→año) y 14 (line renderiza).
+
 ## [1.3.2] — 2026-07-08
 ### Fixed
 - fix: timeline OFF elige explícitamente el año máximo — ya no depende del orden de columnas en el archivo de datos; guard simétrico `typeof viz.timeline === 'function'` en rama ON.
