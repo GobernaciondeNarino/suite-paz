@@ -14,6 +14,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from paz_catalog import CATALOGO  # noqa: E402
+from analisis import ANALISIS    # noqa: E402
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 _lookup_path = ROOT / "data" / "topo" / "narino_municipios.lookup.json"
@@ -30,6 +31,10 @@ def norm(s: str) -> str:
 
 
 def write(seccion: str, slug: str, obj: dict) -> None:
+    # Inject citizen analysis paragraph if available
+    analisis_text = ANALISIS.get(slug, "")
+    if analisis_text:
+        obj["analisis"] = analisis_text
     d = ROOT / "data" / "views" / seccion
     d.mkdir(parents=True, exist_ok=True)
     # Silence index.php (WordPress direct-access protection)
@@ -188,7 +193,8 @@ def dni_cneb_desplazamiento():
         "titulo": "Desplazamiento en zona de injerencia CNEB (2023–2026)",
         "descripcion": "Personas desplazadas en municipios de influencia de la Coordinadora Nacional Ejército Bolivariano. Fuente: Comité de Justicia Transicional Ley 1448 de 2011.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "humanitarian",
+        "categoria": "categorical",
+        "tema": "humanitarian",
         "datos": datos
     })
 
@@ -202,7 +208,8 @@ def dni_cneb_confinamiento():
         "titulo": "Confinamiento en zona de injerencia CNEB (2023–2026)",
         "descripcion": "Personas confinadas en municipios de influencia de la Coordinadora Nacional Ejército Bolivariano. Fuente: Comité de Justicia Transicional Ley 1448 de 2011.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "humanitarian",
+        "categoria": "categorical",
+        "tema": "humanitarian",
         "datos": datos
     })
 
@@ -304,8 +311,9 @@ def dni_nna_desvinculacion():
             f"Total acumulado en el programa: {d['total']}. Parcial 2026: {d['parcial_2026']}. "
             "Fuente: ICBF."
         ),
-        "tipo_grafico_sugerido": "line",
-        "categoria": "humanitarian",
+        "tipo_grafico_sugerido": "bar",
+        "categoria": "categorical",
+        "tema": "humanitarian",
         "datos": datos
     })
 
@@ -386,7 +394,8 @@ def seg_hist_homicidios_gob():
         "titulo": "Histórico de homicidios por gobierno — Colombia (1990–2025)",
         "descripcion": "Tasa de homicidio por 100.000 hab. en Colombia por período presidencial. Gobierno actual (Petro): 25,6 (2023) · 25,7 (2024) · 26,1 (2025). Fuente: Policía Nacional.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "security",
+        "categoria": "categorical",
+        "tema": "security",
         "datos": datos
     })
 
@@ -408,7 +417,8 @@ def seg_terrorismo():
         "titulo": "Acciones terroristas — Colombia vs Nariño (2022–2024)",
         "descripcion": "Número de acciones terroristas por departamento/nación. Nariño: −53% (2022→2023) y −20,5% (2023→2024), tendencia opuesta al resto del país. Fuente: Fuerzas Militares.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "security",
+        "categoria": "categorical",
+        "tema": "security",
         "datos": datos
     })
 
@@ -431,7 +441,8 @@ def seg_fuerza_publica():
         "titulo": "Fuerza pública asesinada en el marco del conflicto (2023–2025)",
         "descripcion": "Bajas de policías y militares. Nacional: +156,7% policías y +77,8% militares. Nariño: policías estable, militares −60%. Fuente: Policía Nacional – SIEDCO Plus.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "security",
+        "categoria": "categorical",
+        "tema": "security",
         "datos": datos
     })
 
@@ -447,8 +458,9 @@ def seg_homicidios_departamental():
         "vista": "homicidios-departamental",
         "titulo": "Ranking departamental de homicidios — Colombia (2023, 2024, 2025)",
         "descripcion": "Tasa de homicidio por 100.000 hab. por departamento y año (selección con Nariño). Fuente: Policía Nacional – DANE.",
-        "tipo_grafico_sugerido": "table",
-        "categoria": "security",
+        "tipo_grafico_sugerido": "tabla",
+        "categoria": "categorical",
+        "tema": "security",
         "datos": datos
     })
 
@@ -469,8 +481,9 @@ def seg_estructuras_armadas():
             f"CNEB: {d['cneb']['total']} combatientes; "
             f"{d['cneb']['en_proceso_paz']} en proceso de paz ({d['cneb']['pct_paz']}%)."
         ),
-        "tipo_grafico_sugerido": "list",
-        "categoria": "security",
+        "tipo_grafico_sugerido": "tabla",
+        "categoria": "categorical",
+        "tema": "security",
         "datos": datos
     })
 
@@ -497,8 +510,9 @@ def conv_convivencia():
         "vista": "convivencia",
         "titulo": "Convivencia y seguridad ciudadana — Nariño vs Colombia (2023–2025)",
         "descripcion": "Casos y tasa por 100.000 hab. de violencia intrafamiliar, lesiones personales y feminicidio. Fuente: SIEDCO Plus · Observatorio Gobernación de Nariño.",
-        "tipo_grafico_sugerido": "table",
-        "categoria": "coexistence",
+        "tipo_grafico_sugerido": "tabla",
+        "categoria": "categorical",
+        "tema": "coexistence",
         "datos": datos
     })
 
@@ -519,8 +533,9 @@ def conv_hurtos():
         "vista": "hurtos",
         "titulo": "Hurtos — Nariño vs Colombia (2023–2025)",
         "descripcion": "Casos de hurto a residencias, comercio, automotores y motocicletas. null = dato no disponible en la fuente. Fuente: SIEDCO Plus.",
-        "tipo_grafico_sugerido": "table",
-        "categoria": "coexistence",
+        "tipo_grafico_sugerido": "tabla",
+        "categoria": "categorical",
+        "tema": "coexistence",
         "datos": datos
     })
 
@@ -542,40 +557,31 @@ def conv_hallazgos_clave():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def est_subsecretaria():
-    """s31 — esquema radial subsecretaría"""
+    """s31 — módulo diagrama subsecretaría (ramas radiales)"""
     d = CATALOGO["subsecretaria"]
-    datos = [
-        {
-            "rama":  r["nombre"],
-            "kpi":   r.get("kpi", None),
-            "sub":   r.get("sub", [])
-        }
+    ramas = [
+        {k: v for k, v in r.items() if k in ("nombre", "kpi", "sub")}
         for r in d["ramas"]
     ]
     write("estrategia", "subsecretaria", {
-        "vista": "subsecretaria",
+        "modulo": "diagrama",
+        "id": "subsecretaria",
         "titulo": "Subsecretaría de Seguridad Ciudadana — Esquema de estrategia 2026",
-        "descripcion": "Estructura radial de la Subsecretaría con ejes: elecciones seguras, observatorio, pie de fuerza (19.013 policías), acción unificada (80 instituciones), FONSET, proyecto Taminango y mesas operativas locales.",
-        "tipo_grafico_sugerido": "radial",
-        "categoria": "strategy",
-        "datos": datos
+        "centro": d["centro"],
+        "ramas": ramas
     })
 
 
 def est_narino_360():
-    """s32 — estrategia Nariño 360°"""
+    """s32 — módulo estrategia Nariño 360°"""
     d = CATALOGO["narino_360"]
-    datos = (
-        [{"tipo": "linea",      "texto": l} for l in d["lineas"]] +
-        [{"tipo": "componente", "texto": c} for c in d["componentes"]]
-    )
     write("estrategia", "narino-360", {
-        "vista": "narino-360",
+        "modulo": "estrategia",
+        "id": "narino-360",
         "titulo": "Nariño 360° — Seguridad, Convivencia y Paz Territorial",
         "descripcion": d["descripcion"],
-        "tipo_grafico_sugerido": "strategy",
-        "categoria": "strategy",
-        "datos": datos
+        "lineas": d["lineas"],
+        "comunicaciones": d["componentes"]
     })
 
 
@@ -620,7 +626,7 @@ def trans_indicadores_sociales():
         "vista": "indicadores-sociales",
         "titulo": "Indicadores sociales — Nariño (2024–2025)",
         "descripcion": "Variación en educación, acceso a agua y calidad de vivienda según el IPM. Fuente: DANE.",
-        "tipo_grafico_sugerido": "table",
+        "tipo_grafico_sugerido": "tabla",
         "categoria": "social",
         "datos": datos
     })
@@ -638,7 +644,8 @@ def trans_desocupacion():
         "titulo": "Tasa de desocupación — Nariño vs Colombia (2024–2025)",
         "descripcion": "Tasa de desocupación (%). Nariño 6,0% en 2025, la más baja del país (nacional: 8%). Fuente: DANE.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "economic",
+        "categoria": "categorical",
+        "tema": "economic",
         "datos": datos
     })
 
@@ -655,7 +662,8 @@ def trans_pib():
         "titulo": "PIB de Nariño por sectores económicos (2024–2025)",
         "descripcion": "PIB a precios corrientes, miles de millones de pesos. Fuente: DANE.",
         "tipo_grafico_sugerido": "bar",
-        "categoria": "economic",
+        "categoria": "categorical",
+        "tema": "economic",
         "datos": datos
     })
 

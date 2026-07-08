@@ -1,49 +1,21 @@
 {
-  "vista": "narino-360",
+  "modulo": "estrategia",
+  "id": "narino-360",
   "titulo": "Nariño 360° — Seguridad, Convivencia y Paz Territorial",
   "descripcion": "Estrategia integral que articula territorio, comunidad, instituciones, fuerza pública y actores privados e internacionales.",
-  "tipo_grafico_sugerido": "strategy",
-  "categoria": "strategy",
-  "datos": [
-    {
-      "tipo": "linea",
-      "texto": "Fortalecimiento Institucional"
-    },
-    {
-      "tipo": "linea",
-      "texto": "Guardián Inteligente OBSC"
-    },
-    {
-      "tipo": "linea",
-      "texto": "Acción Unificada para la Seguridad"
-    },
-    {
-      "tipo": "linea",
-      "texto": "Cultivos para la Paz"
-    },
-    {
-      "tipo": "linea",
-      "texto": "Convivencia Armónica 360"
-    },
-    {
-      "tipo": "componente",
-      "texto": "Prevención"
-    },
-    {
-      "tipo": "componente",
-      "texto": "Convivencia"
-    },
-    {
-      "tipo": "componente",
-      "texto": "Sustitución"
-    },
-    {
-      "tipo": "componente",
-      "texto": "Operatividad"
-    },
-    {
-      "tipo": "componente",
-      "texto": "Acción Unificada"
-    }
-  ]
+  "lineas": [
+    "Fortalecimiento Institucional",
+    "Guardián Inteligente OBSC",
+    "Acción Unificada para la Seguridad",
+    "Cultivos para la Paz",
+    "Convivencia Armónica 360"
+  ],
+  "comunicaciones": [
+    "Prevención",
+    "Convivencia",
+    "Sustitución",
+    "Operatividad",
+    "Acción Unificada"
+  ],
+  "analisis": "Nariño 360° es la estrategia integral de la Gobernación para construir seguridad, convivencia y paz en el departamento. Articula cinco líneas de acción: Fortalecimiento Institucional, Guardián Inteligente (Observatorio de Seguridad Ciudadana), Acción Unificada para la Seguridad, Cultivos para la Paz y Convivencia Armónica 360. Participan el territorio, las comunidades, las instituciones, la fuerza pública y actores privados e internacionales. Esa articulación es lo que hace sostenibles los avances: ninguna entidad sola puede lograrlo; se requiere trabajar juntos para que Nariño avance hacia la paz."
 }

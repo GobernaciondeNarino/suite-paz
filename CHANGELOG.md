@@ -1,6 +1,90 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.1.x] — Resumen del ciclo de corrección y nuevas funcionalidades
+
+> Este bloque resume los cambios acumulados de v1.1.0 → v1.1.7. Ver las entradas individuales más abajo para el detalle por versión.
+
+### Causa raíz corregida (v1.1.0)
+La semilla de datos usaba categorías temáticas (`humanitarian`, `security`, `economic`, `coexistence`) que `SPZ_Chart_Types::compatible_for()` no reconocía como categorías estándar. Todas las vistas de esas secciones devolvían **409 Conflict** en el endpoint REST `/render`. Solución: mapear todas las categorías a las estándar (`categorical`, `geographic`, `social`) y preservar el tema original en campo `tema`.
+
+### Nuevas funcionalidades (v1.1.1 — v1.1.7)
+- **Tipo nativo `tabla`** (v1.1.1): registro en `SPZ_Chart_Types` con `native=true`, compatible con todas las categorías, renderizado HTML puro sin d3plus. Las 5 vistas con `tipo_grafico_sugerido: "tabla"` ahora renderizan correctamente.
+- **Módulos `diagrama` y `estrategia`** (v1.1.2): dos nuevos tipos de módulo nativos para la sección Estrategia (`subsecretaria` y `narino-360`). Renderizado con HTML/CSS sin d3plus.
+- **Shortcode `[spz_analisis id seccion]`** (v1.1.4): renderizado server-side del texto de análisis ciudadano (~594 caracteres) de cada vista. Los 34 elementos tienen análisis redactados. Aparece en el Constructor y en la Galería de shortcodes.
+- **Botón "Ver datos"** (v1.1.6): cada vista renderizada incluye automáticamente `<button class="spz-verdatos">` y un panel colapsable con las filas de datos consumidas.
+- **Correcciones de calidad** (v1.1.3, v1.1.5, v1.1.7): escapado XSS en fallbacks, listener `keydown` sin fuga de memoria, `aria-label` sin doble-escape, campo `fuente` en metadata del panel.
+
+### Validación integral (v1.1.7)
+- `validate-views.py`: 34 vistas válidas.
+- `verify-compat.php`: 17 vistas de gráfico compatibles, 0 fallos.
+- PHP lint: 16 archivos, 0 errores de sintaxis.
+- Regresión no-409: `cneb-confinamiento/bar` → payload con 4 filas; `homicidios-departamental/tabla` → payload con 11 filas.
+- Harness Playwright: 10/10 tests pasan; console clean.
+
+---
+
+## [1.1.8] — 2026-07-07
+### Fixed
+- `includes/class-spz-modules.php`: `TYPES` ampliado con `'diagrama'` y `'estrategia'`; `is_valid('diagrama')` e `is_valid('estrategia')` ahora devuelven `true`, desbloqueando `[spz_seccion id="estrategia"]` y los nuevos shortcodes de módulo.
+- `includes/class-spz-shortcode.php`: registrados `[spz_diagrama id seccion]` y `[spz_estrategia id seccion]` en el path WP (WordPress shortcode registry); cada uno delega a `render_module` con su clave de módulo correspondiente, siguiendo exactamente el mismo patrón que `spz_kpi`/`spz_compare`/`spz_timeline`/`spz_logro`.
+- `includes/class-spz-shortcode.php`: `render_seccion` ahora prefiere `tipo_grafico_sugerido` de la vista cuando ese tipo está en la lista de compatibles, en lugar de tomar siempre `compatible[0]` (que era `bar` para vistas categóricas). Las 5 vistas con `tipo_grafico_sugerido:"tabla"` ahora se renderizan correctamente como tablas.
+- `README.md`: tabla de módulos de Estrategia actualizada con los shortcodes correctos `[spz_diagrama]`/`[spz_estrategia]`; eliminadas referencias erróneas a `[spz_grafico view="subsecretaria"]` y `[spz_grafico view="narino-360"]`.
+
+## [1.1.7] — 2026-07-07
+### Fixed
+- `assets/js/renderer.js`: fuga de listener `keydown` — `attachVerDatos` registraba un listener anónimo irremovible por cada panel. Ahora `onKey` (función nombrada en el closure) se añade en `openPanel()` y se elimina en `closePanel()`, de modo que solo existe un listener mientras el panel está abierto.
+- `assets/js/renderer.js`: `aria-label` con doble-escape — `setAttribute` almacena texto verbatim; se eliminó `escHtml()` del valor del atributo para que lectores de pantalla no lean `&amp;` literal.
+- `assets/js/renderer.js`: campo `fuente` omitido en meta de gráficos — ambas llamadas a `attachVerDatos` (path tabla nativa y path d3plus) ahora incluyen `fuente: payload.fuente || ''`.
+
+## [1.1.6] — 2026-07-07
+### Added
+- `assets/js/renderer.js`: función `attachVerDatos(el, dataForPanel, meta)` — adjunta un botón `<button class="spz-verdatos">` y un panel colapsable `<div class="spz-datapanel">` como hermanos de cada elemento renderizado. El botón usa `aria-expanded` y gestión de foco (Esc cierra y devuelve el foco al botón). La función está expuesta en `window.SPZ.util.attachVerDatos` para reutilización desde `modules.js`. Guarda `el.dataset.spzVd` para evitar doble adjunto.
+- `assets/js/renderer.js`: llamada a `attachVerDatos` en `Renderer.render()` — para el path de tabla nativa (sincrono, tras `renderTable`) y para el path d3plus (antes del await `waitForD3plus`, de modo que el botón aparece inmediatamente sin esperar a que d3plus cargue).
+- `assets/js/modules.js`: función privada `moduleDataForPanel(modulo, payload)` — extrae las filas significativas de cada tipo de módulo (`kpi→[{valor,unidad}]`, `compare→[{período,valor}×2]`, `timeline→eventos`, `logro→[{titulo,texto}]`, `diagrama→ramas`, `estrategia→lineas`). `SPZ.modules.render` llama a `SPZ.util.attachVerDatos` tras renderizar cada módulo.
+- `assets/css/frontend.css`: `.spz-verdatos` (botón pill violeta `#5B3B8C`, hover fondo violeta, `aria-expanded=true` fondo violeta), `.spz-datapanel` (panel con cabecera `#F4F1FA` + botón cerrar ×, cuerpo scrollable `max-height:380px`), `.spz-datapanel__src` (fuente en cursiva con borde teal), `.spz-datapanel__dl` (grid 2 columnas). Responsive: panel reduce a 260 px y dl a 1 columna en ≤ 640 px.
+- `tests/harness.html`: Bloque Test 10 — card con `#s10` que espera botones `.spz-verdatos`, hace clic en el primero y verifica que `.spz-datapanel:not([hidden])` contiene tabla o dl.
+
+## [1.1.5] — 2026-07-07
+### Fixed
+- `templates/admin/builder.php`: `MutationObserver` ahora revela simétricamente el bloque `[spz_analisis]` cuando el shortcode principal se vuelve visible (`mainBox.hidden === false`), invocando `syncAnalisis()` con el valor actual. Previamente solo ocultaba el análisis cuando el shortcode se ocultaba.
+
+## [1.1.4] — 2026-07-07
+### Added
+- `includes/class-spz-shortcode.php`: shortcode `[spz_analisis id seccion]` — renderizado server-side del campo `analisis` de la vista/módulo; texto escapado con `esc_html()`; retorna vacío si el campo no existe o está en blanco (tolerante a datos sin `analisis` hasta Fix-Task 5). Registrado con `add_shortcode('spz_analisis', ...)`.
+- `templates/admin/builder.php`: segunda caja de shortcode (`#spz-analisis-box`) que muestra `[spz_analisis id="..." seccion="..."]` copiable cada vez que admin.js genera el shortcode principal; sincronización via interceptor `Object.defineProperty` en el setter de `#spz-shortcode-input`; se oculta/muestra junto con la caja principal via `MutationObserver`.
+- `templates/admin/shortcodes.php`: artículo extra `[spz_analisis …]` copiable añadido en la galería de shortcodes — dentro del `spz-shortcode-grid` de cada módulo PAZ y de cada vista de gráfico (tras el loop de tipos compatibles).
+- `assets/css/frontend.css`: `.spz-analisis` — bloque de párrafo ciudadano con borde izquierdo violeta `#5B3B8C`, fondo lavanda claro `#f9f7fd`, `line-height: 1.75`, `max-width: 68ch`, radio de borde derecho para legibilidad pública.
+
+## [1.1.3] — 2026-07-07
+### Fixed
+- `assets/js/modules.js`: escapar `payload.modulo` con `esc()` en fallback "no soportado" (XSS).
+- `assets/js/renderer.js`: escapar `typeHint` con `escHtml()` en fallback "tipo no soportado" (XSS).
+- `assets/js/modules.js`: guards `|| ''` en `esc(d.centro)` y `esc(r.nombre)` del módulo `diagrama`.
+- `assets/js/renderer.js`: eliminar bloque muerto `numericCols` en `dataTable` (nunca leído).
+
+## [1.1.2] — 2026-07-07
+### Added
+- `assets/js/renderer.js`: rama `tabla` nativa — detecta `tipo_grafico_sugerido:'tabla'` (raw seed) o `chart.class===''` (REST) y renderiza `<table class="spz-tabla">` con encabezado violeta, filas zebra y números formateados `es-CO`, sin invocar d3plus. `SPZ.util.dataTable(rows, columns)` expuesto para reutilización desde Fix-Task 6.
+- `assets/js/modules.js`: módulos `diagrama` (nodo central + ramas con nombre/kpi/sub) y `estrategia` (descripción + líneas numeradas + chips de comunicaciones), ambos escapando texto con el helper `esc`.
+- `assets/css/frontend.css`: `.spz-tabla-wrap/.spz-tabla` (responsive, header violeta `#5B3B8C`, zebra, números right-aligned), `.spz-diagrama` (centro pill + ramas), `.spz-estrategia` (descripción cursiva, lista ol, chips), `.spz-chip`.
+- `tests/harness.html`: Tests 7 (tabla nativa), 8 (diagrama), 9 (estrategia) — con polling de validación y badges de estado.
+
+## [1.1.1] — 2026-07-07
+### Added
+- `includes/class-spz-chart-types.php`: tipo nativo `tabla` registrado (`d3plus_class=''`, `native=true`), compatible con todas las categorías estándar (`categorical,temporal,geographic,hierarchical,network,statistical,social`), sin requisitos mínimos de campos. `is_valid_type('tabla')` ahora es `true`.
+- `includes/class-spz-rest-api.php`: `build_mapping()` — nuevo `case 'tabla':` que devuelve `['columns' => array_merge(dimensions, measures)]`.
+- `scripts/verify-compat.php`: assertions inline que verifican `is_valid_type('tabla')===true` y que `compatible_for` incluye `tabla` para vistas `categorical`; las 5 vistas tabla se procesan ahora en el flujo normal (ya no marcadas como "pendiente Task 2").
+
+## [1.1.0] — 2026-07-07
+### Fixed
+- `scripts/build-views.py`: categorías estándar para todas las vistas — `humanitarian/security/economic/coexistence` → `categorical`; `nna-desvinculacion` (serie anual con 1 medida) → `categorical` + `bar`; `geographic` y `social` sin cambio. Categoría temática original preservada en campo `tema`.
+- `scripts/build-views.py`: tipos no-d3plus corregidos — `table` → `tabla` en `homicidios-departamental`, `hurtos`, `convivencia`, `indicadores-sociales`; `list` → `tabla` en `estructuras-armadas`.
+- `scripts/build-views.py`: `subsecretaria` convertida a `{"modulo":"diagrama",...}` con `centro` y `ramas`; `narino-360` convertida a `{"modulo":"estrategia",...}` con `lineas` y `comunicaciones`.
+- `scripts/validate-views.py`: `MOD_TYPES` ampliado con `diagrama` y `estrategia`; validación de `tipo_grafico_sugerido` contra lista de tipos conocidos (incluye `tabla`).
+### Added
+- `scripts/verify-compat.php`: script de aceptación con stubs WP mínimos que carga `SPZ_Chart_Types` y replica la inferencia `is_int/is_float` del data-provider para verificar que `tipo_grafico_sugerido ∈ compatible_for(view)` en todas las vistas de gráfico. Las vistas `tabla` se reportan como "pendiente Task 2".
+
 ## [1.0.1] — 2026-07-06
 ### Fixed
 - `README.md` y `readme.txt`: etiqueta correcta de la sección `dni` — "Diálogo, Negociación e Implementación" (eliminada referencia errónea a "Departamento Nacional de Inteligencia").

@@ -2,7 +2,7 @@
 /**
  * PAZ native module registry.
  *
- * Registers the four PAZ module types (kpi, compare, timeline, logro) and
+ * Registers the six PAZ module types (kpi, compare, timeline, logro, diagrama, estrategia) and
  * provides validation helpers consumed by shortcode handlers and the REST API.
  *
  * Module JSON files carry a top-level `"modulo"` key (detected by
@@ -29,7 +29,7 @@ class SPZ_Modules {
 	 *
 	 * @var string[]
 	 */
-	private const TYPES = [ 'kpi', 'compare', 'timeline', 'logro' ];
+	private const TYPES = [ 'kpi', 'compare', 'timeline', 'logro', 'diagrama', 'estrategia' ];
 
 	/**
 	 * Return all registered module type keys.

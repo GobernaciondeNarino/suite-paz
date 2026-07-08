@@ -10,6 +10,8 @@ Recreación del plugin [`tic-suite`](https://github.com/GobernaciondeNarino/tic-
 
 Suite PAZ expone **34 vistas de datos** (gráficos y módulos) organizadas en 5 secciones temáticas. Los datos semilla viven en archivos JSON en `data/views/<seccion>/`; cualquier cambio realizado desde el panel de administración se persiste en la base de datos de WordPress (`wp_spz_views`) y tiene prioridad sobre el JSON de origen. El renderizado de gráficos corre 100 % en el cliente a través de [@d3plus/core v3.1.4](https://github.com/d3plus/d3plus) (CDN) — **se requiere conexión a Internet en el frontend**.
 
+**Versión 1.1.x:** corrección de la causa raíz de vistas rotas (categorías), tipo nativo `tabla`, módulos `diagrama`/`estrategia`, shortcode `[spz_analisis]` y botón "Ver datos" en cada vista.
+
 ---
 
 ## Instalación
@@ -56,25 +58,26 @@ Inserta un gráfico interactivo renderizado por d3plus. Los datos se cargan por 
 [spz_grafico view="homicidios-municipio" type="geomap" seccion="seguridad" height="500" title="Homicidios por municipio"]
 ```
 
-**Tipos de gráfico disponibles** (d3plus v3.1.4):
+**Tipos de gráfico disponibles** (d3plus v3.1.4 + nativos):
 
-| Slug           | d3plus Class    | Descripción |
+| Slug           | Clase / Motor   | Descripción |
 |----------------|-----------------|-------------|
-| `bar`          | BarChart        | Barras verticales |
-| `stacked_bar`  | BarChart        | Barras apiladas |
-| `line`         | LinePlot        | Líneas temporales |
-| `area`         | AreaPlot        | Áreas |
-| `stacked_area` | StackedArea     | Áreas apiladas |
-| `pie`          | Pie             | Pastel |
-| `donut`        | Donut           | Dona |
-| `treemap`      | Treemap         | Treemap |
-| `geomap`       | Geomap          | Mapa coroplético (64 municipios de Nariño) |
-| `network`      | Network         | Red de nodos |
-| `tree`         | Tree            | Árbol jerárquico |
-| `sankey`       | Sankey          | Diagrama Sankey |
-| `rings`        | Rings           | Anillos de red |
-| `box_whisker`  | BoxWhisker      | Caja y bigotes |
-| `priestley`    | Priestley       | Timeline de Priestley |
+| `bar`          | BarChart (d3plus) | Barras verticales |
+| `stacked_bar`  | BarChart (d3plus) | Barras apiladas |
+| `line`         | LinePlot (d3plus) | Líneas temporales |
+| `area`         | AreaPlot (d3plus) | Áreas |
+| `stacked_area` | StackedArea (d3plus) | Áreas apiladas |
+| `pie`          | Pie (d3plus)    | Pastel |
+| `donut`        | Donut (d3plus)  | Dona |
+| `treemap`      | Treemap (d3plus) | Treemap |
+| `geomap`       | Geomap (d3plus) | Mapa coroplético (64 municipios de Nariño) |
+| `network`      | Network (d3plus) | Red de nodos |
+| `tree`         | Tree (d3plus)   | Árbol jerárquico |
+| `sankey`       | Sankey (d3plus) | Diagrama Sankey |
+| `rings`        | Rings (d3plus)  | Anillos de red |
+| `box_whisker`  | BoxWhisker (d3plus) | Caja y bigotes |
+| `priestley`    | Priestley (d3plus) | Timeline de Priestley |
+| **`tabla`**    | **Nativo (sin d3plus)** | **Tabla HTML responsiva con encabezado violeta y filas zebra. Compatible con todas las categorías. No requiere conexión a CDN.** |
 
 ---
 
@@ -157,15 +160,48 @@ Inserta automáticamente todos los módulos y gráficos de una sección en orden
 
 ---
 
+### `[spz_analisis]` — Análisis ciudadano
+
+Muestra el texto de análisis ciudadano (~594 caracteres) asociado a una vista o módulo. El texto se renderiza en servidor como un párrafo `.spz-analisis` con borde violeta izquierdo y fondo lavanda; no requiere JavaScript ni d3plus.
+
+| Atributo | Tipo   | Por defecto | Descripción |
+|----------|--------|-------------|-------------|
+| `id`     | string | —           | Slug de la vista o módulo (requerido) |
+| `seccion`| string | `dni`       | Sección temática |
+
+**Ejemplo:**
+```
+[spz_analisis id="cneb-confinamiento" seccion="dni"]
+```
+
+**Notas:**
+- Si la vista no tiene campo `analisis` o está en blanco, el shortcode no emite HTML (tolerante a datos sin análisis).
+- En el **Constructor de shortcodes** (`Suite PAZ → Constructor`), al seleccionar una vista se genera automáticamente un bloque copiable de `[spz_analisis …]` junto al `[spz_grafico …]` correspondiente.
+- En la **Galería de shortcodes** (`Suite PAZ → Shortcodes`), cada tarjeta de vista o módulo incluye su `[spz_analisis …]` copiable.
+- Los 34 elementos del plugin tienen análisis ciudadano redactados a ~594 caracteres cada uno en español de Colombia.
+
+---
+
 ## Las 5 Secciones
 
 | ID               | Etiqueta              | Vistas | Descripción |
 |------------------|-----------------------|--------|-------------|
 | `dni`            | Diálogo, Negociación e Implementación | 19     | Desplazamiento, confinamiento, minas antipersonal, niñez (NNA), firmantes de paz, búsqueda de personas desaparecidas (UBPD), acuerdos de paz. |
-| `seguridad`      | Seguridad             | 6      | Homicidios por municipio (mapa), histórico departamental, estructuras armadas, fuerza pública, terrorismo nacional vs Nariño |
-| `convivencia`    | Convivencia           | 3      | Convivencia ciudadana, hurtos, hallazgos clave |
-| `estrategia`     | Estrategia            | 2      | Subsecretaría de Paz, Nariño 360 |
-| `transformaciones` | Transformaciones    | 4      | IPM, desocupación, indicadores sociales, PIB |
+| `seguridad`      | Seguridad             | 6      | Homicidios por municipio (mapa), histórico departamental (tabla), estructuras armadas (tabla), fuerza pública, terrorismo nacional vs Nariño |
+| `convivencia`    | Convivencia           | 3      | Convivencia ciudadana, hurtos (tabla), hallazgos clave |
+| `estrategia`     | Estrategia            | 2      | Subsecretaría de Paz (módulo `diagrama`), Nariño 360 (módulo `estrategia`) |
+| `transformaciones` | Transformaciones    | 4      | IPM, desocupación, indicadores sociales (tabla), PIB |
+
+### Módulos de la sección Estrategia
+
+Las dos vistas de la sección **Estrategia** son módulos nativos (no gráficos d3plus), insertados con sus propios shortcodes:
+
+| Módulo       | Vista slug      | Shortcode correcto                                              | Descripción |
+|--------------|-----------------|----------------------------------------------------------------|-------------|
+| `diagrama`   | `subsecretaria` | `[spz_diagrama id="subsecretaria" seccion="estrategia"]`       | Nodo central "Subsecretaría" con ramas que muestran nombre, KPI y sub-descripción de cada área. Renderizado con HTML/CSS nativo sin d3plus. |
+| `estrategia` | `narino-360`    | `[spz_estrategia id="narino-360" seccion="estrategia"]`        | Descripción estratégica, lista numerada de líneas de acción y chips de canales de comunicación. Renderizado con HTML/CSS nativo sin d3plus. |
+
+> **Nota:** `[spz_grafico view="subsecretaria"]` y `[spz_grafico view="narino-360"]` **no funcionan** — estas vistas son módulos nativos, no gráficos d3plus. Use `[spz_diagrama]` / `[spz_estrategia]` o el shortcode de sección `[spz_seccion id="estrategia"]`.
 
 ---
 
@@ -191,6 +227,17 @@ El panel **Suite PAZ → Editar datos** permite modificar cualquier vista o mód
 
 ---
 
+## Botón "Ver datos"
+
+Cada vista renderizada (gráfico d3plus, tabla nativa, módulo diagrama/estrategia y módulos KPI/compare/timeline/logro) incluye automáticamente un botón **"Ver datos"** (`<button class="spz-verdatos">`) con un panel colapsable `<div class="spz-datapanel">`.
+
+- El botón abre/cierra el panel con gestión de foco y tecla Esc para accesibilidad.
+- El panel muestra las filas de datos que el renderer consumió (en tabla o lista clave/valor) y la fuente de los datos en cursiva con borde teal.
+- No requiere configuración adicional: se adjunta automáticamente al final de cada elemento renderizado.
+- El CSS del panel respeta la paleta de marca (fondo lavanda `#F4F1FA`, borde teal `#3FCF97`, botón cerrar ×).
+
+---
+
 ## Arquitectura
 
 ```
@@ -205,17 +252,17 @@ suite-paz/
 │   ├── class-spz-security.php  # Capability checks, nonce verification, sanitización, anti-traversal
 │   ├── class-spz-data-provider.php # Lee vistas/módulos: BD override → JSON semilla
 │   ├── class-spz-data-store.php    # CRUD en wp_spz_views ($wpdb->prepare en todas las queries)
-│   ├── class-spz-chart-types.php   # Registro de 15 tipos d3plus; compatible_for(view)
-│   ├── class-spz-modules.php       # Registro de tipos de módulo (kpi/compare/timeline/logro)
-│   ├── class-spz-shortcode.php     # Handlers de los 6 shortcodes
+│   ├── class-spz-chart-types.php   # Registro de 15 tipos d3plus + 1 nativo (tabla); compatible_for(view)
+│   ├── class-spz-modules.php       # Registro de tipos de módulo (kpi/compare/timeline/logro/diagrama/estrategia)
+│   ├── class-spz-shortcode.php     # Handlers de los 9 shortcodes (incluye spz_diagrama, spz_estrategia, spz_analisis)
 │   ├── class-spz-rest-api.php      # Rutas REST (suite-paz/v1)
 │   └── class-spz-admin.php         # Menú de administración (4 subpáginas)
 │
 ├── assets/
 │   ├── js/
-│   │   ├── renderer.js         # SPZ.renderer — wrapper d3plus (15 tipos, geomap, módulos)
+│   │   ├── renderer.js         # SPZ.renderer — wrapper d3plus (15 tipos + tabla nativa) + SPZ.util.attachVerDatos
 │   │   ├── frontend.js         # Hidratador WP: escanea .spz-chart/.spz-module, fetch REST, render
-│   │   ├── modules.js          # SPZ.modules.render — kpi/compare/timeline/logro
+│   │   ├── modules.js          # SPZ.modules.render — kpi/compare/timeline/logro/diagrama/estrategia
 │   │   └── admin.js            # Constructor + Editor de datos (panel admin)
 │   └── css/
 │       ├── frontend.css        # Estilos del frontend (paleta SPZ, módulos, gráficos)
@@ -239,8 +286,9 @@ suite-paz/
 │       └── settings.php        # Ajustes del plugin
 │
 ├── scripts/
-│   ├── build-views.py          # Generador de vistas JSON semilla
-│   ├── validate-views.py       # Validador de esquema JSON (34 vistas)
+│   ├── build-views.py          # Generador de vistas JSON semilla (categorías estándar + análisis)
+│   ├── validate-views.py       # Validador de esquema JSON (34 vistas, incluye diagrama/estrategia)
+│   ├── verify-compat.php       # Verifica tipo_grafico_sugerido ∈ compatible_for para las 17 vistas de gráfico
 │   └── gitpush.sh              # Push seguro con ASKPASS
 │
 └── tests/
@@ -289,17 +337,54 @@ suite-paz/
    [spz_kpi id="rutas-nna" seccion="dni"]
    ```
    y verificar que el número se anima con count-up al cargar la página.
-8. Para probar el **editor de datos**: ir a **Suite PAZ → Editar datos**, seleccionar `seguridad` → `homicidios-municipio`, modificar un valor, guardar, y recargar el mapa para confirmar que el cambio se refleja.
-9. Usar **Restablecer** para volver a los datos originales.
-10. Verificar que el menú principal y los 4 submenús son visibles únicamente para usuarios con rol **Administrador**.
+8. Para probar la **tabla nativa**, insertar:
+   ```
+   [spz_grafico view="homicidios-departamental" type="tabla" seccion="seguridad"]
+   ```
+   y verificar que aparece una tabla HTML con encabezado violeta y filas zebra (no requiere d3plus ni CDN).
+9. Para probar el **análisis ciudadano**, insertar:
+   ```
+   [spz_analisis id="cneb-confinamiento" seccion="dni"]
+   ```
+   y verificar que aparece el párrafo con borde violeta izquierdo sobre fondo lavanda.
+10. Verificar que cada vista tiene un botón **"Ver datos"** (pill violeta debajo del gráfico); hacer clic abre un panel con las filas de datos y la fuente.
+11. Para probar módulos de Estrategia:
+    ```
+    [spz_diagrama id="subsecretaria" seccion="estrategia"]
+    [spz_estrategia id="narino-360" seccion="estrategia"]
+    ```
+    O insertarlos a la vez con `[spz_seccion id="estrategia"]`.
+12. Para probar el **editor de datos**: ir a **Suite PAZ → Editar datos**, seleccionar `seguridad` → `homicidios-municipio`, modificar un valor, guardar, y recargar el mapa para confirmar que el cambio se refleja.
+13. Usar **Restablecer** para volver a los datos originales.
+14. Verificar que el menú principal y los 4 submenús son visibles únicamente para usuarios con rol **Administrador**.
 
 > **Nota:** El frontend requiere conexión a Internet para cargar la librería d3plus desde CDN (`cdn.jsdelivr.net`). En entornos sin acceso a Internet, los gráficos no se renderizarán.
 
 ---
 
-## Limitación conocida
+## Solución de problemas
 
-Las vistas de la sección **Estrategia** (`subsecretaria` y `narino-360`) usan `tipo_grafico_sugerido: "radial"` y `"strategy"` respectivamente. Estos tipos no son tipos d3plus estándar; por tanto, `compatible_for()` devuelve `[]` para estas vistas y el shortcode `[spz_grafico]` no las renderiza automáticamente como gráfico. **Se maquetar manualmente** en la página usando el HTML/CSS apropiado para el diseño radial o de mapa estratégico. Los datos JSON están disponibles y correctos — solo falta el componente de visualización personalizado.
+### Una vista muestra solo el contenedor vacío (sin gráfico ni tabla)
+
+La causa más frecuente es tener una versión anterior al **v1.1.x** del plugin. Antes de la versión 1.1.0, la semilla de datos usaba categorías temáticas no estándar (`humanitarian`, `security`, `economic`, `coexistence`) que `compatible_for()` no reconocía; como resultado, el endpoint REST `/render` devolvía **409 Conflict** para todas esas vistas.
+
+**Verificar:** ir a **Plugins → Plugins instalados** y confirmar que Suite PAZ muestra la versión **1.1.8** o posterior.
+
+**Otras causas:**
+- La librería d3plus no cargó desde CDN (revisar conexión a `cdn.jsdelivr.net`). Las vistas `tabla`, `diagrama` y `estrategia` no requieren d3plus y siempre renderizan.
+- El tipo seleccionado no es compatible con la vista (la categoría de la vista no incluye ese tipo). Usar la **Galería de shortcodes** (`Suite PAZ → Shortcodes`) para obtener los tipos compatibles por vista.
+
+### Los módulos `diagrama` y `estrategia` no aparecen
+
+Confirmar que se usan los shortcodes correctos:
+- `[spz_diagrama id="subsecretaria" seccion="estrategia"]`
+- `[spz_estrategia id="narino-360" seccion="estrategia"]`
+
+**No usar** `[spz_grafico view="subsecretaria"]` ni `[spz_grafico view="narino-360"]` — estas vistas son módulos nativos, no gráficos d3plus. Alternativamente, `[spz_seccion id="estrategia"]` los inserta ambos automáticamente. Estas dos vistas no usan d3plus y renderizan siempre que el plugin esté activo.
+
+### El análisis ciudadano `[spz_analisis]` no muestra texto
+
+Confirmar que el atributo `id` coincide exactamente con el slug de la vista y que `seccion` es correcto. El shortcode devuelve vacío si el campo `analisis` no existe en el JSON de la vista (comportamiento esperado en instalaciones con datos personalizados que no incluyan ese campo).
 
 ---
 

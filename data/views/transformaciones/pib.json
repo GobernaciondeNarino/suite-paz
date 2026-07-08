@@ -3,7 +3,8 @@
   "titulo": "PIB de Nariño por sectores económicos (2024–2025)",
   "descripcion": "PIB a precios corrientes, miles de millones de pesos. Fuente: DANE.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "economic",
+  "categoria": "categorical",
+  "tema": "economic",
   "datos": [
     {
       "sector": "Agricultura, ganadería, caza, silvicultura y pesca",
@@ -25,5 +26,6 @@
       "valor_2024": 525,
       "valor_2025": 569
     }
-  ]
+  ],
+  "analisis": "El Producto Interno Bruto (PIB) muestra cuánto produce la economía de Nariño. Entre 2024 y 2025 el sector agropecuario creció de 26.130 a 28.593 miles de millones de pesos, consolidándose como el motor principal del departamento. La minería subió de 5.185 a 5.852, la manufactura de 217 a 243 y el comercio de 525 a 569. Que la agricultura crezca es especialmente importante: significa más empleo rural, más ingresos para los campesinos y mejores condiciones en los municipios. Una economía rural fuerte es también una de las bases más sólidas para la paz territorial."
 }

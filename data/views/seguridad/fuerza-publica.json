@@ -3,7 +3,8 @@
   "titulo": "Fuerza pública asesinada en el marco del conflicto (2023–2025)",
   "descripcion": "Bajas de policías y militares. Nacional: +156,7% policías y +77,8% militares. Nariño: policías estable, militares −60%. Fuente: Policía Nacional – SIEDCO Plus.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "security",
+  "categoria": "categorical",
+  "tema": "security",
   "datos": [
     {
       "ambito": "Nacional",
@@ -77,5 +78,6 @@
       "año": "2025",
       "bajas": 2
     }
-  ]
+  ],
+  "analisis": "Este indicador registra policías y militares asesinados en el conflicto. En Nariño las bajas de policías fueron 1 en 2023, 1 en 2024 y 0 en 2025; los militares registraron 5 en 2023, 1 en 2024 y 2 en 2025. A nivel nacional la situación empeoró: los policías subieron de 30 a 96 (+220%) y los militares de 54 a 96 (+78%), con un alza combinada del 129% en fuerza pública. Que Nariño mantenga cifras bajas mientras el país enfrenta ese incremento demuestra que la estrategia de seguridad del departamento está conteniendo el conflicto y protegiendo también a quienes tienen la misión de cuidar a la ciudadanía nariñense."
 }

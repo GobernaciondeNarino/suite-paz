@@ -2,8 +2,9 @@
   "vista": "estructuras-armadas",
   "titulo": "Estructuras armadas ilegales presentes en Nariño",
   "descripcion": "4 grupos armados al margen de la ley + 1 estructura de crimen de alto impacto. CNEB: 3200 combatientes; 2000 en proceso de paz (62.5%).",
-  "tipo_grafico_sugerido": "list",
-  "categoria": "security",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "security",
   "datos": [
     {
       "grupo": "Coordinadora Nacional Ejército Bolivariano",
@@ -47,5 +48,6 @@
         "Jaime Toño Obando"
       ]
     }
-  ]
+  ],
+  "analisis": "Este panel muestra los grupos armados ilegales presentes en Nariño: la Coordinadora Nacional Ejército Bolivariano (CNEB), el Estado Mayor Central, el ELN, el Frente Comuneros del Sur y las Autodefensas Unidas de Nariño. La CNEB es el grupo más numeroso, con 3.200 combatientes, de los cuales 2.000 (el 62,5%) están vinculados a procesos de paz. Conocer la estructura del conflicto es el primer paso para abordarlo: con esta información la Gobernación diseña estrategias de negociación y seguridad para proteger a las comunidades y reducir la violencia en el departamento nariñense."
 }

@@ -3,7 +3,8 @@
   "titulo": "Desplazamiento en zona de injerencia CNEB (2023–2026)",
   "descripcion": "Personas desplazadas en municipios de influencia de la Coordinadora Nacional Ejército Bolivariano. Fuente: Comité de Justicia Transicional Ley 1448 de 2011.",
   "tipo_grafico_sugerido": "bar",
-  "categoria": "humanitarian",
+  "categoria": "categorical",
+  "tema": "humanitarian",
   "datos": [
     {
       "año": "2023",
@@ -21,5 +22,6 @@
       "año": "2026",
       "personas": 441
     }
-  ]
+  ],
+  "analisis": "En la zona de influencia de la Coordinadora Nacional Ejército Bolivariano (CNEB), las personas desplazadas cayeron de 15.697 en 2023 a 12.611 en 2024, luego a 2.973 en 2025 y a 441 en lo que va de 2026. Esa reducción del 97% en tres años muestra que las negociaciones y la presencia institucional están funcionando: miles de familias nariñenses pudieron quedarse en sus territorios o regresar a ellos. Menos desplazamiento significa estabilidad, arraigo y esperanza de vida digna para comunidades que antes vivían bajo la presión constante del conflicto armado en Nariño."
 }

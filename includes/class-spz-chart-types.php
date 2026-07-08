@@ -2,17 +2,21 @@
 /**
  * Chart types registry.
  *
- * Defines the 15 supported d3plus chart types, their d3plus class name,
- * the view categories they can render, and the minimum field requirements.
+ * Defines the 15 supported d3plus chart types plus 1 native type (tabla),
+ * their d3plus class name, the view categories they can render, and the
+ * minimum field requirements.
  *
  * Adapted from class-tsg-chart-types.php (tic-suite).
  * Changes: TSG_ → SPZ_, text domain, added tree + box_whisker (15 total),
  * renamed compatible_with_view() → compatible_for(), added is_valid_type(),
  * compatible_for() returns [] for modules and non-standard tipo_grafico_sugerido.
+ * v1.1.1: added native type 'tabla' (d3plus_class='', native=true, universal).
  *
- * The 15 types (d3plus v3):
+ * The 15 d3plus types (d3plus v3):
  *   bar, stacked_bar, line, area, stacked_area, pie, donut, treemap,
  *   geomap, network, tree, sankey, rings, box_whisker, priestley.
+ * Native types (rendered without d3plus):
+ *   tabla — universal table view.
  *
  * @package SuitePaz
  */
@@ -293,6 +297,16 @@ class SPZ_Chart_Types {
 				'categories'   => [ 'geographic', 'categorical', 'temporal' ],
 				'requires'     => [ 'dimensions' => 1, 'measures' => 2 ],
 				'description'  => __( 'Barras horizontales para periodos o comparación de vigencias.', 'suite-paz' ),
+			],
+			// ── Tipos nativos (sin d3plus) ────────────────────────────────────
+			'tabla'       => [
+				'label'        => __( 'Tabla de datos', 'suite-paz' ),
+				'icon'         => 'editor-table',
+				'd3plus_class' => '',
+				'native'       => true,
+				'categories'   => [ 'categorical', 'temporal', 'geographic', 'hierarchical', 'network', 'statistical', 'social' ],
+				'requires'     => [],
+				'description'  => __( 'Vista tabular nativa — muestra filas y columnas sin d3plus.', 'suite-paz' ),
 			],
 		];
 	}

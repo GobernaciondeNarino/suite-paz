@@ -63,6 +63,166 @@
 	const NF_PCT     = new Intl.NumberFormat( 'es-CO', { minimumFractionDigits: 1, maximumFractionDigits: 1 } );
 
 	// ------------------------------------------------------------------
+	// HTML-escape helper (used by table builder and renderTable).
+	// ------------------------------------------------------------------
+	function escHtml( s ) {
+		return String( s == null ? '' : s ).replace( /[&<>"']/g, function ( c ) {
+			return ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } )[ c ];
+		} );
+	}
+
+	// ------------------------------------------------------------------
+	// dataTable( rows, columns ) → HTML string for <table class="spz-tabla">
+	// Exposed as SPZ.util.dataTable so Fix-Task 6 "Ver datos" can reuse it.
+	// ------------------------------------------------------------------
+	function dataTable( rows, columns ) {
+		if ( ! Array.isArray( rows ) || ! rows.length ) {
+			return '<p class="spz-empty">Sin datos.</p>';
+		}
+		// Compute columns from the union of keys if not provided.
+		if ( ! Array.isArray( columns ) || ! columns.length ) {
+			const keySet = Object.create( null );
+			rows.forEach( function ( row ) {
+				Object.keys( row || {} ).forEach( function ( k ) { keySet[ k ] = true; } );
+			} );
+			columns = Object.keys( keySet );
+		}
+		let html = '<div class="spz-tabla-wrap"><table class="spz-tabla"><thead><tr>';
+		columns.forEach( function ( col ) {
+			html += '<th>' + escHtml( col ) + '</th>';
+		} );
+		html += '</tr></thead><tbody>';
+		rows.forEach( function ( row ) {
+			html += '<tr>';
+			columns.forEach( function ( col ) {
+				const val   = row[ col ];
+				const isNum = typeof val === 'number';
+				let display;
+				if ( val == null || val === '' ) {
+					display = '&mdash;';
+				} else if ( isNum ) {
+					display = escHtml( val.toLocaleString( 'es-CO' ) );
+				} else {
+					display = escHtml( String( val ) );
+				}
+				html += '<td' + ( isNum ? ' class="spz-num"' : '' ) + '>' + display + '</td>';
+			} );
+			html += '</tr>';
+		} );
+		html += '</tbody></table></div>';
+		return html;
+	}
+
+	// ------------------------------------------------------------------
+	// attachVerDatos( el, dataForPanel, meta )
+	// Appends a branded "Ver datos" button + collapsible data panel
+	// as siblings of `el` after each chart/table/module render.
+	// meta: { title, descripcion, fuente, columns }
+	// Exposed as SPZ.util.attachVerDatos so modules.js can reuse it.
+	// ------------------------------------------------------------------
+	function attachVerDatos( el, dataForPanel, meta ) {
+		if ( ! el || ! el.parentNode ) {
+			return;
+		}
+		// Guard: only attach once per element.
+		if ( el.dataset && el.dataset.spzVd ) {
+			return;
+		}
+		if ( el.dataset ) {
+			el.dataset.spzVd = '1';
+		}
+
+		meta = meta || {};
+		var uid = 'spz-dp-' + Math.random().toString( 36 ).slice( 2 );
+
+		// Build inner HTML for the panel body.
+		var bodyHtml = '';
+		var src = meta.descripcion || meta.fuente || '';
+		if ( src ) {
+			bodyHtml += '<p class="spz-datapanel__src">Fuente: ' + escHtml( src ) + '</p>';
+		}
+		if ( Array.isArray( dataForPanel ) && dataForPanel.length ) {
+			bodyHtml += dataTable( dataForPanel, meta.columns || null );
+		} else if ( dataForPanel && typeof dataForPanel === 'object' && ! Array.isArray( dataForPanel ) ) {
+			bodyHtml += '<dl class="spz-datapanel__dl">';
+			Object.keys( dataForPanel ).forEach( function ( k ) {
+				var v = dataForPanel[ k ];
+				if ( v == null || v === '' ) {
+					return;
+				}
+				bodyHtml += '<dt>' + escHtml( String( k ) ) + '</dt><dd>' + escHtml( String( v ) ) + '</dd>';
+			} );
+			bodyHtml += '</dl>';
+		} else {
+			bodyHtml += '<p class="spz-empty">Sin datos.</p>';
+		}
+
+		var panelTitle = escHtml( meta.title || 'Datos de la vista' );
+
+		// Create button.
+		var btn = document.createElement( 'button' );
+		btn.type = 'button';
+		btn.className = 'spz-verdatos';
+		btn.setAttribute( 'aria-expanded', 'false' );
+		btn.setAttribute( 'aria-controls', uid );
+		btn.innerHTML = '<span class="spz-verdatos__icon" aria-hidden="true">&#9638;</span><span>Ver datos</span>';
+
+		// Create panel.
+		var panel = document.createElement( 'div' );
+		panel.className = 'spz-datapanel';
+		panel.id = uid;
+		panel.setAttribute( 'hidden', '' );
+		panel.setAttribute( 'role', 'region' );
+		panel.setAttribute( 'aria-label', 'Datos: ' + ( meta.title || '' ) );
+		panel.innerHTML =
+			'<div class="spz-datapanel__header">' +
+				'<span class="spz-datapanel__title">' + panelTitle + '</span>' +
+				'<button type="button" class="spz-datapanel__close" aria-label="Cerrar panel">&#x2715;</button>' +
+			'</div>' +
+			'<div class="spz-datapanel__body">' + bodyHtml + '</div>';
+
+		// Insert button then panel immediately after el.
+		var ref = el.nextSibling;
+		el.parentNode.insertBefore( btn, ref );
+		el.parentNode.insertBefore( panel, btn.nextSibling );
+
+		// Toggle helpers.
+		function onKey( e ) {
+			if ( e.key === 'Escape' || e.key === 'Esc' ) {
+				closePanel();
+			}
+		}
+		function openPanel() {
+			panel.removeAttribute( 'hidden' );
+			btn.setAttribute( 'aria-expanded', 'true' );
+			document.addEventListener( 'keydown', onKey );
+			var closeBtn = panel.querySelector( '.spz-datapanel__close' );
+			if ( closeBtn ) {
+				closeBtn.focus();
+			}
+		}
+		function closePanel() {
+			panel.setAttribute( 'hidden', '' );
+			btn.setAttribute( 'aria-expanded', 'false' );
+			document.removeEventListener( 'keydown', onKey );
+			btn.focus();
+		}
+
+		btn.addEventListener( 'click', function () {
+			if ( panel.hasAttribute( 'hidden' ) ) {
+				openPanel();
+			} else {
+				closePanel();
+			}
+		} );
+
+		var closeEl = panel.querySelector( '.spz-datapanel__close' );
+		if ( closeEl ) {
+			closeEl.addEventListener( 'click', closePanel );
+		}
+	}
+
+	// ------------------------------------------------------------------
 	// Renderer object
 	// ------------------------------------------------------------------
 	const Renderer = {
@@ -101,8 +261,25 @@
 
 			// Build the normalised payload.
 			const payload = this.buildPayload( rawView, typeHint );
+
+			// Native table renderer — intercept before d3plus instantiation.
+			// Triggered when: type==='tabla', chart.class==='' (REST native), or chart.class==='native'.
+			if ( payload && payload.chart &&
+				( payload.chart.key === 'tabla' ||
+				  payload.chart.class === '' ||
+				  payload.chart.class === 'native' ) ) {
+				this.renderTable( el, payload );
+				attachVerDatos( el, payload.data || [], {
+					title:       ( payload.view && payload.view.name )        || 'Datos',
+					descripcion: ( payload.view && payload.view.description ) || '',
+					columns:     ( payload.mapping && payload.mapping.columns ) || null,
+					fuente:      payload.fuente || '',
+				} );
+				return;
+			}
+
 			if ( ! payload || ! payload.chart || ! payload.chart.class ) {
-				el.innerHTML = `<p class="spz-empty">Tipo de gráfico no soportado: ${ typeHint || '(desconocido)' }</p>`;
+				el.innerHTML = `<p class="spz-empty">Tipo de gráfico no soportado: ${ escHtml( String( typeHint || '(desconocido)' ) ) }</p>`;
 				return;
 			}
 
@@ -110,6 +287,14 @@
 			if ( ! el.id ) {
 				el.id = 'spz-chart-' + Math.random().toString( 36 ).slice( 2 );
 			}
+
+			// Attach "Ver datos" button/panel as a sibling of el (independent of d3plus loading).
+			attachVerDatos( el, payload.data || [], {
+				title:       ( payload.view && payload.view.name )        || 'Datos',
+				descripcion: ( payload.view && payload.view.description ) || '',
+				columns:     ( payload.mapping && payload.mapping.columns ) || null,
+				fuente:      payload.fuente || '',
+			} );
 
 			// Wait for the d3plus bundle.
 			try {
@@ -232,9 +417,10 @@
 		 * @returns {object}         Normalised payload.
 		 */
 		buildPayload( raw, typeHint ) {
-			// (b) Already a pre-built REST payload — detect by chart.class + data array.
-			if ( raw && raw.chart && raw.chart.class && Array.isArray( raw.data ) ) {
-				// Allow typeHint to override the chart type.
+			// (b) Already a pre-built REST payload — detect by presence of raw.chart + raw.data array.
+			// Native types (tabla) have chart.class==='' so we cannot require it to be truthy.
+			if ( raw && raw.chart && raw.chart.key && Array.isArray( raw.data ) ) {
+				// Allow typeHint to override the chart type (d3plus types only).
 				if ( typeHint && typeHint !== raw.chart.key ) {
 					const cls = CLASS_MAP[ typeHint ];
 					if ( cls ) {
@@ -1031,12 +1217,33 @@
 				}
 			}
 		},
+
+		// ==============================================================
+		// Native table renderer (no d3plus)
+		// ==============================================================
+
+		/**
+		 * Render payload.data as a branded <table class="spz-tabla">.
+		 * Columns come from mapping.columns or are inferred from the row keys.
+		 *
+		 * @param {Element} el      Container element.
+		 * @param {object}  payload Normalised renderer payload.
+		 */
+		renderTable( el, payload ) {
+			const data    = payload.data    || [];
+			const mapping = payload.mapping || {};
+			const columns = mapping.columns || null;
+			el.innerHTML  = dataTable( data, columns );
+		},
 	};
 
 	// ------------------------------------------------------------------
-	// Expose as window.SPZ.renderer
+	// Expose as window.SPZ.renderer + window.SPZ.util.dataTable
 	// ------------------------------------------------------------------
 	window.SPZ = window.SPZ || {};
-	window.SPZ.config   = window.SPZ.config   || {};
-	window.SPZ.renderer = Renderer;
+	window.SPZ.config      = window.SPZ.config || {};
+	window.SPZ.renderer    = Renderer;
+	window.SPZ.util                = window.SPZ.util || {};
+	window.SPZ.util.dataTable      = dataTable;
+	window.SPZ.util.attachVerDatos = attachVerDatos;
 } )();

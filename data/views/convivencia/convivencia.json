@@ -2,8 +2,9 @@
   "vista": "convivencia",
   "titulo": "Convivencia y seguridad ciudadana — Nariño vs Colombia (2023–2025)",
   "descripcion": "Casos y tasa por 100.000 hab. de violencia intrafamiliar, lesiones personales y feminicidio. Fuente: SIEDCO Plus · Observatorio Gobernación de Nariño.",
-  "tipo_grafico_sugerido": "table",
-  "categoria": "coexistence",
+  "tipo_grafico_sugerido": "tabla",
+  "categoria": "categorical",
+  "tema": "coexistence",
   "datos": [
     {
       "indicador": "Violencia intrafamiliar",
@@ -77,5 +78,6 @@
       "casos_narino": 5,
       "tasa_narino": 0.3
     }
-  ]
+  ],
+  "analisis": "Este indicador mide tres formas de violencia que afectan a familias y mujeres en Nariño: violencia intrafamiliar, lesiones personales y feminicidio. En 2025, la violencia intrafamiliar registró 3.284 casos (tasa 191,6 por 100.000 hab.), menos que en 2024 (3.339; tasa 195,9). Las lesiones personales bajaron de 2.585 a 2.411 casos. Los feminicidios pasaron de 5 en 2023 a 8 en 2024 y volvieron a 5 en 2025. Que estas cifras disminuyan indica que la prevención y la atención temprana funcionan; reducirlas más significa hogares más seguros y menos sufrimiento para las familias de Nariño."
 }

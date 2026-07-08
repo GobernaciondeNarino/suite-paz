@@ -162,6 +162,104 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<p class="spz-hint"><?php esc_html_e( 'Pégalo en cualquier página o entrada de WordPress.', 'suite-paz' ); ?></p>
 			</div>
+
+			<div class="spz-shortcode-box" id="spz-analisis-box" hidden>
+				<label for="spz-analisis-input">
+					<span class="dashicons dashicons-editor-quote" aria-hidden="true"></span>
+					<?php esc_html_e( 'Análisis ciudadano', 'suite-paz' ); ?>
+				</label>
+				<div class="spz-shortcode-row">
+					<input type="text" id="spz-analisis-input" readonly value="" />
+					<button type="button" class="button" id="spz-copy-analisis-btn">
+						<span class="dashicons dashicons-admin-page" aria-hidden="true"></span>
+						<?php esc_html_e( 'Copiar', 'suite-paz' ); ?>
+					</button>
+				</div>
+				<p class="spz-hint"><?php esc_html_e( 'Muestra el párrafo de análisis ciudadano del elemento.', 'suite-paz' ); ?></p>
+			</div>
+			<script>
+			/* Sync [spz_analisis] shortcode whenever admin.js updates the main shortcode input. */
+			( function () {
+				'use strict';
+				document.addEventListener( 'DOMContentLoaded', function () {
+					var mainBox     = document.querySelector( '.spz-shortcode-box' );
+					var mainInput   = document.getElementById( 'spz-shortcode-input' );
+					var analisisBox = document.getElementById( 'spz-analisis-box' );
+					var analisisIn  = document.getElementById( 'spz-analisis-input' );
+					var copyBtn     = document.getElementById( 'spz-copy-analisis-btn' );
+					if ( ! mainInput || ! analisisBox || ! analisisIn ) { return; }
+
+					/* Intercept programmatic .value = ... assignments from admin.js. */
+					var proto = Object.getOwnPropertyDescriptor( HTMLInputElement.prototype, 'value' );
+					Object.defineProperty( mainInput, 'value', {
+						get: proto.get,
+						set: function ( val ) {
+							proto.set.call( this, val );
+							syncAnalisis( val );
+						},
+						configurable: true,
+					} );
+
+					/* Hide the analysis box whenever the main shortcode box is hidden. */
+					if ( mainBox ) {
+						new MutationObserver( function ( muts ) {
+							muts.forEach( function ( m ) {
+								if ( m.attributeName === 'hidden' ) {
+									if ( mainBox.hidden ) {
+										analisisBox.hidden = true;
+									} else {
+										syncAnalisis( mainInput.value );
+									}
+								}
+							} );
+						} ).observe( mainBox, { attributes: true } );
+					}
+
+					function syncAnalisis( sc ) {
+						if ( ! sc ) { analisisBox.hidden = true; return; }
+						var viewMatch    = sc.match( /view="([^"]+)"/ );
+						var idMatch      = sc.match( /\bid="([^"]+)"/ );
+						var seccionMatch = sc.match( /seccion="([^"]+)"/ );
+						var id      = viewMatch ? viewMatch[ 1 ] : ( idMatch ? idMatch[ 1 ] : '' );
+						var seccion = seccionMatch ? seccionMatch[ 1 ] : '';
+						if ( ! id ) { analisisBox.hidden = true; return; }
+						analisisIn.value = '[spz_analisis id="' + id + '"' +
+							( seccion ? ' seccion="' + seccion + '"' : '' ) + ']';
+						analisisBox.hidden = false;
+					}
+
+					if ( copyBtn ) {
+						copyBtn.addEventListener( 'click', function () {
+							var text = analisisIn.value;
+							if ( ! text ) { return; }
+							if ( navigator.clipboard && navigator.clipboard.writeText ) {
+								navigator.clipboard.writeText( text ).then( onCopied );
+							} else {
+								var ta = document.createElement( 'textarea' );
+								ta.value = text;
+								ta.style.cssText = 'position:absolute;left:-9999px;top:0';
+								document.body.appendChild( ta );
+								ta.select();
+								try { document.execCommand( 'copy' ); onCopied(); } catch ( e ) { /* silent */ }
+								document.body.removeChild( ta );
+							}
+						} );
+					}
+
+					function onCopied() {
+						if ( ! copyBtn ) { return; }
+						var orig = copyBtn.innerHTML;
+						copyBtn.innerHTML =
+							'<span class="dashicons dashicons-yes" aria-hidden="true"></span> <?php echo esc_js( esc_html__( 'Copiado', 'suite-paz' ) ); ?>';
+						copyBtn.classList.add( 'is-success' );
+						setTimeout( function () {
+							copyBtn.innerHTML = orig;
+							copyBtn.classList.remove( 'is-success' );
+						}, 1800 );
+					}
+				} );
+			}() );
+			</script>
 		</section>
 	</section>
 </div>
