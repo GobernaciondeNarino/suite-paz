@@ -1,6 +1,6 @@
 ﻿/* global d3plus */
 /**
- * Suite PAZ · Renderer d3plus v3.
+ * Suite PAZ · Renderer d3plus v3 · v1.5.1.
  *
  * Exposes window.SPZ.renderer.render( el, { view, type, options } ).
  *
@@ -631,6 +631,9 @@
 								} ) );
 							} );
 						} );
+						// Wide format: x=year (already correct), mark for applyAxes.
+						payload._resolvedXField = '_year';
+						if ( el ) { el.dataset.spzXfield = '_year'; }
 						viz
 							.data( long )
 							.groupBy( dims[ 0 ] )
@@ -641,12 +644,18 @@
 						const gbOverrideLA = ( el && el.getAttribute( 'data-group-by' ) ) || '';
 						const mOverrideLA  = ( el && el.getAttribute( 'data-measure' )  ) || '';
 						if ( yearDimLA && dims.length >= 2 ) {
-							const wantedGBLA = ( gbOverrideLA && dims.indexOf( gbOverrideLA ) !== -1 ) ? gbOverrideLA : yearDimLA;
-							const xFieldLA   = dims.find( function ( d ) { return d !== wantedGBLA; } ) || dims[ 0 ];
+							// Long format with year dim: x=year (time series), groupBy=category.
+							const nonYearDimsLA = dims.filter( function ( d ) { return d !== yearDimLA; } );
+							const wantedGBLA    = ( gbOverrideLA && dims.indexOf( gbOverrideLA ) !== -1 && gbOverrideLA !== yearDimLA )
+								? gbOverrideLA
+								: ( nonYearDimsLA[ 0 ] || dims[ 0 ] );
+							const xFieldLA   = yearDimLA;
 							const yFieldLA   = this.chooseMeasure( measures, mOverrideLA );
 							if ( el ) { el.dataset.spzGroupBy = wantedGBLA; }
+							if ( el ) { el.dataset.spzXfield  = yearDimLA; }
 							payload._resolvedGroupBy = wantedGBLA;
 							payload._resolvedMeasure = yFieldLA;
+							payload._resolvedXField  = yearDimLA;
 							if ( el ) { el.dataset.spzYfield = yFieldLA; }
 							viz
 								.data( data )
@@ -928,9 +937,12 @@
 				if ( typeof viz.timeline === 'function' ) { viz.timeline( true ); }
 
 				if ( typeof viz.y === 'function' && typeof viz.x === 'function' ) {
-					viz.x( dims[ 0 ] || '_year' );
+					// Timeline ON: years on X-axis; one series per category.
+					viz.x( '_year' );
 					viz.y( '_value' );
 					viz.groupBy( dims[ 0 ] || '_year' );
+					payload._resolvedXField = '_year';
+					if ( el ) { el.dataset.spzXfield = '_year'; }
 				}
 				if ( typeof viz.value === 'function' && ( chart.key === 'pie' || chart.key === 'donut' ) ) {
 					viz.value( '_value' );
@@ -1048,13 +1060,19 @@
 					break;
 				case 'line':
 				case 'area':
-					xField = hasTime ? '_year' : dims[ 0 ];
+					xField = payload._resolvedXField || ( hasTime ? '_year' : dims[ 0 ] );
 					yField = hasTime ? '_value' : ( payload._resolvedMeasure || measures[ 0 ] );
 					break;
 				default:
-					xField = dims[ 0 ];
+					xField = payload._resolvedXField || dims[ 0 ];
 					yField = hasTime ? '_value' : ( payload._resolvedMeasure || measures[ 0 ] );
 			}
+
+			// Determine if the X-axis represents years → title 'Año'.
+			const yearAxisNames = [ 'ano', 'anio', 'year', 'vigencia', 'periodo', '_year' ];
+			const normalizedXF  = String( xField ).toLowerCase()
+				.normalize( 'NFD' ).replace( /[̀-ͯ]/g, '' );
+			const xIsYearAxis = xField === '_year' || yearAxisNames.indexOf( normalizedXF ) !== -1;
 
 			let xTitle, yTitle;
 			if ( hasTime ) {
@@ -1063,13 +1081,13 @@
 					? yearMeasures[ 0 ].replace( /_(20\d{2})$/, '' )
 					: measures[ 0 ];
 				xTitle = ( opts && opts.xTitle ) || (
-					chart.key === 'line' || chart.key === 'area'
-						? 'Vigencia'
-						: this.autoAxisTitle( dims[ 0 ] )
+					xIsYearAxis ? 'Año' : this.autoAxisTitle( dims[ 0 ] )
 				);
 				yTitle = ( opts && opts.yTitle ) || this.autoAxisTitle( baseName );
 			} else {
-				xTitle = ( opts && opts.xTitle ) || this.autoAxisTitle( xField );
+				xTitle = ( opts && opts.xTitle ) || (
+					xIsYearAxis ? 'Año' : this.autoAxisTitle( xField )
+				);
 				yTitle = ( opts && opts.yTitle ) || (
 					( chart.key === 'stacked_bar' || chart.key === 'stacked_area' )
 						? this.measureGroupTitle( measures )

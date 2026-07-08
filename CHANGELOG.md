@@ -1,6 +1,14 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.5.1] — 2026-07-08
+### Fixed
+- fix: líneas (`line`/`area`) ponen los años en el eje X — para datos en formato largo (dim `año`/`vigencia`/`year`/`periodo`) se invierte la asignación: `x=añoDim`, `groupBy=categoría` (una línea por indicador/categoría). Para formato ancho (_YYYY) se marca `_resolvedXField='_year'` explícitamente.
+- fix: timeline forzado (`data-timeline="true"`) pone `_year` en el eje X (`viz.x('_year')`) en lugar de `dims[0]`; `groupBy=dims[0]` mantiene una serie por categoría.
+- fix: `applyAxes` usa `payload._resolvedXField` para resolver el campo X en `line`/`area` y en el `default` (bar), eliminando la discrepancia entre `configure` y el cálculo de títulos de ejes.
+- fix: título del eje X es `'Año'` cuando el campo resuelto es `_year` o normaliza a un nombre de año (`año`/`anio`/`year`/`vigencia`/`periodo`). Aplica tanto en la rama `hasTime` como fuera de ella.
+- feat: nuevo marcador `el.dataset.spzXfield` expuesto por `configure` para tests y harness.
+
 ## [1.5.0] — 2026-07-08
 ### Added
 - feat: sección **Acumulado** + mapa combinado por municipio con selector de métrica y tooltip completo (v1.5.0). Nueva sección `'acumulado' => 'Acumulado Municipal'` en `SPZ_Plugin::SECCIONES` (cablea menú admin, constructor, galería y proveedores de datos automáticamente). `scripts/build-views.py`: nueva función `acu_municipios()` que lee los 64 municipios canónicos del lookup y hace JOIN (por nombre normalizado NFD/upper) de las métricas por municipio de los JSON existentes en una sola vista geomap `data/views/acumulado/acumulado-municipios.json` (`tasa_homicidio_2025/2024/2023`, `casos_homicidio_2025`, `cuerpos_recuperados`, `en_desminado`, `priorizado`; 0/false donde no hay dato). Análisis ciudadano en `scripts/analisis.py`. Nueva acción de barra `metrica`: `assets/js/frontend.js` renderiza un `<select>` (estilo `.spz-action--select`) para geomaps con >1 medida numérica, listando cada medida (etiqueta legible) + opción "Todos"; al cambiar re-colorea el mapa re-renderizando con la medida elegida (sin round-trip de red). `assets/js/renderer.js` (caso geomap) usa la métrica activa desde `data-metrica` para `.colorScale(...)` (fallback a `measures[0]`) y expone `el.dataset.spzMetrica`; el tooltip lista TODAS las métricas por municipio (es-CO, escapado). Shortcode `[spz_grafico]`: `metrica` en whitelist `sanitize_actions` y en acciones por defecto; atributo `metrica="<medida>"` → `data-metrica` (regex unicode-safe, `esc_attr`). CSS `.spz-action--metrica`. Harness Playwright: geomap 64 paths, select `metrica` con >1 opción incl. "Todos", cambio re-colorea (`spzMetrica`), tooltip con 6 métricas.
