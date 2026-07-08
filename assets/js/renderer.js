@@ -818,11 +818,24 @@
 
 			// ── OFF branch ─────────────────────────────────────────────────────
 			// Timeline disabled: do not reshape data. The chart renders with its
-			// original data; applyAxes already set measures[0] as the main value.
+			// original data; configure already set measures[0] as the main value.
 			// viz.timeline(false) suppresses any slider d3plus might add.
 			if ( effective === 'false' ) {
 				if ( typeof viz.timeline === 'function' ) {
 					viz.timeline( false );
+				}
+				// OFF: no timeline. Bind the latest-year column explicitly (robust to column order).
+				const yearMeasuresOff = measures.filter( ( m ) => /_(20\d{2})$/.test( m ) );
+				if ( yearMeasuresOff && yearMeasuresOff.length ) {
+					// pick the measure ending in the max year
+					let best = yearMeasuresOff[ 0 ], bestYear = -Infinity;
+					yearMeasuresOff.forEach( function ( m ) {
+						var y = parseInt( ( m.match( /_(\d{4})$/ ) || [] )[ 1 ], 10 );
+						if ( ! isNaN( y ) && y > bestYear ) { bestYear = y; best = m; }
+					} );
+					if ( typeof viz.y === 'function' && [ 'bar', 'stacked_bar', 'line', 'area', 'stacked_area' ].indexOf( chart.key ) !== -1 ) { viz.y( best ); }
+					if ( typeof viz.value === 'function' && ( chart.key === 'pie' || chart.key === 'donut' ) ) { viz.value( best ); }
+					if ( typeof viz.sum === 'function' && chart.key === 'treemap' ) { viz.sum( best ); }
 				}
 				if ( el ) {
 					el.dataset.spzTimeline = 'off';
@@ -852,7 +865,7 @@
 			if ( long.length ) {
 				viz.data( long );
 				viz.time( '_year' );
-				viz.timeline( true );
+				if ( typeof viz.timeline === 'function' ) { viz.timeline( true ); }
 
 				if ( typeof viz.y === 'function' && typeof viz.x === 'function' ) {
 					viz.x( dims[ 0 ] || '_year' );

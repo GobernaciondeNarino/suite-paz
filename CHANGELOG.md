@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.3.2] — 2026-07-08
+### Fixed
+- fix: timeline OFF elige explícitamente el año máximo — ya no depende del orden de columnas en el archivo de datos; guard simétrico `typeof viz.timeline === 'function'` en rama ON.
+
 ## [1.3.1] — 2026-07-08
 ### Added
 - feat: toggle de línea de tiempo d3plus por shortcode + default en Ajustes. Shortcode `[spz_grafico]` acepta atributo `timeline="auto|true|false"` (default `auto`), emitido como `data-timeline` en `.spz-chart`. Ajustes agrega `timeline_default` (auto/on/off, default auto), localizado como `SPZ_FRONTEND.timelineDefault`. `renderer.js` resuelve el valor efectivo: `auto` sigue el default global (si ausente, se comporta como `on` en el harness); `true/on` fuerza la línea de tiempo; `false/off` la desactiva (el gráfico renderiza con los datos originales — primera medida del año más reciente). El Constructor incluye selector "Línea de tiempo" en las Opciones que inyecta `timeline="true"/"false"` al shortcode cuando no es `auto`.
