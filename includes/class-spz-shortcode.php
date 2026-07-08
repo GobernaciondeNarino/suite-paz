@@ -497,27 +497,4 @@ class SPZ_Shortcode {
 		return $out;
 	}
 
-	private function action_label( string $action ): string {
-		$map = [
-			'detalle'   => __( 'Detalle', 'suite-paz' ),
-			'compartir' => __( 'Compartir', 'suite-paz' ),
-			'datos'     => __( 'Datos', 'suite-paz' ),
-			'imagen'    => __( 'Imagen', 'suite-paz' ),
-			'descarga'  => __( 'Descarga', 'suite-paz' ),
-			'cambiar'   => __( 'Tipo', 'suite-paz' ),
-		];
-		return $map[ $action ] ?? $action;
-	}
-
-	private function action_icon( string $action ): string {
-		$map = [
-			'detalle'   => 'info-outline',
-			'compartir' => 'share',
-			'datos'     => 'editor-table',
-			'imagen'    => 'format-image',
-			'descarga'  => 'download',
-			'cambiar'   => 'update',
-		];
-		return $map[ $action ] ?? 'admin-generic';
-	}
 }

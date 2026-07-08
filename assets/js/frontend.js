@@ -404,7 +404,7 @@
 	function runAction( el, action, payload, btn ) {
 		switch ( action ) {
 			case 'detalle':
-				openDetalle( el, payload );
+				openDetalle( el, payload, btn );
 				break;
 			case 'compartir':
 				shareUrl( el, btn );
@@ -425,7 +425,7 @@
 	// Actions
 	// ------------------------------------------------------------------
 
-	function openDetalle( el, payload ) {
+	function openDetalle( el, payload, triggerBtn ) {
 		const view  = payload.view  || {};
 		const chart = payload.chart || {};
 		const dims  = ( view.dimensions || [] ).map( humanize ).map( escHtml ).join( ', ' ) || '—';
@@ -439,7 +439,7 @@
 				'<dt>Medidas</dt><dd>' + meas + '</dd>' +
 				'<dt>Filas</dt><dd>' + ( ( payload.data || [] ).length ) + '</dd>' +
 			'</dl>';
-		showModal( el, 'Detalle del gráfico', html );
+		showModal( el, 'Detalle del gráfico', html, triggerBtn );
 	}
 
 	function openDatos( el ) {
@@ -574,24 +574,57 @@
 		modal.querySelectorAll( '[data-spz-modal-close]' ).forEach( function ( closeEl ) {
 			closeEl.addEventListener( 'click', function () { closeModal( el ); } );
 		} );
-		document.addEventListener( 'keydown', function ( ev ) {
-			if ( ( ev.key === 'Escape' || ev.key === 'Esc' ) && ! modal.hasAttribute( 'hidden' ) ) {
-				closeModal( el );
-			}
-		} );
 
 		return modal;
 	}
 
-	function showModal( el, title, bodyHtml ) {
+	function showModal( el, title, bodyHtml, triggerBtn ) {
 		const modal = getOrCreateModal( el );
 		if ( ! modal ) {
 			return;
 		}
 		modal.querySelector( '.spz-modal__title' ).textContent = title;
 		modal.querySelector( '.spz-modal__body' ).innerHTML    = bodyHtml;
+		modal._spzTrigger = triggerBtn || null;
 		modal.removeAttribute( 'hidden' );
 		modal.classList.add( 'is-open' );
+
+		// Move focus to the close button.
+		const closeBtn = modal.querySelector( '.spz-modal__close' );
+		if ( closeBtn ) {
+			closeBtn.focus();
+		}
+
+		// Per-open keydown handler: Esc closes, Tab traps focus within the modal.
+		modal._spzKeydown = function ( ev ) {
+			if ( ev.key === 'Escape' || ev.key === 'Esc' ) {
+				closeModal( el );
+				return;
+			}
+			if ( ev.key === 'Tab' ) {
+				const focusable = Array.from(
+					modal.querySelectorAll( 'button, [href], select, input, [tabindex]:not([tabindex="-1"])' )
+				).filter( function ( node ) { return ! node.disabled && node.offsetParent !== null; } );
+				if ( ! focusable.length ) {
+					ev.preventDefault();
+					return;
+				}
+				const first = focusable[ 0 ];
+				const last  = focusable[ focusable.length - 1 ];
+				if ( ev.shiftKey ) {
+					if ( document.activeElement === first ) {
+						ev.preventDefault();
+						last.focus();
+					}
+				} else {
+					if ( document.activeElement === last ) {
+						ev.preventDefault();
+						first.focus();
+					}
+				}
+			}
+		};
+		document.addEventListener( 'keydown', modal._spzKeydown );
 	}
 
 	function closeModal( el ) {
@@ -605,6 +638,18 @@
 		}
 		modal.setAttribute( 'hidden', '' );
 		modal.classList.remove( 'is-open' );
+
+		// Remove the per-open keydown handler.
+		if ( modal._spzKeydown ) {
+			document.removeEventListener( 'keydown', modal._spzKeydown );
+			modal._spzKeydown = null;
+		}
+
+		// Return focus to the trigger button.
+		if ( modal._spzTrigger ) {
+			modal._spzTrigger.focus();
+			modal._spzTrigger = null;
+		}
 	}
 
 	// ------------------------------------------------------------------

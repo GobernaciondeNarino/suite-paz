@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.2.1] — 2026-07-07
+### Fixed
+- fix: accesibilidad del modal Detalle — foco al abrir/cerrar, trap de foco, listener Esc por-apertura; quitar métodos PHP muertos `action_label()` y `action_icon()`.
+
 ## [1.2.0] — 2026-07-07
 ### Added
 - `includes/class-spz-shortcode.php`: shortcode `[spz_grafico]` acepta seis nuevos atributos — `legend` (default `true`), `legend_style` (`text`|`icons`, default `text`), `toolbar` (default `true`), `actions` (lista CSV de detalle/compartir/datos/imagen/descarga/cambiar, default todos), `x_title`, `y_title`. Añadidos como `data-*` en el div `.spz-chart`. Helpers privados `to_bool()`, `sanitize_actions()` (whitelist VALID_ACTIONS), `action_label()`, `action_icon()`. El shortcode ahora envuelve en `<figure class="spz-figure">` cuando hay título o toolbar habilitada.
