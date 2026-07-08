@@ -774,10 +774,27 @@
 						row,
 						{ _municipio_id: Renderer.normalizeMuni( row[ joinField ] ) }
 					) );
+
+					// Active metric: which measure colors the map. Resolved from the
+					// data-metrica attribute (set by the toolbar metric selector or the
+					// shortcode) when it names a real numeric measure; otherwise the
+					// primary measure. A "Todos"/empty value falls back to the primary.
+					const attrMetrica = ( el && typeof el.getAttribute === 'function' )
+						? el.getAttribute( 'data-metrica' )
+						: null;
+					const activeMeasure = ( attrMetrica && measures.indexOf( attrMetrica ) !== -1 )
+						? attrMetrica
+						: ( measures[ 0 ] || '' );
+
+					// Expose the active metric as a marker for the toolbar / tests.
+					if ( el && el.dataset && activeMeasure ) {
+						el.dataset.spzMetrica = activeMeasure;
+					}
+
 					viz
 						.data( normData )
 						.groupBy( '_municipio_id' )
-						.colorScale( measures[ 0 ] );
+						.colorScale( activeMeasure );
 
 					// No CARTO / OSM basemap — only Nariño polygons.
 					if ( typeof viz.tiles === 'function' ) {

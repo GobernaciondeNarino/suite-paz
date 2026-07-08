@@ -31,6 +31,7 @@ final class SPZ_Plugin {
 		'convivencia'      => 'Convivencia Ciudadana',
 		'estrategia'       => 'La Estrategia 2026',
 		'transformaciones' => 'Transformaciones Territoriales',
+		'acumulado'        => 'Acumulado Municipal',
 	];
 
 	public const DEFAULT_SECCION = 'dni';

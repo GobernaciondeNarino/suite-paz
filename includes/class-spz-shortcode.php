@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SPZ_Shortcode {
 
-	private const VALID_ACTIONS = [ 'detalle', 'compartir', 'datos', 'imagen', 'descarga', 'cambiar' ];
+	private const VALID_ACTIONS = [ 'detalle', 'compartir', 'datos', 'imagen', 'descarga', 'cambiar', 'metrica' ];
 
 	private SPZ_Plugin $plugin;
 	private SPZ_Chart_Types $chart_types;
@@ -115,12 +115,13 @@ class SPZ_Shortcode {
 				'legend'       => 'true',
 				'legend_style' => 'text',
 				'toolbar'      => 'true',
-				'actions'      => 'detalle,compartir,datos,imagen,descarga,cambiar',
+				'actions'      => 'detalle,compartir,datos,imagen,descarga,cambiar,metrica',
 				'x_title'      => '',
 				'y_title'      => '',
 				'timeline'     => 'auto',
 				'group_by'     => '',
 				'measure'      => '',
+				'metrica'      => '',
 			],
 			is_array( $atts ) ? $atts : [],
 			'spz_grafico'
@@ -143,6 +144,7 @@ class SPZ_Shortcode {
 		$timeline     = in_array( $raw_tl, [ 'auto', 'true', 'false' ], true ) ? $raw_tl : 'auto';
 		$group_by     = preg_replace( '/[^\p{L}\p{N}_\-]/u', '', (string) wp_unslash( $atts['group_by'] ) );
 		$measure_attr = preg_replace( '/[^\p{L}\p{N}_\-]/u', '', (string) wp_unslash( $atts['measure'] ) );
+		$metrica_attr = preg_replace( '/[^\p{L}\p{N}_\-]/u', '', (string) wp_unslash( $atts['metrica'] ) );
 
 		if ( '' === $view_id || '' === $chart_type ) {
 			return sprintf(
@@ -156,13 +158,14 @@ class SPZ_Shortcode {
 		// Only emit data-group-by / data-measure when non-empty (m3 — avoid empty attrs).
 		$group_by_attr    = '' !== $group_by     ? ' data-group-by="' . esc_attr( $group_by ) . '"'    : '';
 		$measure_attr_out = '' !== $measure_attr ? ' data-measure="'  . esc_attr( $measure_attr ) . '"' : '';
+		$metrica_attr_out = '' !== $metrica_attr ? ' data-metrica="'  . esc_attr( $metrica_attr ) . '"' : '';
 
 		$chart_div = sprintf(
 			'<div class="spz-chart"'
 			. ' data-view="%s" data-type="%s" data-seccion="%s" data-height="%d"'
 			. ' data-legend="%s" data-legend-style="%s" data-toolbar="%s"'
 			. ' data-actions="%s" data-x-title="%s" data-y-title="%s"'
-			. ' data-timeline="%s"%s%s'
+			. ' data-timeline="%s"%s%s%s'
 			. ' style="min-height:%dpx;" aria-label="%s" role="img">'
 			. '<div class="spz-chart__loading">%s</div></div>',
 			esc_attr( $view_id ),
@@ -178,6 +181,7 @@ class SPZ_Shortcode {
 			esc_attr( $timeline ),
 			$group_by_attr,
 			$measure_attr_out,
+			$metrica_attr_out,
 			$height,
 			esc_attr( $title ?: __( 'Gráfico Suite PAZ', 'suite-paz' ) ),
 			esc_html__( 'Cargando…', 'suite-paz' )
