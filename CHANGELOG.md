@@ -24,6 +24,10 @@ La semilla de datos usaba categorías temáticas (`humanitarian`, `security`, `e
 
 ---
 
+## [1.1.9] — 2026-07-07
+### Fixed
+- fix: [spz_analisis] — preservar analisis en la normalización de vistas. `adapt()` ramas B (formato publicación PAZ) y C (dataset anónimo) ahora copian `analisis`, `tema` y `fuente` del JSON fuente al array canónico; antes estos campos se perdían y el shortcode siempre devolvía cadena vacía.
+
 ## [1.1.8] — 2026-07-07
 ### Fixed
 - `includes/class-spz-modules.php`: `TYPES` ampliado con `'diagrama'` y `'estrategia'`; `is_valid('diagrama')` e `is_valid('estrategia')` ahora devuelven `true`, desbloqueando `[spz_seccion id="estrategia"]` y los nuevos shortcodes de módulo.

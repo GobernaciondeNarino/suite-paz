@@ -355,6 +355,9 @@ class SPZ_Data_Provider {
 				'measures'              => $fields['measures'],
 				'data'                  => $data,
 				'tipo_grafico_sugerido' => $hint,
+				'analisis'              => (string) ( $raw['analisis'] ?? '' ),
+				'tema'                  => (string) ( $raw['tema'] ?? '' ),
+				'fuente'                => (string) ( $raw['fuente'] ?? '' ),
 			];
 		}
 
@@ -375,6 +378,9 @@ class SPZ_Data_Provider {
 				'dimensions'  => $fields['dimensions'],
 				'measures'    => $fields['measures'],
 				'data'        => $data,
+				'analisis'    => (string) ( $raw['analisis'] ?? '' ),
+				'tema'        => (string) ( $raw['tema'] ?? '' ),
+				'fuente'      => (string) ( $raw['fuente'] ?? '' ),
 			];
 		}
 
