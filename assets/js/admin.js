@@ -493,6 +493,7 @@
 		};
 
 		const els = {};
+		let _rowCounter = 0; // monotonic counter for new-row data-row indices
 		const i18n = SPZ_ADMIN.i18n || {};
 
 		function init() {
@@ -520,6 +521,8 @@
 			if ( els.btnSave )   { els.btnSave.addEventListener( 'click', onSave ); }
 			if ( els.btnExport ) { els.btnExport.addEventListener( 'click', onExport ); }
 			if ( els.btnReset )  { els.btnReset.addEventListener( 'click', onReset ); }
+			// Delegated listener handles add-row and del-row buttons (works for dynamic rows).
+			if ( els.formArea )  { els.formArea.addEventListener( 'click', onFormAreaClick ); }
 
 			// Load initial views for the default sección.
 			loadViews( state.seccion );
@@ -644,8 +647,63 @@
 		}
 
 		/**
+		 * Delegated click handler for the form area.
+		 * Handles "Quitar" (del-row) and "Añadir" (add-row) buttons added at render time
+		 * and dynamically after rows are appended.
+		 */
+		function onFormAreaClick( e ) {
+			// Delete-row button.
+			const delBtn = e.target.closest( '[data-spz-del-row]' );
+			if ( delBtn ) {
+				const tr = delBtn.closest( 'tr' );
+				if ( tr ) { tr.remove(); }
+				if ( els.btnSave ) { els.btnSave.disabled = false; }
+				return;
+			}
+			// Add-row button.
+			if ( e.target.closest( '#spz-add-row' ) ) {
+				addRow();
+			}
+		}
+
+		/**
+		 * Append a blank row to the editor table and focus its first cell.
+		 * Column structure (key names + input types) is derived from the
+		 * first existing tbody row so no extra state is needed.
+		 */
+		function addRow() {
+			const tbody = els.formArea ? els.formArea.querySelector( '.spz-editor-table tbody' ) : null;
+			if ( ! tbody ) { return; }
+
+			// Read column structure from the first existing row's inputs.
+			const templateInputs = Array.from( tbody.querySelectorAll( 'tr:first-child .spz-cell-input[data-key]' ) );
+			if ( ! templateInputs.length ) { return; }
+
+			const ri = _rowCounter++;
+			const tr = document.createElement( 'tr' );
+			let cells = '';
+			templateInputs.forEach( ( inp ) => {
+				// Use escapeHtml to preserve Unicode key names (e.g. año) in data-key.
+				const k = escapeHtml( inp.dataset.key );
+				if ( inp.type === 'number' ) {
+					cells += `<td><input type="number" step="any" class="spz-cell-input" data-row="${ ri }" data-key="${ k }" value="" /></td>`;
+				} else {
+					cells += `<td><input type="text" class="spz-cell-input spz-cell-dim" data-row="${ ri }" data-key="${ k }" value="" /></td>`;
+				}
+			} );
+			cells += `<td class="spz-td-actions"><button type="button" class="spz-del-row" data-spz-del-row="${ ri }" title="Quitar fila" aria-label="Quitar fila">&#x2715; Quitar</button></td>`;
+			tr.innerHTML = cells;
+			tbody.appendChild( tr );
+
+			const firstInput = tr.querySelector( '.spz-cell-input' );
+			if ( firstInput ) { firstInput.focus(); }
+			if ( els.btnSave ) { els.btnSave.disabled = false; }
+		}
+
+		/**
 		 * Build an editable table for geographic/tabular views.
 		 * One row per record, one input per measure column.
+		 * Includes an add-row toolbar and per-row delete buttons.
 		 */
 		function buildTableForm( payload ) {
 			const rows  = payload.municipios || payload.datos || payload.data || [];
@@ -659,28 +717,46 @@
 			} );
 			const dimKeys  = keys.filter( ( k ) => ! numKeys.includes( k ) );
 
+			// Detect year-like column to label the add-row button appropriately.
+			const YEAR_RE = /^(ano|anio|year|vigencia|periodo)$/;
+			const hasYearKey = dimKeys.some( ( k ) =>
+				YEAR_RE.test( k.toLowerCase().normalize( 'NFD' ).replace( /[̀-ͯ]/g, '' ) )
+			);
+			const addRowLabel = hasYearKey ? 'Añadir vigencia' : 'Añadir fila';
+
+			// Reset counter so new rows get indices that won't collide with existing ones.
+			_rowCounter = rows.length;
+
 			let html = '<div class="spz-table-wrap spz-editor-table-wrap">';
 			html += '<table class="widefat striped spz-data-table spz-editor-table">';
 			html += '<thead><tr>';
 			dimKeys.forEach( ( k ) => { html += `<th>${ escapeHtml( k ) }</th>`; } );
 			numKeys.forEach( ( k ) => { html += `<th class="spz-th-edit"><span class="dashicons dashicons-edit" aria-hidden="true"></span>${ escapeHtml( k ) }</th>`; } );
+			html += '<th class="spz-th-actions"></th>';
 			html += '</tr></thead><tbody>';
 
 			rows.forEach( ( row, ri ) => {
 				html += '<tr>';
 				dimKeys.forEach( ( k ) => {
-					html += `<td>${ escapeHtml( String( row[ k ] ?? '' ) ) }</td>`;
+					const val = row[ k ] ?? '';
+					// Use escapeHtml (not escapeAttr) for data-key so Unicode letters like ñ are preserved.
+					html += `<td><input type="text" class="spz-cell-input spz-cell-dim"
+						data-row="${ ri }" data-key="${ escapeHtml( k ) }"
+						value="${ escapeHtml( String( val ) ) }" /></td>`;
 				} );
 				numKeys.forEach( ( k ) => {
 					const val = row[ k ] ?? '';
 					html += `<td><input type="number" step="any"
 						class="spz-cell-input"
-						data-row="${ ri }" data-key="${ escapeAttr( k ) }"
+						data-row="${ ri }" data-key="${ escapeHtml( k ) }"
 						value="${ escapeHtml( String( val ) ) }" /></td>`;
 				} );
+				html += `<td class="spz-td-actions"><button type="button" class="spz-del-row" data-spz-del-row="${ ri }" title="Quitar fila" aria-label="Quitar fila">&#x2715; Quitar</button></td>`;
 				html += '</tr>';
 			} );
-			html += '</tbody></table></div>';
+			html += '</tbody></table>';
+			html += `<div class="spz-row-toolbar"><button type="button" id="spz-add-row" class="button spz-btn-add-row">&#x2795; ${ escapeHtml( addRowLabel ) }</button></div>`;
+			html += '</div>';
 			return html;
 		}
 
@@ -773,18 +849,34 @@
 			if ( ! state.payload ) { return null; }
 			const edited = JSON.parse( JSON.stringify( state.payload ) );
 
-			// Table form inputs.
-			$$( '.spz-cell-input[data-row][data-key]', els.formArea ).forEach( ( inp ) => {
-				const ri  = parseInt( inp.dataset.row, 10 );
-				const key = inp.dataset.key;
-				if ( isNaN( ri ) || ! key ) { return; }
+			// Table form inputs — rebuild the array from DOM so added / removed rows
+			// are correctly included / excluded (no assumption of contiguous indices).
+			const tableInputs = $$( '.spz-cell-input[data-row][data-key]', els.formArea );
+			if ( tableInputs.length ) {
 				const dataKey = edited.municipios ? 'municipios' : edited.datos ? 'datos' : 'data';
-				const arr     = edited[ dataKey ];
-				if ( arr && arr[ ri ] ) {
+				const seen    = []; // preserves DOM order
+				const rowMap  = Object.create( null );
+				tableInputs.forEach( ( inp ) => {
+					const ri  = inp.dataset.row; // string key for grouping
+					const key = inp.dataset.key;
+					if ( ! ri || ! key ) { return; }
+					if ( ! rowMap[ ri ] ) {
+						rowMap[ ri ] = Object.create( null );
+						seen.push( ri );
+					}
 					const n = parseFloat( inp.value );
-					arr[ ri ][ key ] = isNaN( n ) ? inp.value : n;
-				}
-			} );
+					// Number inputs → float; text inputs (dim keys, e.g. año) → string.
+					rowMap[ ri ][ key ] = ( inp.type === 'number' && ! isNaN( n ) ) ? n : inp.value;
+				} );
+				// Build array, dropping fully-empty rows (blank appended rows).
+				const newArr = [];
+				seen.forEach( ( ri ) => {
+					const row = rowMap[ ri ];
+					const allEmpty = Object.values( row ).every( ( v ) => v === '' || v == null );
+					if ( ! allEmpty ) { newArr.push( row ); }
+				} );
+				edited[ dataKey ] = newArr;
+			}
 
 			// Timeline event inputs.
 			$$( '.spz-cell-input[data-evt][data-ekey]', els.formArea ).forEach( ( inp ) => {
@@ -897,6 +989,19 @@
 			els.feedback.textContent = msg;
 			els.feedback.className   = 'spz-feedback spz-feedback--' + ( type || 'info' );
 			els.feedback.hidden      = false;
+		}
+
+		// Test/dev hook — only active when window.__SPZ_TEST__ is truthy (never true in production).
+		if ( typeof window !== 'undefined' && window.__SPZ_TEST__ ) {
+			window.SPZ_ADMIN_TEST = {
+				buildTableForm,
+				collectPayload,
+				addRow,
+				onFormAreaClick,
+				renderEditorForm,
+				state,
+				els,
+			};
 		}
 
 		return { init };

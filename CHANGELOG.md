@@ -1,6 +1,10 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.6.0] — 2026-07-08
+### Added
+- feat: editor de datos permite añadir/quitar vigencias (filas) en vistas tabulares. `buildTableForm` en `admin.js`: celdas de dimensión convertidas a `<input type="text">` editables; columna de acciones con botón "✕ Quitar" por fila (`data-spz-del-row`); barra inferior "➕ Añadir vigencia" / "➕ Añadir fila" (`#spz-add-row`, etiqueta según si hay clave tipo año en las columnas). `addRow()`: copia estructura de columnas de la primera fila existente, asigna índice único via `_rowCounter` (= `rows.length` al renderizar, incrementa por cada nueva fila). `onFormAreaClick()`: delegación en `els.formArea` maneja add y delete sin listeners por elemento. `collectPayload()`: reconstruye el array desde el DOM agrupando por `data-row` (sin asumir índices contiguos); omite filas totalmente vacías. CSS: `.spz-btn-add-row` (violeta, branded) y `.spz-del-row` (coral, sutil).
+
 ## [1.5.1] — 2026-07-08
 ### Fixed
 - fix: líneas (`line`/`area`) ponen los años en el eje X — para datos en formato largo (dim `año`/`vigencia`/`year`/`periodo`) se invierte la asignación: `x=añoDim`, `groupBy=categoría` (una línea por indicador/categoría). Para formato ancho (_YYYY) se marca `_resolvedXField='_year'` explícitamente.
