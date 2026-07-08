@@ -493,7 +493,8 @@
 		};
 
 		const els = {};
-		let _rowCounter = 0; // monotonic counter for new-row data-row indices
+		let _rowCounter  = 0;  // monotonic counter for new-row data-row indices
+		let _tableSchema = []; // [{key,type}] captured at render time; enables addRow when table is empty
 		const i18n = SPZ_ADMIN.i18n || {};
 
 		function init() {
@@ -675,17 +676,24 @@
 			const tbody = els.formArea ? els.formArea.querySelector( '.spz-editor-table tbody' ) : null;
 			if ( ! tbody ) { return; }
 
-			// Read column structure from the first existing row's inputs.
+			// Prefer reading column structure from the first existing row's inputs (DOM source
+			// of truth while rows are present).  Fall back to _tableSchema captured at render
+			// time so addRow works correctly even after all rows have been deleted.
 			const templateInputs = Array.from( tbody.querySelectorAll( 'tr:first-child .spz-cell-input[data-key]' ) );
-			if ( ! templateInputs.length ) { return; }
+			const schema = templateInputs.length
+				? templateInputs.map( ( inp ) => ( { key: inp.dataset.key, type: inp.type } ) )
+				: _tableSchema;
+
+			// If no schema is available (view had no columns), silently no-op.
+			if ( ! schema.length ) { return; }
 
 			const ri = _rowCounter++;
 			const tr = document.createElement( 'tr' );
 			let cells = '';
-			templateInputs.forEach( ( inp ) => {
+			schema.forEach( ( col ) => {
 				// Use escapeHtml to preserve Unicode key names (e.g. año) in data-key.
-				const k = escapeHtml( inp.dataset.key );
-				if ( inp.type === 'number' ) {
+				const k = escapeHtml( col.key );
+				if ( col.type === 'number' ) {
 					cells += `<td><input type="number" step="any" class="spz-cell-input" data-row="${ ri }" data-key="${ k }" value="" /></td>`;
 				} else {
 					cells += `<td><input type="text" class="spz-cell-input spz-cell-dim" data-row="${ ri }" data-key="${ k }" value="" /></td>`;
@@ -723,6 +731,12 @@
 				YEAR_RE.test( k.toLowerCase().normalize( 'NFD' ).replace( /[̀-ͯ]/g, '' ) )
 			);
 			const addRowLabel = hasYearKey ? 'Añadir vigencia' : 'Añadir fila';
+
+			// Capture column schema for addRow() — allows adding rows even after all are deleted.
+			_tableSchema = [
+				...dimKeys.map( ( k ) => ( { key: k, type: 'text' } ) ),
+				...numKeys.map( ( k ) => ( { key: k, type: 'number' } ) ),
+			];
 
 			// Reset counter so new rows get indices that won't collide with existing ones.
 			_rowCounter = rows.length;
@@ -865,8 +879,9 @@
 						seen.push( ri );
 					}
 					const n = parseFloat( inp.value );
-					// Number inputs → float; text inputs (dim keys, e.g. año) → string.
-					rowMap[ ri ][ key ] = ( inp.type === 'number' && ! isNaN( n ) ) ? n : inp.value;
+					// Number inputs: valid float → number; blank/NaN → null (not "").
+					// Text/dim inputs (e.g. año) → string as-is.
+					rowMap[ ri ][ key ] = ( inp.type === 'number' ) ? ( isNaN( n ) ? null : n ) : inp.value;
 				} );
 				// Build array, dropping fully-empty rows (blank appended rows).
 				const newArr = [];

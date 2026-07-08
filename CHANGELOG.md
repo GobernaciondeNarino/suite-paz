@@ -1,6 +1,11 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.6.1] — 2026-07-08
+### Fixed
+- fix: editor — medida numérica en blanco se guarda como `null` en vez de `""` (evita mezcla de tipos en `datos[]` y corrupción de gráficos). `collectPayload()`: `inp.type==='number'` → `isNaN(n) ? null : n`; las entradas de texto/dimensión (e.g. `año`) siguen usando `inp.value`.
+- fix: "Añadir vigencia" funciona incluso con la tabla vacía (todos los registros eliminados). `buildTableForm()` captura el esquema de columnas en `_tableSchema` ([{key,type}]); `addRow()` usa `_tableSchema` como fuente de verdad de respaldo cuando `tbody` no tiene filas existentes. Si `_tableSchema` está vacío la operación sigue siendo no-op.
+
 ## [1.6.0] — 2026-07-08
 ### Added
 - feat: editor de datos permite añadir/quitar vigencias (filas) en vistas tabulares. `buildTableForm` en `admin.js`: celdas de dimensión convertidas a `<input type="text">` editables; columna de acciones con botón "✕ Quitar" por fila (`data-spz-del-row`); barra inferior "➕ Añadir vigencia" / "➕ Añadir fila" (`#spz-add-row`, etiqueta según si hay clave tipo año en las columnas). `addRow()`: copia estructura de columnas de la primera fila existente, asigna índice único via `_rowCounter` (= `rows.length` al renderizar, incrementa por cada nueva fila). `onFormAreaClick()`: delegación en `els.formArea` maneja add y delete sin listeners por elemento. `collectPayload()`: reconstruye el array desde el DOM agrupando por `data-row` (sin asumir índices contiguos); omite filas totalmente vacías. CSS: `.spz-btn-add-row` (violeta, branded) y `.spz-del-row` (coral, sutil).
