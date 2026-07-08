@@ -343,7 +343,7 @@
 				}
 
 				this.configure( viz, payload, opts );
-				this.applyTimeline( viz, payload );
+				this.applyTimeline( viz, payload, el );
 				this.applyAxes( viz, payload, opts );
 				this.applyTooltip( viz, payload );
 				this.applyShape( viz );
@@ -780,7 +780,7 @@
 		// Timeline
 		// ==============================================================
 
-		applyTimeline( viz, payload ) {
+		applyTimeline( viz, payload, el ) {
 			if ( typeof viz.time !== 'function' ) {
 				return;
 			}
@@ -795,6 +795,42 @@
 				return;
 			}
 
+			// ── Resolve effective timeline setting ─────────────────────────────
+			// Priority: data-timeline attr > SPZ_FRONTEND.timelineDefault > auto
+			const attrTl = ( el && typeof el.getAttribute === 'function' )
+				? el.getAttribute( 'data-timeline' )
+				: null;
+			// Accept 'true' / 'false' from attr; anything else (including 'auto' or null) → 'auto'
+			let effective = ( attrTl === 'true' || attrTl === 'false' ) ? attrTl : 'auto';
+
+			if ( effective === 'auto' ) {
+				// Resolve against WordPress global setting (absent in harness → stay 'auto').
+				const globalDef = ( typeof SPZ_FRONTEND !== 'undefined' && SPZ_FRONTEND.timelineDefault )
+					? String( SPZ_FRONTEND.timelineDefault )
+					: 'auto';
+				if ( globalDef === 'on' || globalDef === 'true' ) {
+					effective = 'true';
+				} else if ( globalDef === 'off' || globalDef === 'false' ) {
+					effective = 'false';
+				}
+				// globalDef 'auto' → effective stays 'auto' → show timeline when year data present.
+			}
+
+			// ── OFF branch ─────────────────────────────────────────────────────
+			// Timeline disabled: do not reshape data. The chart renders with its
+			// original data; applyAxes already set measures[0] as the main value.
+			// viz.timeline(false) suppresses any slider d3plus might add.
+			if ( effective === 'false' ) {
+				if ( typeof viz.timeline === 'function' ) {
+					viz.timeline( false );
+				}
+				if ( el ) {
+					el.dataset.spzTimeline = 'off';
+				}
+				return;
+			}
+
+			// ── ON / AUTO branch (show timeline when year data is present) ─────
 			const dims    = view.dimensions || [];
 			const rawData = payload._filteredData || payload.data || [];
 			const long    = [];
@@ -828,6 +864,9 @@
 				}
 				if ( typeof viz.sum === 'function' && chart.key === 'treemap' ) {
 					viz.sum( '_value' );
+				}
+				if ( el ) {
+					el.dataset.spzTimeline = 'on';
 				}
 			}
 		},
