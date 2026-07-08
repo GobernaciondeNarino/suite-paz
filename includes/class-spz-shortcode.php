@@ -141,8 +141,8 @@ class SPZ_Shortcode {
 		$y_title      = sanitize_text_field( (string) $atts['y_title'] );
 		$raw_tl       = strtolower( trim( (string) $atts['timeline'] ) );
 		$timeline     = in_array( $raw_tl, [ 'auto', 'true', 'false' ], true ) ? $raw_tl : 'auto';
-		$group_by     = sanitize_key( (string) $atts['group_by'] );
-		$measure_attr = sanitize_key( (string) $atts['measure'] );
+		$group_by     = preg_replace( '/[^\p{L}\p{N}_\-]/u', '', (string) wp_unslash( $atts['group_by'] ) );
+		$measure_attr = preg_replace( '/[^\p{L}\p{N}_\-]/u', '', (string) wp_unslash( $atts['measure'] ) );
 
 		if ( '' === $view_id || '' === $chart_type ) {
 			return sprintf(
@@ -153,12 +153,16 @@ class SPZ_Shortcode {
 
 		$this->needs_assets = true;
 
+		// Only emit data-group-by / data-measure when non-empty (m3 — avoid empty attrs).
+		$group_by_attr    = '' !== $group_by     ? ' data-group-by="' . esc_attr( $group_by ) . '"'    : '';
+		$measure_attr_out = '' !== $measure_attr ? ' data-measure="'  . esc_attr( $measure_attr ) . '"' : '';
+
 		$chart_div = sprintf(
 			'<div class="spz-chart"'
 			. ' data-view="%s" data-type="%s" data-seccion="%s" data-height="%d"'
 			. ' data-legend="%s" data-legend-style="%s" data-toolbar="%s"'
 			. ' data-actions="%s" data-x-title="%s" data-y-title="%s"'
-			. ' data-timeline="%s" data-group-by="%s" data-measure="%s"'
+			. ' data-timeline="%s"%s%s'
 			. ' style="min-height:%dpx;" aria-label="%s" role="img">'
 			. '<div class="spz-chart__loading">%s</div></div>',
 			esc_attr( $view_id ),
@@ -172,8 +176,8 @@ class SPZ_Shortcode {
 			esc_attr( $x_title ),
 			esc_attr( $y_title ),
 			esc_attr( $timeline ),
-			esc_attr( $group_by ),
-			esc_attr( $measure_attr ),
+			$group_by_attr,
+			$measure_attr_out,
 			$height,
 			esc_attr( $title ?: __( 'Gráfico Suite PAZ', 'suite-paz' ) ),
 			esc_html__( 'Cargando…', 'suite-paz' )

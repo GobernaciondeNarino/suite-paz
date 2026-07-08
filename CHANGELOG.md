@@ -1,6 +1,14 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.4.1] — 2026-07-08
+### Fixed
+- fix: título de eje Y usa la medida graficada (`payload._resolvedMeasure`) en vez de `measures[0]` — corrige etiqueta que decía "Casos nacional" cuando la barra graficaba `tasa_narino`. Aplica a ramas `line`/`area` y `default` de `applyAxes`. Marcador `el.dataset.spzYfield` expuesto para tests.
+- fix: `detectYearDim` usa nombres post-normalización ASCII (`ano`, `anio`, …) para que la comparación con la dimensión normalizada por NFD funcione con `'año'` real en los datos.
+- fix: `sanitize_key` en `group_by`/`measure` del shortcode reemplazado por `preg_replace` unicode-safe que preserva `ñ` y acentos — `group_by="año"` ya no se convierte en `"ao"`.
+- fix: `filterMeaningful` usa la medida resuelta (`resolvedMeasure || measures[0]`) para no filtrar filas sobre la columna equivocada cuando hay override de medida.
+- fix: atributos `data-group-by` y `data-measure` no se emiten cuando están vacíos (DOM limpio).
+
 ## [1.4.0] — 2026-07-08
 ### Added
 - feat: énfasis año-a-año — groupBy por vigencia + atributos group_by/measure; Convivencia como gráficos. `renderer.js`: nuevos helpers `detectYearDim` (normaliza tildes, detecta nombres año/anio/year/vigencia/periodo o valores 4-dígitos) y `chooseMeasure` (prefiere tasa_narino/*_narino). `configure(viz, payload, el)` recibe el contenedor DOM; para `bar`/`line`/`area` con formato largo y dimensión año: `groupBy=año`, `x=indicador`, `y=tasa_narino`; soporta overrides `data-group-by`/`data-measure`; expone `el.dataset.spzGroupBy`. Shortcode `[spz_grafico]`: atributos `group_by` (sanitize_key, emitido como `data-group-by`) y `measure` (idem). Constructor admin: selects "Agrupar por" y "Medida" poblados desde dims/measures de la vista; generan `group_by="…"`/`measure="…"` en el shortcode cuando no son auto. `scripts/build-views.py`: convivencia y hurtos cambian de `tipo_grafico_sugerido:"tabla"` a `"bar"` + hint fields `group_by_default:"año"` y `measure_default`. Harness Playwright: Tests 13 (bar groupBy→año) y 14 (line renderiza).
