@@ -1,6 +1,17 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.2.1] — 2026-07-07
+### Fixed
+- fix: accesibilidad del modal Detalle — foco al abrir/cerrar, trap de foco, listener Esc por-apertura; quitar métodos PHP muertos `action_label()` y `action_icon()`.
+
+## [1.2.0] — 2026-07-07
+### Added
+- `includes/class-spz-shortcode.php`: shortcode `[spz_grafico]` acepta seis nuevos atributos — `legend` (default `true`), `legend_style` (`text`|`icons`, default `text`), `toolbar` (default `true`), `actions` (lista CSV de detalle/compartir/datos/imagen/descarga/cambiar, default todos), `x_title`, `y_title`. Añadidos como `data-*` en el div `.spz-chart`. Helpers privados `to_bool()`, `sanitize_actions()` (whitelist VALID_ACTIONS), `action_label()`, `action_icon()`. El shortcode ahora envuelve en `<figure class="spz-figure">` cuando hay título o toolbar habilitada.
+- `assets/js/frontend.js`: función `buildToolbar(el, payload)` — construye e inserta `.spz-toolbar[data-spz-toolbar]` como hermano previo de `.spz-chart`; lee `data-toolbar` y `data-actions`; normaliza el payload a formato REST si llega en formato semilla. Acciones implementadas: **detalle** (modal con tipo, categoría, dimensiones, medidas, nº filas), **compartir** (`navigator.share` o copia al portapapeles + flash "URL copiada"), **datos** (reutiliza el panel `.spz-verdatos`/`.spz-datapanel` de Fix-Task v1.1.6, ocultando el botón standalone cuando toolbar tiene la acción), **imagen** (SVG → PNG canvas 2×, fondo blanco; omitida para tipo `tabla`), **descarga** (descarga `{view,data}` como JSON), **cambiar** (`<select>` de tipos compatibles; re-fetch REST + re-render en WP; solo display en modo harness). Modal de detalle creado con `getOrCreateModal()`, accesible (`role=dialog`, `aria-modal`, `aria-labelledby`, Esc cierra). Expuesto en `window.SPZ.frontend.buildToolbar` para uso desde harness.
+- `tests/fixtures/bar-toolbar.json`: fixture en formato REST (chart/view/data/mapping/compatible/seccion) para el Test 11 del harness.
+- `tests/harness.html`: Test 11 — carga `frontend.js` dinámicamente (post-DOMContentLoaded para no interferir con tests 1-10), renderiza gráfico de barra con fixture, llama `SPZ.frontend.buildToolbar`, verifica ≥ 4 botones `[data-spz-action]`, select cambiar ≥ 3 opciones, click datos abre panel, click descarga sin excepción.
+
 ## [1.1.x] — Resumen del ciclo de corrección y nuevas funcionalidades
 
 > Este bloque resume los cambios acumulados de v1.1.0 → v1.1.7. Ver las entradas individuales más abajo para el detalle por versión.
@@ -23,6 +34,10 @@ La semilla de datos usaba categorías temáticas (`humanitarian`, `security`, `e
 - Harness Playwright: 10/10 tests pasan; console clean.
 
 ---
+
+## [1.1.9] — 2026-07-07
+### Fixed
+- fix: [spz_analisis] — preservar analisis en la normalización de vistas. `adapt()` ramas B (formato publicación PAZ) y C (dataset anónimo) ahora copian `analisis`, `tema` y `fuente` del JSON fuente al array canónico; antes estos campos se perdían y el shortcode siempre devolvía cadena vacía.
 
 ## [1.1.8] — 2026-07-07
 ### Fixed

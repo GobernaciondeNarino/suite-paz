@@ -1,0 +1,29 @@
+{
+  "chart": { "key": "bar", "class": "BarChart", "label": "Barras" },
+  "view": {
+    "id": "fuerza-publica",
+    "name": "Fuerza Pública por Rol",
+    "category": "categorical",
+    "dimensions": ["rol"],
+    "measures": ["bajas"],
+    "description": "Bajas por institución de fuerza pública en Nariño 2023-2025."
+  },
+  "data": [
+    { "rol": "Policía Nacional", "bajas": 12 },
+    { "rol": "Ejército Nacional", "bajas": 8 },
+    { "rol": "Fiscalía",          "bajas": 3 }
+  ],
+  "mapping": {
+    "groupBy": ["rol"],
+    "x": "rol",
+    "y": "bajas",
+    "columns": ["rol", "bajas"]
+  },
+  "compatible": [
+    { "key": "bar",   "label": "Barras" },
+    { "key": "pie",   "label": "Torta"  },
+    { "key": "tabla", "label": "Tabla"  }
+  ],
+  "seccion": "seguridad",
+  "fuente": "PONAL / Ejército — Nariño 2023-2025"
+}
