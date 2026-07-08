@@ -47,11 +47,18 @@
 		priestley:    'Priestley',
 	};
 
-	// Suite PAZ brand palette (violeta, teal, coral, ámbar + extras).
-	const PALETTE = [
-		'#5B3B8C', '#3FCF97', '#E63946', '#F4A93C',
-		'#2563eb', '#0ea5e9', '#14b8a6', '#22c55e',
-		'#ec4899', '#6366f1',
+	// Suite PAZ chart color palette.
+	// Prefers the value localized from PHP (SPZ_FRONTEND.palette) when available;
+	// falls back to the 24-color default that matches SPZ_DEFAULT_PALETTE in PHP.
+	const PALETTE = (
+		typeof SPZ_FRONTEND !== 'undefined' &&
+		Array.isArray( SPZ_FRONTEND.palette ) &&
+		SPZ_FRONTEND.palette.length
+	) ? SPZ_FRONTEND.palette : [
+		'#844e80', '#ff7300', '#ffc53b', '#3eba6a', '#0080c3', '#e74c3c',
+		'#9b59b6', '#1abc9c', '#348AFB', '#e84393', '#fdcb6e', '#2ecc71',
+		'#00cec9', '#0984e3', '#6c5ce7', '#d63031', '#e17055', '#ff4757',
+		'#2ed573', '#1e90ff', '#ffa502', '#ff6b81', '#70a1ff', '#78e08f',
 	];
 
 	// Data key candidates when extracting rows from a PAZ seed JSON.
@@ -335,8 +342,8 @@
 					} );
 				}
 
-				this.configure( viz, payload, opts );
-				this.applyTimeline( viz, payload );
+				this.configure( viz, payload, el );
+				this.applyTimeline( viz, payload, el );
 				this.applyAxes( viz, payload, opts );
 				this.applyTooltip( viz, payload );
 				this.applyShape( viz );
@@ -553,7 +560,7 @@
 		// Per-chart configuration
 		// ==============================================================
 
-		configure( viz, payload ) {
+		configure( viz, payload, el ) {
 			const { mapping, view, chart } = payload;
 			const dims     = view.dimensions || [];
 			const measures = view.measures   || [];
@@ -562,13 +569,30 @@
 			payload._filteredData = data;
 
 			switch ( chart.key ) {
-				case 'bar':
+				case 'bar': {
+					const yearDimB    = this.detectYearDim( dims, data );
+					const gbOverrideB = ( el && el.getAttribute( 'data-group-by' ) ) || '';
+					const mOverrideB  = ( el && el.getAttribute( 'data-measure' )  ) || '';
+					let groupByFieldB, xFieldB;
+					if ( yearDimB && dims.length >= 2 ) {
+						const wantedGB = ( gbOverrideB && dims.indexOf( gbOverrideB ) !== -1 ) ? gbOverrideB : yearDimB;
+						groupByFieldB  = wantedGB;
+						xFieldB        = dims.find( function ( d ) { return d !== groupByFieldB; } ) || dims[ 0 ];
+					} else {
+						groupByFieldB = ( gbOverrideB && dims.indexOf( gbOverrideB ) !== -1 ) ? gbOverrideB : dims[ 0 ];
+						xFieldB       = groupByFieldB;
+					}
+					const yFieldB = this.chooseMeasure( measures, mOverrideB );
+					if ( el ) { el.dataset.spzGroupBy = groupByFieldB; }
+					payload._resolvedGroupBy = groupByFieldB;
+					payload._resolvedMeasure = yFieldB;
 					viz
 						.data( data )
-						.groupBy( dims[ 0 ] )
-						.x( dims[ 0 ] )
-						.y( measures[ 0 ] );
+						.groupBy( groupByFieldB )
+						.x( xFieldB )
+						.y( yFieldB );
 					break;
+				}
 
 				case 'stacked_bar': {
 					const long = this.reshapeWideToLong( data, dims, measures );
@@ -605,11 +629,28 @@
 							.x( '_year' )
 							.y( '_value' );
 					} else {
-						viz
-							.data( data )
-							.groupBy( dims[ 1 ] || dims[ 0 ] )
-							.x( dims[ 0 ] )
-							.y( measures[ 0 ] );
+						const yearDimLA    = this.detectYearDim( dims, data );
+						const gbOverrideLA = ( el && el.getAttribute( 'data-group-by' ) ) || '';
+						const mOverrideLA  = ( el && el.getAttribute( 'data-measure' )  ) || '';
+						if ( yearDimLA && dims.length >= 2 ) {
+							const wantedGBLA = ( gbOverrideLA && dims.indexOf( gbOverrideLA ) !== -1 ) ? gbOverrideLA : yearDimLA;
+							const xFieldLA   = dims.find( function ( d ) { return d !== wantedGBLA; } ) || dims[ 0 ];
+							const yFieldLA   = this.chooseMeasure( measures, mOverrideLA );
+							if ( el ) { el.dataset.spzGroupBy = wantedGBLA; }
+							payload._resolvedGroupBy = wantedGBLA;
+							payload._resolvedMeasure = yFieldLA;
+							viz
+								.data( data )
+								.groupBy( wantedGBLA )
+								.x( xFieldLA )
+								.y( yFieldLA );
+						} else {
+							viz
+								.data( data )
+								.groupBy( dims[ 1 ] || dims[ 0 ] )
+								.x( dims[ 0 ] )
+								.y( measures[ 0 ] );
+						}
 					}
 					break;
 				}
@@ -773,7 +814,7 @@
 		// Timeline
 		// ==============================================================
 
-		applyTimeline( viz, payload ) {
+		applyTimeline( viz, payload, el ) {
 			if ( typeof viz.time !== 'function' ) {
 				return;
 			}
@@ -788,6 +829,55 @@
 				return;
 			}
 
+			// ── Resolve effective timeline setting ─────────────────────────────
+			// Priority: data-timeline attr > SPZ_FRONTEND.timelineDefault > auto
+			const attrTl = ( el && typeof el.getAttribute === 'function' )
+				? el.getAttribute( 'data-timeline' )
+				: null;
+			// Accept 'true' / 'false' from attr; anything else (including 'auto' or null) → 'auto'
+			let effective = ( attrTl === 'true' || attrTl === 'false' ) ? attrTl : 'auto';
+
+			if ( effective === 'auto' ) {
+				// Resolve against WordPress global setting (absent in harness → stay 'auto').
+				const globalDef = ( typeof SPZ_FRONTEND !== 'undefined' && SPZ_FRONTEND.timelineDefault )
+					? String( SPZ_FRONTEND.timelineDefault )
+					: 'auto';
+				if ( globalDef === 'on' || globalDef === 'true' ) {
+					effective = 'true';
+				} else if ( globalDef === 'off' || globalDef === 'false' ) {
+					effective = 'false';
+				}
+				// globalDef 'auto' → effective stays 'auto' → show timeline when year data present.
+			}
+
+			// ── OFF branch ─────────────────────────────────────────────────────
+			// Timeline disabled: do not reshape data. The chart renders with its
+			// original data; configure already set measures[0] as the main value.
+			// viz.timeline(false) suppresses any slider d3plus might add.
+			if ( effective === 'false' ) {
+				if ( typeof viz.timeline === 'function' ) {
+					viz.timeline( false );
+				}
+				// OFF: no timeline. Bind the latest-year column explicitly (robust to column order).
+				const yearMeasuresOff = measures.filter( ( m ) => /_(20\d{2})$/.test( m ) );
+				if ( yearMeasuresOff && yearMeasuresOff.length ) {
+					// pick the measure ending in the max year
+					let best = yearMeasuresOff[ 0 ], bestYear = -Infinity;
+					yearMeasuresOff.forEach( function ( m ) {
+						var y = parseInt( ( m.match( /_(\d{4})$/ ) || [] )[ 1 ], 10 );
+						if ( ! isNaN( y ) && y > bestYear ) { bestYear = y; best = m; }
+					} );
+					if ( typeof viz.y === 'function' && [ 'bar', 'stacked_bar', 'line', 'area', 'stacked_area' ].indexOf( chart.key ) !== -1 ) { viz.y( best ); }
+					if ( typeof viz.value === 'function' && ( chart.key === 'pie' || chart.key === 'donut' ) ) { viz.value( best ); }
+					if ( typeof viz.sum === 'function' && chart.key === 'treemap' ) { viz.sum( best ); }
+				}
+				if ( el ) {
+					el.dataset.spzTimeline = 'off';
+				}
+				return;
+			}
+
+			// ── ON / AUTO branch (show timeline when year data is present) ─────
 			const dims    = view.dimensions || [];
 			const rawData = payload._filteredData || payload.data || [];
 			const long    = [];
@@ -809,7 +899,7 @@
 			if ( long.length ) {
 				viz.data( long );
 				viz.time( '_year' );
-				viz.timeline( true );
+				if ( typeof viz.timeline === 'function' ) { viz.timeline( true ); }
 
 				if ( typeof viz.y === 'function' && typeof viz.x === 'function' ) {
 					viz.x( dims[ 0 ] || '_year' );
@@ -821,6 +911,9 @@
 				}
 				if ( typeof viz.sum === 'function' && chart.key === 'treemap' ) {
 					viz.sum( '_value' );
+				}
+				if ( el ) {
+					el.dataset.spzTimeline = 'on';
 				}
 			}
 		},
@@ -834,6 +927,65 @@
 				}
 			} );
 			return Array.from( years ).sort();
+		},
+
+		/**
+		 * Detect a "year/vigencia" dimension in a set of dimension names.
+		 * Matches names like año, anio, year, vigencia, periodo (accent-insensitive).
+		 * Falls back to checking if column values are all 4-digit years (20xx).
+		 *
+		 * @param {string[]} dims Dimension field names.
+		 * @param {object[]} data Sample data rows.
+		 * @returns {string|null} The year dimension name, or null if none found.
+		 */
+		detectYearDim( dims, data ) {
+			const yearNames = [ 'año', 'anio', 'year', 'vigencia', 'periodo' ];
+			for ( let i = 0; i < dims.length; i++ ) {
+				const normalized = String( dims[ i ] )
+					.toLowerCase()
+					.normalize( 'NFD' )
+					.replace( /[̀-ͯ]/g, '' );
+				if ( yearNames.indexOf( normalized ) !== -1 ) {
+					return dims[ i ];
+				}
+			}
+			// Fallback: check if values in the dimension are 4-digit years.
+			if ( Array.isArray( data ) && data.length && dims.length ) {
+				for ( let i = 0; i < dims.length; i++ ) {
+					const sample = data
+						.slice( 0, Math.min( 5, data.length ) )
+						.map( function ( r ) { return String( r[ dims[ i ] ] || '' ); } );
+					if ( sample.length && sample.every( function ( v ) { return /^20\d{2}$/.test( v ); } ) ) {
+						return dims[ i ];
+					}
+				}
+			}
+			return null;
+		},
+
+		/**
+		 * Choose the best measure to plot for a year-over-year chart.
+		 * Priority: explicit override → tasa_narino → any *_narino → measures[0].
+		 *
+		 * @param {string[]} measures Measure field names.
+		 * @param {string}   override Explicit override (from data-measure attr).
+		 * @returns {string}
+		 */
+		chooseMeasure( measures, override ) {
+			if ( override && measures.indexOf( override ) !== -1 ) {
+				return override;
+			}
+			for ( let i = 0; i < measures.length; i++ ) {
+				if ( /tasa_narino$/i.test( measures[ i ] ) ) {
+					return measures[ i ];
+				}
+			}
+			for ( let i = 0; i < measures.length; i++ ) {
+				if ( /narino$/i.test( measures[ i ] ) ) {
+					return measures[ i ];
+				}
+			}
+			return measures[ 0 ] || '';
 		},
 
 		// ==============================================================

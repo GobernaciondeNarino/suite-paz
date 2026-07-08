@@ -137,6 +137,9 @@
 				actions:      DEFAULT_ACTIONS.slice(),
 				x_title:      '',
 				y_title:      '',
+				timeline:     'auto',
+				group_by:     '',
+				measure:      '',
 			},
 		};
 
@@ -287,9 +290,42 @@
 				state.view       = payload.view;
 				state.compatible = payload.compatible || [];
 				renderChartTypes();
+				populateGroupByMeasure( payload.view );
 				els.preview.innerHTML = '<p class="spz-empty">' + escapeHtml( SPZ_ADMIN.i18n.selectChart || 'Selecciona un tipo de gráfico.' ) + '</p>';
 			} catch ( err ) {
 				els.typesWrap.innerHTML = '<p class="spz-empty">' + escapeHtml( SPZ_ADMIN.i18n.noCompatible || 'Sin gráficos compatibles.' ) + '</p>';
+			}
+		}
+
+		function populateGroupByMeasure( view ) {
+			const dims     = ( view && view.dimensions ) || [];
+			const measures = ( view && view.measures )   || [];
+
+			const gbSel = $( '[data-spz-opt="group_by"]',  els.options );
+			const mSel  = $( '[data-spz-opt="measure"]',   els.options );
+
+			if ( gbSel ) {
+				gbSel.innerHTML = '<option value="">' + escapeHtml( ( SPZ_ADMIN.i18n && SPZ_ADMIN.i18n.autoGroupBy ) || 'Auto (año/vigencia)' ) + '</option>';
+				dims.forEach( function ( d ) {
+					const opt = document.createElement( 'option' );
+					opt.value       = d;
+					opt.textContent = d;
+					gbSel.appendChild( opt );
+				} );
+				gbSel.value = '';
+				state.options.group_by = '';
+			}
+
+			if ( mSel ) {
+				mSel.innerHTML = '<option value="">' + escapeHtml( ( SPZ_ADMIN.i18n && SPZ_ADMIN.i18n.autoMeasure ) || 'Auto (tasa_narino / primera)' ) + '</option>';
+				measures.forEach( function ( m ) {
+					const opt = document.createElement( 'option' );
+					opt.value       = m;
+					opt.textContent = m;
+					mSel.appendChild( opt );
+				} );
+				mSel.value = '';
+				state.options.measure = '';
 			}
 		}
 
@@ -433,6 +469,9 @@
 			}
 			if ( opts.x_title ) { parts.push( `x_title="${ String( opts.x_title ).replace( /"/g, "'" ) }"` ); }
 			if ( opts.y_title ) { parts.push( `y_title="${ String( opts.y_title ).replace( /"/g, "'" ) }"` ); }
+			if ( opts.timeline && opts.timeline !== 'auto' ) { parts.push( `timeline="${ opts.timeline }"` ); }
+			if ( opts.group_by ) { parts.push( `group_by="${ opts.group_by }"` ); }
+			if ( opts.measure )  { parts.push( `measure="${ opts.measure }"` ); }
 
 			els.shortcodeInput.value = `[spz_grafico ${ parts.join( ' ' ) }]`;
 			if ( els.shortcodeBox ) { els.shortcodeBox.hidden = false; }

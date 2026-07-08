@@ -176,6 +176,57 @@
   <div class="status" id="s11">Cargando&hellip;</div>
 </div>
 
+<!-- ============================================================
+     TEST 12a — Timeline ON: bar chart con tasa_homicidio_2023/24/25
+     data-timeline="true" → el.dataset.spzTimeline === 'on'
+     ============================================================ -->
+<div class="card">
+  <h2>Test 12a — Timeline ON: Homicidios municipio (bar + timeline)</h2>
+  <p class="desc">Vista: seguridad/homicidios-municipio · tipo: bar · data-timeline="true"<br>
+     Se espera <code>el.dataset.spzTimeline === 'on'</code> y SVG con elementos.</p>
+  <div class="spz-chart" id="c12a" data-timeline="true" style="height:380px;min-height:380px;"></div>
+  <div class="status" id="s12a">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 12b — Timeline OFF: mismo chart, sin slider
+     data-timeline="false" → el.dataset.spzTimeline === 'off'
+     ============================================================ -->
+<div class="card">
+  <h2>Test 12b — Timeline OFF: Homicidios municipio (bar sin timeline)</h2>
+  <p class="desc">Vista: seguridad/homicidios-municipio · tipo: bar · data-timeline="false"<br>
+     Se espera <code>el.dataset.spzTimeline === 'off'</code> y SVG con elementos.</p>
+  <div class="spz-chart" id="c12b" data-timeline="false" style="height:380px;min-height:380px;"></div>
+  <div class="status" id="s12b">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 13 — Convivencia bar con year-over-year groupBy
+     data/views/convivencia/convivencia.json · tipo: bar
+     groupBy auto → debe resolverse a 'año' (el.dataset.spzGroupBy)
+     x-axis: 3 indicadores; legend: 3 años (2023/2024/2025)
+     ============================================================ -->
+<div class="card">
+  <h2>Test 13 — Barras Convivencia año-a-año (groupBy=año auto)</h2>
+  <p class="desc">Vista: convivencia/convivencia · tipo: bar · data-group-by="" (auto)<br>
+     Se espera <code>el.dataset.spzGroupBy === 'año'</code> y SVG con barras.</p>
+  <div class="spz-chart" id="c13" style="height:420px;min-height:420px;"></div>
+  <div class="status" id="s13">Cargando…</div>
+</div>
+
+<!-- ============================================================
+     TEST 14 — Convivencia line chart
+     data/views/convivencia/convivencia.json · tipo: line
+     Debe renderizar sin error; SVG con elementos.
+     ============================================================ -->
+<div class="card">
+  <h2>Test 14 — Líneas Convivencia año-a-año</h2>
+  <p class="desc">Vista: convivencia/convivencia · tipo: line<br>
+     Se espera SVG con elementos (sin error de consola).</p>
+  <div class="spz-chart" id="c14" style="height:420px;min-height:420px;"></div>
+  <div class="status" id="s14">Cargando…</div>
+</div>
+
 <!-- Renderer (must be after d3plus) -->
 <script src="../assets/js/renderer.js"></script>
 <!-- PAZ native module renderer (must load before frontend.js) -->
@@ -434,6 +485,140 @@
       setStatus('s10', false, 'Sin botones .spz-verdatos tras 8 s — revisar renderer.js / modules.js');
     }
   }, 200);
+
+  // ----------------------------------------------------------------
+  // Test 12a — Timeline ON (data-timeline="true")
+  // Uses homicidios-municipio which has tasa_homicidio_2023/2024/2025.
+  // Rendered as 'bar' (not in SKIP list) so applyTimeline fires.
+  // Assertion: el.dataset.spzTimeline === 'on' (set by renderer).
+  // ----------------------------------------------------------------
+  fetch('../data/views/seguridad/homicidios-municipio.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c12a = document.getElementById('c12a');
+      if (!c12a) { setStatus('s12a', false, '#c12a no encontrado'); return; }
+      c12a.scrollIntoView({ behavior: 'instant', block: 'center' });
+      if (!c12a.id) { c12a.id = 'spz-c12a-' + Date.now(); }
+      SPZ.renderer.render(c12a, { view: view, type: 'bar', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var marker = c12a.dataset.spzTimeline;
+        var svgEls = c12a.querySelectorAll('svg *').length;
+        if (marker === 'on') {
+          clearInterval(timer);
+          setStatus('s12a', true, 'Timeline ON confirmado (spzTimeline=on) — ' + svgEls + ' elementos SVG');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s12a', false, 'Timeout — spzTimeline="' + (marker || 'no seteado') + '" svgEls=' + svgEls);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness] t12a error', err);
+      setStatus('s12a', false, 'Error: ' + err.message);
+    });
+
+  // ----------------------------------------------------------------
+  // Test 12b — Timeline OFF (data-timeline="false")
+  // Assertion: el.dataset.spzTimeline === 'off', SVG still renders.
+  // ----------------------------------------------------------------
+  fetch('../data/views/seguridad/homicidios-municipio.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c12b = document.getElementById('c12b');
+      if (!c12b) { setStatus('s12b', false, '#c12b no encontrado'); return; }
+      c12b.scrollIntoView({ behavior: 'instant', block: 'center' });
+      if (!c12b.id) { c12b.id = 'spz-c12b-' + Date.now(); }
+      SPZ.renderer.render(c12b, { view: view, type: 'bar', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var marker = c12b.dataset.spzTimeline;
+        var svgEls = c12b.querySelectorAll('svg *').length;
+        if (marker === 'off') {
+          clearInterval(timer);
+          var hasChart = svgEls > 5;
+          setStatus('s12b', hasChart,
+            hasChart
+              ? 'Timeline OFF confirmado (spzTimeline=off) — ' + svgEls + ' elementos SVG, sin slider'
+              : 'spzTimeline=off pero sin SVG (' + svgEls + ' elementos)');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s12b', false, 'Timeout — spzTimeline="' + (marker || 'no seteado') + '" svgEls=' + svgEls);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness] t12b error', err);
+      setStatus('s12b', false, 'Error: ' + err.message);
+    });
+
+  // ----------------------------------------------------------------
+  // Test 13 — Convivencia bar: groupBy resolves to año
+  // Convivencia has dims ['indicador','año'] — year-dim auto-detection
+  // should set spzGroupBy='año' and x='indicador'.
+  // ----------------------------------------------------------------
+  fetch('../data/views/convivencia/convivencia.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c13 = document.getElementById('c13');
+      if (!c13) { setStatus('s13', false, '#c13 no encontrado'); return; }
+      c13.scrollIntoView({ behavior: 'instant', block: 'center' });
+      SPZ.renderer.render(c13, { view: view, type: 'bar', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var groupBy = c13.dataset.spzGroupBy;
+        var svgEls  = c13.querySelectorAll('svg *').length;
+        if (groupBy) {
+          clearInterval(timer);
+          var ok = (groupBy === 'año');
+          setStatus('s13', ok,
+            ok
+              ? 'spzGroupBy="año" ✓ — ' + svgEls + ' elementos SVG'
+              : 'spzGroupBy="' + groupBy + '" (esperaba "año") — revisar detectYearDim');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s13', false, 'Timeout — spzGroupBy no seteado (configure no llega a bar?), svgEls=' + svgEls);
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness test 13]', err);
+      setStatus('s13', false, 'Error: ' + err.message);
+    });
+
+  // ----------------------------------------------------------------
+  // Test 14 — Convivencia line chart renders without error
+  // ----------------------------------------------------------------
+  fetch('../data/views/convivencia/convivencia.json')
+    .then(function(r) { return r.json(); })
+    .then(function(view) {
+      var c14 = document.getElementById('c14');
+      if (!c14) { setStatus('s14', false, '#c14 no encontrado'); return; }
+      c14.scrollIntoView({ behavior: 'instant', block: 'center' });
+      SPZ.renderer.render(c14, { view: view, type: 'line', options: { legend: true } });
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        var svgEls = c14.querySelectorAll('svg *').length;
+        if (svgEls > 5) {
+          clearInterval(timer);
+          setStatus('s14', true, 'Line chart pintado — ' + svgEls + ' elementos SVG');
+        } else if (attempts > 80) {
+          clearInterval(timer);
+          setStatus('s14', svgEls > 0,
+            svgEls > 0
+              ? 'SVG mínimo (' + svgEls + ' elementos) — puede necesitar scroll'
+              : 'Sin SVG tras 8 s — revisar consola');
+        }
+      }, 100);
+    })
+    .catch(function(err) {
+      console.error('[SPZ harness test 14]', err);
+      setStatus('s14', false, 'Error: ' + err.message);
+    });
 
 })();
 

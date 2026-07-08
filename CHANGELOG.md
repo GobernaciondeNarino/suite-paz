@@ -1,6 +1,22 @@
 # Changelog
 Todas las versiones del plugin Suite PAZ.
 
+## [1.4.0] — 2026-07-08
+### Added
+- feat: énfasis año-a-año — groupBy por vigencia + atributos group_by/measure; Convivencia como gráficos. `renderer.js`: nuevos helpers `detectYearDim` (normaliza tildes, detecta nombres año/anio/year/vigencia/periodo o valores 4-dígitos) y `chooseMeasure` (prefiere tasa_narino/*_narino). `configure(viz, payload, el)` recibe el contenedor DOM; para `bar`/`line`/`area` con formato largo y dimensión año: `groupBy=año`, `x=indicador`, `y=tasa_narino`; soporta overrides `data-group-by`/`data-measure`; expone `el.dataset.spzGroupBy`. Shortcode `[spz_grafico]`: atributos `group_by` (sanitize_key, emitido como `data-group-by`) y `measure` (idem). Constructor admin: selects "Agrupar por" y "Medida" poblados desde dims/measures de la vista; generan `group_by="…"`/`measure="…"` en el shortcode cuando no son auto. `scripts/build-views.py`: convivencia y hurtos cambian de `tipo_grafico_sugerido:"tabla"` a `"bar"` + hint fields `group_by_default:"año"` y `measure_default`. Harness Playwright: Tests 13 (bar groupBy→año) y 14 (line renderiza).
+
+## [1.3.2] — 2026-07-08
+### Fixed
+- fix: timeline OFF elige explícitamente el año máximo — ya no depende del orden de columnas en el archivo de datos; guard simétrico `typeof viz.timeline === 'function'` en rama ON.
+
+## [1.3.1] — 2026-07-08
+### Added
+- feat: toggle de línea de tiempo d3plus por shortcode + default en Ajustes. Shortcode `[spz_grafico]` acepta atributo `timeline="auto|true|false"` (default `auto`), emitido como `data-timeline` en `.spz-chart`. Ajustes agrega `timeline_default` (auto/on/off, default auto), localizado como `SPZ_FRONTEND.timelineDefault`. `renderer.js` resuelve el valor efectivo: `auto` sigue el default global (si ausente, se comporta como `on` en el harness); `true/on` fuerza la línea de tiempo; `false/off` la desactiva (el gráfico renderiza con los datos originales — primera medida del año más reciente). El Constructor incluye selector "Línea de tiempo" en las Opciones que inyecta `timeline="true"/"false"` al shortcode cuando no es `auto`.
+
+## [1.3.0] — 2026-07-08
+### Added
+- feat: paleta de colores de gráficas configurable en Ajustes (v1.3.0). Nueva constante `SPZ_DEFAULT_PALETTE` (24 colores) en `suite-paz.php`. Campo "Paleta de colores de las gráficas" (`<textarea name="palette">`) en la pantalla Ajustes (`templates/admin/settings.php`). Sanitización en `class-spz-admin.php`: divide por coma/salto de línea, valida `/^#[0-9a-fA-F]{6}$/` (expande 3 dígitos), descarta inválidos, deduplica; si el resultado queda vacío usa los 24 defaults. `class-spz-plugin.php` pasa `palette` en `SPZ_FRONTEND` al script frontend. `assets/js/renderer.js`: `PALETTE` prefiere `SPZ_FRONTEND.palette` y usa los 24 colores como fallback integrado.
+
 ## [1.2.1] — 2026-07-07
 ### Fixed
 - fix: accesibilidad del modal Detalle — foco al abrir/cerrar, trap de foco, listener Esc por-apertura; quitar métodos PHP muertos `action_label()` y `action_icon()`.
