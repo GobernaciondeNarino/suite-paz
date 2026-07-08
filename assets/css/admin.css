@@ -727,6 +727,65 @@
 	padding: 4px 8px;
 }
 
+/* Row-management toolbar and per-row delete button */
+.spz-row-toolbar {
+	padding: 10px 0 4px;
+}
+.spz-btn-add-row {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 6px;
+	background: var(--spz-violet) !important;
+	color: #fff !important;
+	border-color: var(--spz-violet) !important;
+	border-radius: 8px !important;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 6px 14px !important;
+	height: auto !important;
+	line-height: 1.4 !important;
+	transition: background .15s ease, transform .1s ease;
+}
+.spz-btn-add-row:hover {
+	background: #4a2f72 !important;
+	border-color: #4a2f72 !important;
+	color: #fff !important;
+	transform: translateY(-1px);
+}
+.spz-btn-add-row:focus-visible {
+	outline: 2px solid var(--spz-violet);
+	outline-offset: 2px;
+}
+.spz-del-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 3px 8px;
+	font-size: 11px;
+	color: var(--spz-coral);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background .15s ease, border-color .15s ease;
+	white-space: nowrap;
+	font-family: inherit;
+}
+.spz-del-row:hover {
+	background: #fde4e6;
+	border-color: var(--spz-coral);
+}
+.spz-del-row:focus-visible {
+	outline: 2px solid var(--spz-coral);
+	outline-offset: 1px;
+}
+.spz-td-actions,
+.spz-th-actions {
+	white-space: nowrap;
+	width: 1%;
+	padding-left: 4px !important;
+}
+
 /* Module editor form */
 .spz-module-form,
 .spz-generic-form {
