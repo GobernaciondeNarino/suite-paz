@@ -262,6 +262,20 @@
 				lbl.appendChild( icon );
 				lbl.appendChild( sel );
 				toolbar.appendChild( lbl );
+			} else if ( action === 'metrica' ) {
+				const lbl = document.createElement( 'label' );
+				lbl.className = 'spz-action spz-action--select spz-action--metrica';
+				lbl.title = 'Métrica que colorea el mapa';
+				const icon = document.createElement( 'span' );
+				icon.className = 'spz-action__label';
+				icon.textContent = '◧ Métrica';
+				const sel = document.createElement( 'select' );
+				sel.className = 'spz-action__select';
+				sel.setAttribute( 'data-spz-metrica-selector', '1' );
+				sel.setAttribute( 'aria-label', 'Métrica del mapa' );
+				lbl.appendChild( icon );
+				lbl.appendChild( sel );
+				toolbar.appendChild( lbl );
 			} else {
 				const btn = document.createElement( 'button' );
 				btn.type = 'button';
@@ -287,6 +301,9 @@
 
 		// Populate the cambiar type selector.
 		populateTypeSelector( el, toolbar, payload );
+
+		// Populate the métrica selector (geomap with >1 numeric measure).
+		populateMetricaSelector( el, toolbar, payload, rawPayload );
 
 		// When datos is an action, hide the standalone .spz-verdatos button
 		// (already inserted by renderer.js/attachVerDatos) to avoid duplicate affordance.
@@ -395,6 +412,110 @@
 			el.innerHTML = prevHtml;
 			el.classList.remove( 'is-loading' );
 		}
+	}
+
+	// ------------------------------------------------------------------
+	// Métrica (geomap color-metric selector)
+	// ------------------------------------------------------------------
+
+	// Human-friendly labels for the known combined-map measures.
+	const METRICA_LABELS = {
+		tasa_homicidio_2025:  'Tasa homicidio 2025',
+		tasa_homicidio_2024:  'Tasa homicidio 2024',
+		tasa_homicidio_2023:  'Tasa homicidio 2023',
+		casos_homicidio_2025: 'Casos homicidio 2025',
+		cuerpos_recuperados:  'Cuerpos recuperados',
+		en_desminado:         'En desminado',
+		priorizado:           'Priorizado'
+	};
+
+	function metricaLabel( measure ) {
+		if ( METRICA_LABELS[ measure ] ) {
+			return METRICA_LABELS[ measure ];
+		}
+		const s = String( measure || '' ).replace( /_/g, ' ' ).trim();
+		return s ? s.charAt( 0 ).toUpperCase() + s.slice( 1 ) : '';
+	}
+
+	/**
+	 * Populate the métrica selector for geomap views with >1 numeric measure.
+	 * Lists every measure (human-labelled) plus a "Todos" option that colors by
+	 * the primary measure while keeping the full (all-measure) tooltip.
+	 * No-op / hidden for non-geomap or single-measure views.
+	 *
+	 * @param {Element} el         The .spz-chart container.
+	 * @param {Element} toolbar    The toolbar element.
+	 * @param {object}  payload    REST-normalised payload (chart + view.measures).
+	 * @param {object}  rawPayload The original (seed or REST) payload for re-render.
+	 */
+	function populateMetricaSelector( el, toolbar, payload, rawPayload ) {
+		const sel = toolbar.querySelector( '[data-spz-metrica-selector]' );
+		if ( ! sel ) {
+			return;
+		}
+
+		const chartKey = ( payload.chart && payload.chart.key ) || '';
+		const measures = ( payload.view && payload.view.measures ) || [];
+
+		// Only meaningful for a geomap that has more than one numeric measure.
+		if ( chartKey !== 'geomap' || measures.length < 2 ) {
+			const wrap = sel.closest( '.spz-action--select' );
+			if ( wrap ) {
+				wrap.hidden = true;
+			}
+			return;
+		}
+
+		const primary    = measures[ 0 ];
+		const current    = el.getAttribute( 'data-metrica' );
+		const currentVal = ( current && measures.indexOf( current ) !== -1 ) ? current : primary;
+
+		let html = measures.map( function ( m ) {
+			const selAttr = m === currentVal ? ' selected' : '';
+			return '<option value="' + escAttr( m ) + '"' + selAttr + '>' + escHtml( metricaLabel( m ) ) + '</option>';
+		} ).join( '' );
+		// "Todos": color by the primary measure; the tooltip already lists every metric.
+		html += '<option value="__todos__">' + escHtml( 'Todos' ) + '</option>';
+		sel.innerHTML = html;
+
+		// Clone to drop any prior listener, then re-attach.
+		const fresh = sel.cloneNode( true );
+		sel.parentNode.replaceChild( fresh, sel );
+		fresh.addEventListener( 'change', function ( ev ) {
+			const v = ev.target.value === '__todos__' ? '' : ev.target.value;
+			onMetricaChange( el, v, rawPayload );
+		} );
+	}
+
+	/**
+	 * Re-color the geomap by the chosen measure. Re-renders in place from the
+	 * already-fetched payload (no network round-trip). The renderer's geomap case
+	 * reads data-metrica for its .colorScale() field and exposes el.dataset.spzMetrica.
+	 *
+	 * @param {Element} el         The .spz-chart container.
+	 * @param {string}  measure    Measure to color by; '' → primary ("Todos").
+	 * @param {object}  rawPayload The payload to re-render from.
+	 */
+	function onMetricaChange( el, measure, rawPayload ) {
+		if ( ! window.SPZ || ! window.SPZ.renderer || ! rawPayload ) {
+			return;
+		}
+		if ( measure ) {
+			el.setAttribute( 'data-metrica', measure );
+		} else {
+			el.removeAttribute( 'data-metrica' );
+		}
+
+		const type = el.getAttribute( 'data-type' ) || 'geomap';
+		const opts = {
+			legend:      el.getAttribute( 'data-legend' ) !== '0',
+			legendStyle: el.getAttribute( 'data-legend-style' ) || 'text',
+			xTitle:      el.getAttribute( 'data-x-title' ) || '',
+			yTitle:      el.getAttribute( 'data-y-title' ) || ''
+		};
+
+		el.innerHTML = '';
+		window.SPZ.renderer.render( el, { view: rawPayload, type: type, options: opts } );
 	}
 
 	// ------------------------------------------------------------------

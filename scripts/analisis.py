@@ -397,4 +397,18 @@ ANALISIS = {
         "una de las bases más sólidas para la paz territorial."
     ),
 
+    # ── ACUMULADO ────────────────────────────────────────────────────────────
+
+    "acumulado-municipios": (
+        "Este mapa reúne en una sola vista los indicadores clave por municipio de "
+        "Nariño. En seguridad, cinco municipios concentran los homicidios reportados "
+        "en 2025: Samaniego registra la tasa más alta, 47,6 por cada 100.000 "
+        "habitantes, seguido de Tumaco, Barbacoas, El Charco y Pasto, que juntos suman "
+        "107 casos. En la búsqueda de personas desaparecidas, la UBPD recuperó 39 "
+        "cuerpos, sobre todo en Cumbal (13), Santacruz y Samaniego (12 cada uno) y La "
+        "Llanada (2). Además, seis municipios avanzan en desminado humanitario. Con el "
+        "selector eliges qué indicador colorea el mapa y el tooltip muestra todas las "
+        "cifras de cada municipio."
+    ),
+
 }

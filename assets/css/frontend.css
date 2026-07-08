@@ -143,6 +143,13 @@
 	color: var( --spz-ink );
 	background: #ffffff;
 }
+/* Métrica selector — shares .spz-action--select mechanics, brand-tinted. */
+.spz-action--metrica {
+	color: var( --spz-accent );
+}
+.spz-action--metrica[hidden] {
+	display: none;
+}
 .spz-action--select::after {
 	content: "";
 	position: absolute;

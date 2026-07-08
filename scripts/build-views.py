@@ -673,6 +673,43 @@ def trans_pib():
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# ACUMULADO  (mapa combinado por municipio)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def acu_municipios():
+    """Panorama municipal acumulado — combina homicidios, cuerpos y desminado
+    en un solo geomap de los 64 municipios (join por nombre normalizado)."""
+    hom     = {norm(k): v for k, v in CATALOGO["homicidios_municipio"].items()}
+    cuerpos = {norm(k): v for k, v in CATALOGO["desaparecidos"]["por_municipio"].items()}
+    desmin  = {norm(m) for m in CATALOGO["desminado_municipios"]}
+
+    municipios = []
+    for nom in NOMBRES:
+        n = norm(nom)
+        h = hom.get(n, {})
+        municipios.append({
+            "municipio":            nom,
+            "tasa_homicidio_2025":  h.get("2025", 0),
+            "tasa_homicidio_2024":  h.get("2024", 0),
+            "tasa_homicidio_2023":  h.get("2023", 0),
+            "casos_homicidio_2025": h.get("casos_2025", 0),
+            "cuerpos_recuperados":  cuerpos.get(n, 0),
+            "en_desminado":         1 if n in desmin else 0,
+            "priorizado":           n in hom,
+        })
+
+    write("acumulado", "acumulado-municipios", {
+        "vista": "acumulado-municipios",
+        "titulo": "Panorama municipal acumulado",
+        "descripcion": "Indicadores clave por municipio de Nariño (homicidios, cuerpos recuperados, desminado).",
+        "tipo_grafico_sugerido": "geomap",
+        "categoria": "geographic",
+        "total_municipios": 64,
+        "municipios": municipios
+    })
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -722,5 +759,8 @@ if __name__ == "__main__":
     trans_indicadores_sociales()
     trans_desocupacion()
     trans_pib()
+
+    print("\n-- ACUMULADO --")
+    acu_municipios()
 
     print("\nDone. Ejecuta: python scripts/validate-views.py")
